@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import BoardModal from "@/app/components/ModalContent/BoardModal";
 import TaskModal from "@/app/components/ModalContent/TaskModal";
 import DeleteModal from "@/app/components/ModalContent/DeleteModal";
+import ViewTask from "@/app/components/ModalContent/ViewTask";
+import Dropdown from "@/app/components/Dropdown";
 
 const Main = () => {
   const [invalidURL, setInvalidURL] = useState(false);
@@ -45,6 +47,8 @@ const Main = () => {
       {openModal && <Modal ModalContent={BoardModal} type="add" />}
       {/* <Modal ModalContent={TaskModal} type="add" /> */}
       {/* <Modal ModalContent={DeleteModal} taskOrBoard="task" name={headerName} /> */}
+      {/* {<Modal ModalContent={ViewTask} />} */}
+      {<Dropdown />}
       {!invalidURL && <Header boardName={headerName} />}
 
       {!invalidURL ? (

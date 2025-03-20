@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "./modal.css";
-
+@import "./checkbox.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,6 +27,7 @@
   --contrastGray: rgba(130, 143, 163, 0.1);
   --lightline: #828fa3;
   --lightgray: #f4f7fd;
+
   --red: #ea5555;
   --redhover: #ff9898;
   --textcolor: #20212c;
@@ -41,6 +42,8 @@
     --darkline: #3e3f4e;
     --darkpurple25opacity: #ffffff;
     --contrastGray: rgba(233, 239, 250, 0.025);
+
+    --lightgray: #20212c;
     --textcolor: #ffffff;
   }
 }
@@ -63,6 +66,10 @@ body {
 
 .error {
   @apply border-2 bg-red-100 border-[var(--red)];
+}
+
+button {
+  @apply cursor-pointer;
 }
 
 .btn {
@@ -144,7 +151,7 @@ body {
 }
 
 .board {
-  @apply ml-[19rem] pl-[2rem] pr-[7rem] mt-[6rem] overflow-x-scroll overflow-y-scroll pb-[20rem] h-[100vh] flex gap-10;
+  @apply ml-[19rem] pl-[2rem] pr-[7rem] mt-[8rem] overflow-x-scroll overflow-y-scroll pb-[20rem] h-[100vh] flex gap-10;
   width: calc(100vw - 20rem);
 }
 
@@ -165,4 +172,16 @@ body {
 }
 .card h4 {
   @apply text-[15px] font-bold;
+}
+
+.dropdown {
+  @apply absolute top-0  bg-[var(--background)] py-4 px-8 rounded-lg;
+}
+
+.dropdown ul {
+  @apply grid gap-4;
+}
+
+.dropdown .delete-list-item {
+  @apply text-[var(--red)];
 }

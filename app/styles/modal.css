@@ -38,6 +38,10 @@ textarea {
   @apply py-2 pl-1.5 w-full text-[15px] border border-[var(--mediumgray)] bg-transparent;
 }
 
+option {
+  @apply bg-[var(--background)] text-[var(--textcolor)];
+}
+
 .modal-content-wrapper div .col-input-wrapper img {
   @apply w-[0.9rem] aspect-square;
 }
@@ -65,4 +69,20 @@ textarea {
 
 .delete-modal-content .btns-wrapper button {
   @apply w-1/2;
+}
+
+#view-task-content-wrapper .view-task-modal-header {
+  @apply flex items-center justify-between gap-16;
+}
+
+#view-task-content-wrapper .view-task-modal-header button {
+  @apply w-2 h-5;
+}
+
+#view-task-modal-header button img {
+  @apply w-full h-full;
+}
+
+#view-task-content-wrapper > p {
+  @apply text-[14px] text-[var(--mediumgray)];
 }
