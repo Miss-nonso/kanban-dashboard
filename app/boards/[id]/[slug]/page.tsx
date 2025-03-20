@@ -1,0 +1,63 @@
+"use client";
+
+import Board from "@/app/components/Board";
+import Header from "@/app/components/Header";
+import InvalidURL from "@/app/components/InvalidURL";
+import Modal from "@/app/components/Modal";
+import { FindBoard } from "@/app/utils/helpers/FindBoard";
+import { BoardProps } from "@/app/utils/interface";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import BoardModal from "@/app/components/ModalContent/BoardModal";
+import TaskModal from "@/app/components/ModalContent/TaskModal";
+import DeleteModal from "@/app/components/ModalContent/DeleteModal";
+
+const Main = () => {
+  const [invalidURL, setInvalidURL] = useState(false);
+  const [headerName, setHeaderName] = useState("");
+  const [board, setBoard] = useState<BoardProps | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const params = useParams();
+  const { id } = params;
+
+  const extractHeaderName = (board: BoardProps | null) => {
+    if (!board) {
+      return "";
+    }
+    return board.name.toString();
+  };
+
+  useEffect(() => {
+    if (id) {
+      const foundBoard = FindBoard(id);
+      if (!foundBoard) {
+        setInvalidURL(true);
+        return;
+      }
+      setHeaderName(extractHeaderName(foundBoard));
+      setBoard(foundBoard);
+    }
+  }, [id]);
+
+  console.log({ board });
+  return (
+    <div>
+      {openModal && <Modal ModalContent={BoardModal} type="add" />}
+      {/* <Modal ModalContent={TaskModal} type="add" /> */}
+      {/* <Modal ModalContent={DeleteModal} taskOrBoard="task" name={headerName} /> */}
+      {!invalidURL && <Header boardName={headerName} />}
+
+      {!invalidURL ? (
+        board?.columns ? (
+          <Board columns={board.columns} />
+        ) : (
+          ""
+        )
+      ) : (
+        <InvalidURL />
+      )}
+    </div>
+  );
+};
+
+export default Main;

@@ -1,0 +1,168 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+@import "./modal.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* --background: #828fa3; */
+  --background: #e4ebfa;
+  --foreground: #ffffff;
+  --black: #000112;
+  --darkpurple: #635fc7;
+  --darkpurple25opacity: rgba(99, 95, 199, 0.25);
+  --lightpurple: #a8a4ff;
+  --idlepurple: rgba(99, 95, 199, 10%);
+  --idlehoverpurple: rgba(99, 95, 199, 25%);
+  --mediumgray: #828fa3;
+  --contrastGray: rgba(130, 143, 163, 0.1);
+  --lightline: #828fa3;
+  --lightgray: #f4f7fd;
+  --red: #ea5555;
+  --redhover: #ff9898;
+  --textcolor: #20212c;
+  --white: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* --bg: "#ffffff"; */
+    --background: #20212c;
+    --foreground: #2b2c37;
+    --darkline: #3e3f4e;
+    --darkpurple25opacity: #ffffff;
+    --contrastGray: rgba(233, 239, 250, 0.025);
+    --textcolor: #ffffff;
+  }
+}
+
+header {
+  @apply bg-[var(--foreground)] flex justify-between py-6 px-2 ml-[18.75rem] fixed top-0 right-0 left-0 text-[var(--textcolor)];
+}
+
+body {
+  background: var(--background);
+  font-family: "Plus Jakarta Sans", serif;
+  height: 100vh;
+  color: var(--textcolor);
+  overflow: hidden;
+}
+
+.active {
+  @apply bg-[var(--darkpurple)] rounded-r-[4rem] transition-all duration-500 ease-in-out;
+}
+
+.error {
+  @apply border-2 bg-red-100 border-[var(--red)];
+}
+
+.btn {
+  @apply flex gap-1 items-center justify-center py-[0.13rem] px-6 rounded-[4rem] font-bold;
+}
+
+.btn span {
+  @apply w-[11px] mr-[0.001rem] aspect-square pb-1 font-black text-[1.3rem];
+}
+
+.primary {
+  @apply bg-[var(--darkpurple)] text-[var(--white)] py-1;
+}
+
+.secondary {
+  @apply bg-[var(--darkpurple25opacity)] text-[var(--darkpurple)] font-bold;
+}
+
+.danger {
+  @apply bg-[var(--red)];
+}
+
+.btnLg {
+  @apply py-2;
+}
+
+.active:hover {
+  @apply bg-[var(--darkpurple)] rounded-r-[4rem];
+}
+
+.sidebar {
+  @apply bg-[var(--foreground)] h-[100vh] min-w-[18.75rem] pr-6 gap-4 fixed bottom-0 top-0 left-0;
+  /* color: var(--textcolor); */
+}
+
+.board-length,
+.sidebar .boards-wrapper ul a,
+.logo-wrapper,
+.sidebar .boards-wrapper button {
+  @apply pl-6;
+}
+
+.logo-wrapper {
+  @apply pb-10 mt-6;
+}
+
+.board-length {
+  @apply mt-8 pb-2;
+}
+
+.sidebar .boards-wrapper ul a,
+.sidebar .boards-wrapper button {
+  @apply flex gap-4 font-bold py-4 my-4;
+}
+.sidebar .boards-wrapper ul a:hover {
+  @apply bg-[#635fc730] rounded-r-[4rem] transition-all ease-in-out duration-300;
+}
+.sidebar .boards-wrapper ul .active:hover {
+  @apply bg-[var(--darkpurple)] rounded-r-[4rem];
+}
+
+.sidebar .boards-wrapper a img,
+.sidebar .boards-wrapper button img {
+  @apply w-[1.5rem];
+}
+.boards-wrapper {
+  @apply grid gap-10;
+}
+
+.sidebar .boards-wrapper button {
+  @apply text-[var(--lightpurple)] w-full;
+}
+.sidebar .boards-wrapper button:hover {
+  @apply bg-[var(--lightgray)] rounded-r-[4rem] text-[var(--darkpurple)];
+}
+
+.sidebar .boards-wrapper button span {
+  @apply pl-2;
+}
+
+.board {
+  @apply ml-[19rem] pl-[2rem] pr-[7rem] mt-[6rem] overflow-x-scroll overflow-y-scroll pb-[20rem] h-[100vh] flex gap-10;
+  width: calc(100vw - 20rem);
+}
+
+.column-wrapper {
+  @apply grid gap-6 w-[300px];
+}
+
+.card {
+  @apply bg-[var(--foreground)] rounded-md py-6 pl-4 pr-2 min-h-[5.5rem] grid gap-1 cursor-grab transition-all duration-300 ease-in-out;
+}
+
+.card:hover {
+  @apply scale-105;
+}
+
+.card p {
+  @apply text-[var(--mediumgray)] text-[13px];
+}
+.card h4 {
+  @apply text-[15px] font-bold;
+}
