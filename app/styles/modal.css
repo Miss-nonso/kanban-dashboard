@@ -75,7 +75,7 @@ option {
   @apply flex items-center justify-between gap-16;
 }
 
-#view-task-content-wrapper .view-task-modal-header button {
+#view-task-content-wrapper .view-task-modal-header .task-option-btn {
   @apply w-2 h-5;
 }
 

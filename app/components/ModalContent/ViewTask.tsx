@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import Dropdown from "../Dropdown";
 // import { useState } from "react";
+
+const handleEditTask = () => {
+  console.log("editing...");
+};
 
 const ViewTask = () => {
   //   const [isChecked, setIsChecked] = useState(false);
+  const [displayDropdown, setDisplayDropdown] = useState(false);
   return (
     <div className="modal-content-wrapper" id="view-task-content-wrapper">
       <div className="view-task-modal-header">
@@ -11,14 +17,23 @@ const ViewTask = () => {
           Research pricing points of various competitors and trial different
           business models
         </h5>
-        <button>
-          <Image
-            src="/assets/icons/icon-vertical-ellipsis.svg"
-            alt="options"
-            width={4.62}
-            height={20}
-          />
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setDisplayDropdown(!displayDropdown)}
+            className="task-option-btn"
+          >
+            <Image
+              src="/assets/icons/icon-vertical-ellipsis.svg"
+              alt="options"
+              width={4.62}
+              height={20}
+            />
+          </button>
+
+          {displayDropdown && (
+            <Dropdown taskOrBoard="task" fn={handleEditTask} />
+          )}
+        </div>
       </div>
       <p>
         We know what we&apos;re planning to build for version one. Now we need

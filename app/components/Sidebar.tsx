@@ -5,6 +5,7 @@ import { boards } from "../../public/assets/data";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import Toggle from "./Toggle";
 
 const Sidebar = () => {
   const params = useParams();
@@ -48,6 +49,19 @@ const Sidebar = () => {
             <span>+ Create New Board</span>
           </button>
         </ul>
+
+        <div>
+          <Toggle />
+          <button>
+            <Image
+              src="/assets/icons/icon-hide-sidebar.svg"
+              alt="board"
+              width={16}
+              height={16}
+            />
+            <span>Hide Sidebar</span>
+          </button>
+        </div>
       </div>
     </aside>
   );

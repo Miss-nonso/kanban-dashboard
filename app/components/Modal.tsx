@@ -3,7 +3,7 @@ import DeleteModal from "./ModalContent/DeleteModal";
 
 type ModalProps = {
   ModalContent: () => JSX.Element;
-  type: string;
+  type: "add" | "edit";
   taskOrBoard: "task" | "board";
   name: string;
 };

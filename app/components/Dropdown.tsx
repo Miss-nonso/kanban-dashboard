@@ -1,14 +1,21 @@
 import React from "react";
 
-const Dropdown = () => {
+type DropdownProps = {
+  taskOrBoard: "task" | "board";
+  fn: () => void;
+};
+
+const Dropdown = ({ taskOrBoard, fn }: DropdownProps) => {
   return (
     <div className="dropdown">
       <ul>
         <li>
-          <button>Edit task</button>
+          <button onClick={() => fn()}>
+            Edit {taskOrBoard === "task" ? "task" : "board"}
+          </button>
         </li>
         <li className="delete-list-item">
-          <button>Delete task</button>
+          <button>Delete {taskOrBoard === "task" ? "task" : "board"}</button>
         </li>
       </ul>
     </div>

@@ -44,11 +44,11 @@ const Main = () => {
   console.log({ board });
   return (
     <div>
-      {openModal && <Modal ModalContent={BoardModal} type="add" />}
+      {/* {openModal && <Modal ModalContent={BoardModal} type="add" />} */}
       {/* <Modal ModalContent={TaskModal} type="add" /> */}
       {/* <Modal ModalContent={DeleteModal} taskOrBoard="task" name={headerName} /> */}
       {/* {<Modal ModalContent={ViewTask} />} */}
-      {<Dropdown />}
+
       {!invalidURL && <Header boardName={headerName} />}
 
       {!invalidURL ? (

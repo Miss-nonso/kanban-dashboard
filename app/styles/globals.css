@@ -120,6 +120,11 @@ button {
   @apply mt-8 pb-2;
 }
 
+.sidebar .boards-wrapper {
+  @apply flex flex-col justify-between;
+  height: calc(100vh - 10rem);
+}
+
 .sidebar .boards-wrapper ul a,
 .sidebar .boards-wrapper button {
   @apply flex gap-4 font-bold py-4 my-4;
@@ -151,12 +156,12 @@ button {
 }
 
 .board {
-  @apply ml-[19rem] pl-[2rem] pr-[7rem] mt-[8rem] overflow-x-scroll overflow-y-scroll pb-[20rem] h-[100vh] flex gap-10;
+  @apply ml-[19rem] pl-[2rem] pr-[7rem] mt-[8rem] pb-[20rem] h-[100vh] overflow-x-scroll overflow-y-scroll flex gap-6;
   width: calc(100vw - 20rem);
 }
 
 .column-wrapper {
-  @apply grid gap-6 w-[300px];
+  @apply grid gap-4 w-[300px];
 }
 
 .card {
@@ -175,13 +180,54 @@ button {
 }
 
 .dropdown {
-  @apply absolute top-0  bg-[var(--background)] py-4 px-8 rounded-lg;
+  @apply absolute top-8 min-w-[180px] -left-10 bg-[var(--background)] py-6 px-6 rounded-lg transition-all duration-300 ease-in-out;
 }
 
 .dropdown ul {
-  @apply grid gap-4;
+  @apply grid gap-5;
+}
+
+.dropdown ul li {
+  @apply text-[14px];
 }
 
 .dropdown .delete-list-item {
   @apply text-[var(--red)];
+}
+
+.board-option-btn .dropdown {
+  @apply -left-[10.5rem] top-12;
+}
+
+.toggle-container,
+.toggle-wrapper {
+  @apply flex justify-center;
+}
+
+.toggle-container {
+  @apply w-full;
+}
+
+.toggle-wrapper {
+  @apply w-[80%] py-2 gap-6 bg-[var(--contrastGray)];
+}
+
+.toggle-wrapper img {
+  @apply h-[1rem] aspect-square;
+}
+
+.toggle {
+  @apply bg-[var(--darkpurple)] cursor-pointer flex h-[20px] rounded-3xl p-0.5 w-[40px];
+}
+
+.toggle span {
+  @apply bg-white rounded-full aspect-square;
+}
+
+.light {
+  @apply justify-end;
+}
+
+.dark {
+  @apply justify-start;
 }
