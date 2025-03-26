@@ -1,5 +1,5 @@
 .modal {
-  @apply fixed inset-0 z-10 bg-[#00000099] grid place-items-center;
+  @apply fixed inset-0 z-50 bg-[#00000099] grid place-items-center;
 }
 
 form input,
@@ -56,7 +56,11 @@ option {
 }
 
 .modal-content-wrapper div .error {
-  @apply border bg-red-50 border-[var(--red)];
+  @apply border border-[var(--red)];
+}
+
+.modal-content-wrapper div .error p {
+  @apply block;
 }
 
 .delete-modal-content h5 {

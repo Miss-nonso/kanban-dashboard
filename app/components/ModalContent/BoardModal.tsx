@@ -1,6 +1,6 @@
 import { createNewBoard } from "@/app/utils/helpers/CreateBoard";
 import { BoardProps } from "@/app/utils/interface";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../Button";
 import InputAdd from "../InputAdd";
 import { JSX } from "react";
@@ -10,15 +10,28 @@ type BoardModalProps = {
 };
 
 const BoardModal = ({ type }: BoardModalProps) => {
-  const [shouldRender, setShouldRender] = useState<JSX.Element[]>([
-    <InputAdd
-      value=""
-      inputCount={0}
-      type={type}
-      taskOrBoard="board"
-      key={0}
-    />,
-    <InputAdd value="" type={type} taskOrBoard="board" key={1} />
+  const allInputs = document.getElementsByName(`${type}`);
+  let errMsgs;
+  const [isError, setIsError] = useState(false);
+  // const [shouldRender, setShouldRender] = useState<JSX.Element[]>([
+  //   <InputAdd value="" inputCount={0} type={type} taskOrBoard="board" key={0} />
+  // ]);
+
+  const [shouldRender, setShouldRender] = useState<
+    { id: number; element: JSX.Element }[]
+  >([
+    {
+      id: Date.now(),
+      element: (
+        <InputAdd
+          value=""
+          inputCount={0}
+          type={type}
+          taskOrBoard="board"
+          key={0}
+        />
+      )
+    }
   ]);
   const [board, setBoard] = useState<BoardProps>({
     name: "",
@@ -34,34 +47,68 @@ const BoardModal = ({ type }: BoardModalProps) => {
     console.log("Editing...");
   };
 
-  console.log({ shouldRender });
-
   const addComponent = () => {
+    const newId = Date.now();
     setShouldRender((prev) => [
       ...prev,
-      <InputAdd value="" type={type} taskOrBoard="board" key={0} />
+      {
+        id: newId,
+        element: (
+          <InputAdd
+            value=""
+            type={type}
+            taskOrBoard="board"
+            key={newId}
+            inputCount={prev.length}
+          />
+        )
+      }
     ]);
   };
+
+  const handleDeleteInput = (id: number) => {
+    const indexToRemove = shouldRender.findIndex((item) => item.id === id);
+
+    if (indexToRemove === -1) return; // If not found, do nothing
+
+    // Remove the item by restructuring the array
+    // setShouldRender((prev) => [
+    //   ...prev.slice(0, indexToRemove),
+    //   ...prev.slice(indexToRemove + 1)
+    // ]);
+  };
+
+  useEffect(() => {
+    [...allInputs].forEach((el, index) =>
+      el.addEventListener("keydown", () => {
+        errMsgs = document.querySelectorAll(".input-error");
+        errMsgs[index].classList.add("hidden");
+        el.classList.remove("error");
+      })
+    );
+  });
 
   const handleAddInput = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    const allInputs = document.getElementsByName(`${type}`);
 
-    const emptyInputs = [...allInputs].filter((input) => {
+    [...allInputs].forEach((input, index) => {
+      const inputElement = input as HTMLInputElement;
+      errMsgs = document.querySelectorAll(".input-error");
+
+      if (inputElement.value === "") {
+        input.classList.add("error");
+        errMsgs[index].classList.remove("hidden");
+      }
+    });
+
+    const emptyInputs = [...allInputs].filter((input, idx) => {
       const inputElement = input as HTMLInputElement;
       return inputElement.value === "";
     });
 
-    if (emptyInputs.length > 0) {
-      emptyInputs.map((input) => {
-        input.classList.add("error");
-        input.addEventListener("change", () => {
-          input.classList.remove("error");
-        });
-      });
-    } else {
+    if (emptyInputs.length < 1) {
       addComponent();
     }
   };
@@ -98,6 +145,10 @@ const BoardModal = ({ type }: BoardModalProps) => {
                       taskOrBoard="board"
                       key={index}
                       inputCount={index}
+                      id={component.id}
+                      setShouldRender={setShouldRender}
+                      shouldRender={shouldRender}
+                      handleDeleteInput={handleDeleteInput}
                     />
                   ))}
                 </>
@@ -109,6 +160,8 @@ const BoardModal = ({ type }: BoardModalProps) => {
                     value={col.name}
                     type={type}
                     taskOrBoard="board"
+                    setShouldRender={setShouldRender}
+                    shouldRender={shouldRender}
                   />
                 ))
               )}
@@ -119,7 +172,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
             type="add"
             text=" Add New Column"
             btnClass="secondary"
-            fn={handleAddInput}
+            fn={(e) => handleAddInput(e)}
           />
         </div>
 

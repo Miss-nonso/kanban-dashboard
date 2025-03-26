@@ -13,7 +13,8 @@
   box-sizing: border-box;
 }
 
-:root {
+:root,
+html.light {
   /* --background: #828fa3; */
   --background: #e4ebfa;
   --foreground: #ffffff;
@@ -35,7 +36,8 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root,
+  html.dark {
     /* --bg: "#ffffff"; */
     --background: #20212c;
     --foreground: #2b2c37;
@@ -53,6 +55,7 @@ header {
 }
 
 body {
+  @apply transition-all duration-300 ease-in-out;
   background: var(--background);
   font-family: "Plus Jakarta Sans", serif;
   height: 100vh;
@@ -61,11 +64,15 @@ body {
 }
 
 .active {
-  @apply bg-[var(--darkpurple)] rounded-r-[4rem] transition-all duration-500 ease-in-out;
+  @apply bg-[var(--darkpurple)] text-white rounded-r-[4rem] transition-all duration-500 ease-in-out hover:text-white;
 }
 
 .error {
-  @apply border-2 bg-red-100 border-[var(--red)];
+  @apply border-2 border-[var(--red)];
+}
+
+.error p {
+  @apply block;
 }
 
 button {
@@ -96,9 +103,9 @@ button {
   @apply py-2;
 }
 
-.active:hover {
-  @apply bg-[var(--darkpurple)] rounded-r-[4rem];
-}
+/* .active:hover {
+  @apply bg-[var(--darkpurple)]  rounded-r-[4rem];
+} */
 
 .sidebar {
   @apply bg-[var(--foreground)] h-[100vh] min-w-[18.75rem] pr-6 gap-4 fixed bottom-0 top-0 left-0;
@@ -127,13 +134,13 @@ button {
 
 .sidebar .boards-wrapper ul a,
 .sidebar .boards-wrapper button {
-  @apply flex gap-4 font-bold py-4 my-4;
+  @apply flex gap-4 font-bold py-4 my-2;
 }
 .sidebar .boards-wrapper ul a:hover {
-  @apply bg-[#635fc730] rounded-r-[4rem] transition-all ease-in-out duration-300;
+  @apply bg-[#635fc730] rounded-r-[4rem] text-[var(--darkpurple)] transition-all ease-in-out duration-300;
 }
 .sidebar .boards-wrapper ul .active:hover {
-  @apply bg-[var(--darkpurple)] rounded-r-[4rem];
+  @apply bg-[var(--darkpurple)] text-white rounded-r-[4rem];
 }
 
 .sidebar .boards-wrapper a img,
@@ -141,7 +148,7 @@ button {
   @apply w-[1.5rem];
 }
 .boards-wrapper {
-  @apply grid gap-10;
+  @apply grid;
 }
 
 .sidebar .boards-wrapper button {
@@ -156,7 +163,7 @@ button {
 }
 
 .board {
-  @apply ml-[19rem] pl-[2rem] pr-[7rem] mt-[8rem] pb-[20rem] h-[100vh] overflow-x-scroll overflow-y-scroll flex gap-6;
+  @apply ml-[19rem] pl-[2rem] pr-[7rem] mt-[6rem] pt-[2rem] pb-[20rem] h-[100vh] overflow-x-scroll overflow-y-scroll flex gap-6;
   width: calc(100vw - 20rem);
 }
 
@@ -165,7 +172,7 @@ button {
 }
 
 .card {
-  @apply bg-[var(--foreground)] rounded-md py-6 pl-4 pr-2 min-h-[5.5rem] grid gap-1 cursor-grab transition-all duration-300 ease-in-out;
+  @apply bg-[var(--foreground)] shadow-lg rounded-md py-6 pl-4 pr-2 min-h-[5.5rem] grid gap-1 cursor-grab transition-all duration-300 ease-in-out;
 }
 
 .card:hover {
@@ -180,7 +187,7 @@ button {
 }
 
 .dropdown {
-  @apply absolute top-8 min-w-[180px] -left-10 bg-[var(--background)] py-6 px-6 rounded-lg transition-all duration-300 ease-in-out;
+  @apply absolute top-8 min-w-[180px] -left-10 bg-[var(--foreground)] py-6 px-6 rounded-lg transition-all duration-300 ease-in-out;
 }
 
 .dropdown ul {
@@ -217,11 +224,11 @@ button {
 }
 
 .toggle {
-  @apply bg-[var(--darkpurple)] cursor-pointer flex h-[20px] rounded-3xl p-0.5 w-[40px];
+  @apply bg-[var(--darkpurple)] cursor-pointer flex h-[20px] rounded-3xl p-0.5 w-[40px] transition-all duration-700 ease-in-out;
 }
 
 .toggle span {
-  @apply bg-white rounded-full aspect-square;
+  @apply bg-white rounded-full aspect-square transition-all duration-700 ease-in-out;
 }
 
 .light {

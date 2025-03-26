@@ -4,14 +4,14 @@ import { SubtaskProps, TaskProps } from "../utils/interface";
 type TaskType = { task: TaskProps };
 
 const getCompletedSubtasks = (subtasks: SubtaskProps[]) => {
-  const completerSubTasks = subtasks.filter(
+  const completedSubTasks = subtasks.filter(
     (subtask: SubtaskProps) => subtask.isCompleted
   );
-  return completerSubTasks.length;
+  return completedSubTasks.length;
 };
 
 const TaskCard = ({ task }: TaskType) => {
-  console.log({ task: task.subtasks });
+  //   console.log({ task: task.subtasks });
 
   return (
     <div className="card">

@@ -14,7 +14,7 @@ const Button = ({ type, text, state, stateFn, fn, btnClass }: BtnProps) => {
   return (
     <button
       className={`${btnClass} btn ${type !== "add" && "btnLg"}`}
-      //   onClick={(e) => fn && fn(e)}
+      onClick={(e) => fn && fn(e)}
       //   onClick={stateFn(!state)}
     >
       {type === "add" && (

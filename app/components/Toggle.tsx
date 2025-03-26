@@ -1,7 +1,11 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
+import { useTheme } from "../context/ThemeContext";
 
 const Toggle = () => {
+  const { theme, toggleTheme } = useTheme();
   return (
     <div className="toggle-container">
       <div className="toggle-wrapper">
@@ -11,7 +15,11 @@ const Toggle = () => {
           width={18.33}
           height={18.33}
         />
-        <div className="toggle">
+
+        <div
+          className={`${theme === "dark" ? "dark" : "light"} toggle`}
+          onClick={toggleTheme}
+        >
           <span></span>
         </div>
         <Image

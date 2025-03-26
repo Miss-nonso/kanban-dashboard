@@ -3,13 +3,22 @@
 import Logo from "./Logo";
 import { boards } from "../../public/assets/data";
 import Link from "next/link";
+import { JSX } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import Toggle from "./Toggle";
+import { useModal } from "../context/ModalContext";
+import Modal from "./Modal";
+import BoardModal from "./ModalContent/BoardModal";
 
 const Sidebar = () => {
   const params = useParams();
   const { id } = params;
+  const { handleModalOpen, modalValue } = useModal();
+
+  const handleOpenModal = () => {
+    handleModalOpen(BoardModal, "add", "board");
+  };
 
   return (
     <aside className="sidebar ">
@@ -39,7 +48,7 @@ const Sidebar = () => {
             </Link>
           ))}
 
-          <button>
+          <button onClick={handleOpenModal}>
             <Image
               src="/assets/icons/icon-board.svg"
               alt="board"
