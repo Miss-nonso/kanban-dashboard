@@ -17,7 +17,8 @@ const Sidebar = () => {
   const { handleModalOpen, modalValue } = useModal();
 
   const handleOpenModal = () => {
-    handleModalOpen(BoardModal, "add", "board");
+    const currentBoard = boards.find((board) => board._id === id);
+    handleModalOpen(BoardModal, "add", "board", currentBoard);
   };
 
   return (

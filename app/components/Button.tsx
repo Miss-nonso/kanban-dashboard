@@ -5,8 +5,8 @@ type BtnProps = {
   type?: string;
   text: string;
   fn?: (e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  state: boolean;
-  stateFn: any;
+  state?: boolean;
+  stateFn?: any;
   btnClass: "primary" | "secondary" | "danger";
 };
 

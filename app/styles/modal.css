@@ -1,5 +1,5 @@
 .modal {
-  @apply fixed inset-0 z-50 bg-[#00000099] grid place-items-center;
+  @apply fixed inset-0 z-50 bg-[#00000099] grid place-items-center duration-300 transition-all ease-in-out;
 }
 
 form input,
@@ -12,7 +12,7 @@ option {
   @apply text-black;
 }
 .modal-content-wrapper {
-  @apply grid gap-6 bg-[var(--foreground)] w-full max-w-[480px] p-8 rounded-md;
+  @apply grid gap-6 bg-[var(--foreground)] w-full max-w-[480px] max-h-[90vh] p-8 rounded-md;
 }
 
 .modal-content-wrapper h5,

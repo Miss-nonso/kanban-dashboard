@@ -1,5 +1,9 @@
 import React from "react";
 import { SubtaskProps, TaskProps } from "../utils/interface";
+import { useModal } from "../context/ModalContext";
+import ViewTask from "./ModalContent/ViewTask";
+import { getCurrentBoard } from "../utils/helpers/FindBoard";
+import { useParams } from "next/navigation";
 
 type TaskType = { task: TaskProps };
 
@@ -11,10 +15,18 @@ const getCompletedSubtasks = (subtasks: SubtaskProps[]) => {
 };
 
 const TaskCard = ({ task }: TaskType) => {
-  //   console.log({ task: task.subtasks });
-
+  const params = useParams();
+  const { id } = params;
+  const { handleModalOpen } = useModal();
+  const currentBoard = getCurrentBoard(id);
+  const ColumnsToAddTasksTo = currentBoard?.columns;
   return (
-    <div className="card">
+    <div
+      className="card"
+      onClick={() =>
+        handleModalOpen(ViewTask, "edit", "task", [ColumnsToAddTasksTo, task])
+      }
+    >
       <h4>{task.title}</h4>{" "}
       <p>
         {getCompletedSubtasks(task.subtasks)} of {task.subtasks.length} subtasks

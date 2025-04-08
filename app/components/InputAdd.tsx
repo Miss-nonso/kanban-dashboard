@@ -15,9 +15,13 @@ const InputAdd = ({
   id,
   value,
   type,
+  taskToEdit,
+  setTaskToEdit,
+  subtask,
   taskOrBoard,
   setShouldRender,
   shouldRender,
+  onChange,
   handleDeleteInput
 }: InputAddProps) => {
   const [inputText, setInputText] = useState(type === "edit" ? value : "");
@@ -25,6 +29,10 @@ const InputAdd = ({
     document.querySelectorAll(".cancel-input")
   );
 
+  const handleOnChange = (e) => {
+    return setInputText(e.target.value);
+  };
+  console.log({ inputText });
   return (
     <div className="col-input-wrapper relative">
       <input
@@ -40,7 +48,7 @@ const InputAdd = ({
             : ""
         }
         value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
+        onChange={handleOnChange}
       />
       <p className="input-error absolute right-14 text-red-500 text-[14px] hidden">
         Can&apos;t be empty

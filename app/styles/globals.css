@@ -163,7 +163,7 @@ button {
 }
 
 .board {
-  @apply ml-[19rem] pl-[2rem] pr-[7rem] mt-[6rem] pt-[2rem] pb-[20rem] h-[100vh] overflow-x-scroll overflow-y-scroll flex gap-6;
+  @apply ml-[19rem] pl-[2rem] pr-[7rem] mt-[6rem] pt-[2rem] pb-[20rem] h-[100vh] overflow-x-scroll overflow-y-scroll  flex gap-6;
   width: calc(100vw - 20rem);
 }
 
@@ -187,7 +187,7 @@ button {
 }
 
 .dropdown {
-  @apply absolute top-8 min-w-[180px] -left-10 bg-[var(--foreground)] py-6 px-6 rounded-lg transition-all duration-300 ease-in-out;
+  @apply absolute z-20 top-8 min-w-[180px] -left-10 bg-[var(--background)] py-6 px-6 rounded-lg transition-all duration-300 ease-in-out;
 }
 
 .dropdown ul {

@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "../Button";
+import { useModal } from "@/app/context/ModalContext";
 
 type DeleteModalProps = {
   taskOrBoard: "task" | "board";
@@ -7,8 +8,9 @@ type DeleteModalProps = {
 };
 
 const DeleteModal = ({ taskOrBoard, name }: DeleteModalProps) => {
+  const { modalRef } = useModal();
   return (
-    <div className="modal-content-wrapper delete-modal-content">
+    <div className="modal-content-wrapper delete-modal-content" ref={modalRef}>
       <h5>Delete this {taskOrBoard === "task" ? "task" : "board"}?</h5>
 
       <p>

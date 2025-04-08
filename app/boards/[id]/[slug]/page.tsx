@@ -5,8 +5,9 @@ import Header from "@/app/components/Header";
 import InvalidURL from "@/app/components/InvalidURL";
 import Modal from "@/app/components/Modal";
 import { useModal } from "@/app/context/ModalContext";
+import { getCurrentBoard } from "@/app/utils/helpers/FindBoard";
 // import Modal from "@/app/components/Modal";
-import { FindBoard } from "@/app/utils/helpers/FindBoard";
+// import { FindBoard } from "@/app/utils/helpers/FindBoard";
 import { BoardProps } from "@/app/utils/interface";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -34,7 +35,7 @@ const Main = () => {
 
   useEffect(() => {
     if (id) {
-      const foundBoard = FindBoard(id);
+      const foundBoard = getCurrentBoard(id);
       if (!foundBoard) {
         setInvalidURL(true);
         return;
@@ -51,6 +52,7 @@ const Main = () => {
           ModalContent={modalValue?.modalContent}
           type={modalValue?.type}
           taskOrBoard={modalValue?.taskOrBoard}
+          item={modalValue?.item}
         />
       )}
       {/* {openModal && <Modal ModalContent={BoardModal} type="add" />} */}

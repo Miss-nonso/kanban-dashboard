@@ -4,6 +4,9 @@ import Dropdown from "./Dropdown";
 import { useState } from "react";
 import Modal from "./Modal";
 import TaskModal from "./ModalContent/TaskModal";
+import { useModal } from "../context/ModalContext";
+import { useParams } from "next/navigation";
+import { boards } from "@/public/assets/data";
 type HeaderProps = { boardName: string };
 
 const handleBoardControl = () => {
@@ -13,6 +16,17 @@ const handleBoardControl = () => {
 const Header = ({ boardName }: HeaderProps) => {
   const [displayDropdown, setDisplayDropdown] = useState(false);
   const [taskModal, setTaskModal] = useState(false);
+  const { handleModalOpen } = useModal();
+  const params = useParams();
+  const { id } = params;
+
+  const handleTaskModalOpen = () => {
+    const currentBoard = boards.find((board) => board._id === id);
+
+    const ColumnsToAddTasksTo = currentBoard?.columns;
+    return handleModalOpen(TaskModal, "add", "task", [ColumnsToAddTasksTo]);
+  };
+
   return (
     <header>
       <h2 className="text-[24px] font-bold tracking-[0.045em]">{boardName}</h2>
@@ -22,7 +36,7 @@ const Header = ({ boardName }: HeaderProps) => {
           text="Add New Task"
           state={taskModal}
           stateFn={setTaskModal}
-          // fn={openAddTaskModal()}
+          fn={handleTaskModalOpen}
           btnClass="primary"
         />
         <div className="relative board-option-btn">
@@ -36,7 +50,11 @@ const Header = ({ boardName }: HeaderProps) => {
           </button>
 
           {displayDropdown && (
-            <Dropdown taskOrBoard="board" fn={handleBoardControl} />
+            <Dropdown
+              taskOrBoard="board"
+              fn={handleBoardControl}
+              setDisplayDropdown={setDisplayDropdown}
+            />
           )}
         </div>
       </div>
