@@ -1,72 +1,118 @@
 import {
-  BoardProps,
   ColumnProps,
   SubtaskProps,
-  TaskProps
+  TaskProps,
+  BoardProps
 } from "@/app/utils/interface";
 import Button from "../Button";
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import { useParams } from "next/navigation";
 import { useModal } from "@/app/context/ModalContext";
 import InputAdd from "../InputAdd";
 import { JSX } from "react";
 import { boards } from "@/public/assets/data";
-import { title } from "process";
 
-const TaskModal = ({ type }: { type: "add" | "edit"; taskItem: TaskProps }) => {
+function isTaskTuple(
+  item:
+    | TaskProps
+    | BoardProps
+    | [ColumnProps[]]
+    | [ColumnProps[], TaskProps]
+    | undefined
+): item is [ColumnProps[], TaskProps] {
+  return (
+    Array.isArray(item) &&
+    item.length === 2 &&
+    Array.isArray(item[0]) &&
+    typeof item[1] === "object" &&
+    "title" in item[1]
+  );
+}
+
+// const InputAddElementProps = {
+//   value={type === "edit" ? subtask.title : ""}
+//   type={type}
+//   taskOrBoard="board"
+//   key={index}
+//   inputCount={index}
+//   // id={component.id}
+//   setShouldRender={setShouldRender}
+//   shouldRender={shouldRender}
+//   // handleDeleteInput={handleDeleteInput}
+// }
+
+const TaskModal = ({ type }: { type: "add" | "edit" }) => {
   const allInputs = document.getElementsByName(`${type}`);
-  const [inputText, setInputText] = useState("");
+  // const [inputText, setInputText] = useState("");
   const { modalRef, modalValue } = useModal();
   const params = useParams();
   const { id } = params;
 
   let errMsgs;
 
-  console.log({ modalValue });
-
-  const getTaskToEdit = (ArrOfColumnsAndTaskItem: [ColumnProps, TaskProps]) => {
-    const parentColumn = ArrOfColumnsAndTaskItem[0];
-    if (type === "edit") {
-      const itemToEdit = ArrOfColumnsAndTaskItem[1];
-
-      console.log({ parentColumn, itemToEdit, time: Date.now() });
-
-      if (itemToEdit?.title) {
-        const taskToEditObj = {
-          title: itemToEdit.title,
-          description: itemToEdit.description,
-          status: itemToEdit.status,
-          subtasks: []
-        };
-
-        const subtasks = itemToEdit.subtasks.map((subtask: SubtaskProps) =>
-          taskToEditObj.subtasks.push(subtask)
-        );
-
-        return [parentColumn, taskToEditObj];
+  const getTaskToEdit = (
+    ArrOfColumnsAndTaskItem: [ColumnProps[] | ColumnProps, TaskProps]
+  ) => {
+    if (Array.isArray(ArrOfColumnsAndTaskItem[0])) {
+      // Handle the case where it's an array of ColumnProps
+      const parentColumn = ArrOfColumnsAndTaskItem[0];
+      if (type === "edit") {
+        const itemToEdit = ArrOfColumnsAndTaskItem[1];
+        if (itemToEdit?.title) {
+          const taskToEditObj = {
+            title: itemToEdit.title,
+            description: itemToEdit.description,
+            status: itemToEdit.status,
+            subtasks: [...itemToEdit.subtasks]
+          };
+          return [parentColumn, taskToEditObj];
+        }
       }
-    }
-
-    if (type === "add") {
+    } else {
+      // Handle the case where it's a single ColumnProps
+      const parentColumn = ArrOfColumnsAndTaskItem[0];
       return [parentColumn];
     }
   };
 
-  const [taskToEdit, setTaskToEdit] = useState(
-    type === "add"
-      ? {
-          title: "",
-          description: "",
-          status: "todo",
-          subtasks: []
-        }
-      : getTaskToEdit(modalValue?.item)[1]
-  );
+  const [taskToEdit, setTaskToEdit] = useState<TaskProps>(() => {
+    if (type === "add") {
+      return {
+        title: "",
+        description: "",
+        status: "todo",
+        subtasks: []
+      };
+    }
 
-  const [statusList, setStatusList] = useState(
-    getTaskToEdit(modalValue?.item)[0].map((col: ColumnProps) => col.name)
-  );
+    if (isTaskTuple(modalValue?.item)) {
+      const maybeTask = getTaskToEdit(modalValue.item)?.[1];
+      if (maybeTask && "title" in maybeTask) {
+        return maybeTask as TaskProps;
+      }
+    }
+
+    return {
+      title: "",
+      description: "",
+      status: "todo",
+      subtasks: []
+    };
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [statusList, setStatusList] = useState(() => {
+    if (isTaskTuple(modalValue?.item)) {
+      const columns = getTaskToEdit(modalValue.item)?.[0];
+      if (Array.isArray(columns)) {
+        return columns.map((col) => col.name);
+      }
+    }
+    return [];
+  });
+
   console.log({ taskToEdit });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [task, setTask] = useState<TaskProps>(
     type === "add"
       ? {
@@ -85,7 +131,15 @@ const TaskModal = ({ type }: { type: "add" | "edit"; taskItem: TaskProps }) => {
 
   const [shouldRender, setShouldRender] = useState<JSX.Element[]>(
     type === "edit"
-      ? taskToEdit?.subtasks || (
+      ? taskToEdit?.subtasks.map((subtask, index) => (
+          <InputAdd
+            value={subtask.title}
+            inputCount={index}
+            type={type}
+            taskOrBoard="task"
+            key={index}
+          />
+        )) || [
           <InputAdd
             value=""
             inputCount={0}
@@ -93,7 +147,7 @@ const TaskModal = ({ type }: { type: "add" | "edit"; taskItem: TaskProps }) => {
             taskOrBoard="task"
             key={0}
           />
-        )
+        ]
       : [
           <InputAdd
             value=""
@@ -116,21 +170,15 @@ const TaskModal = ({ type }: { type: "add" | "edit"; taskItem: TaskProps }) => {
   });
 
   const addComponent = () => {
-    const newId = Date.now();
     setShouldRender((prev) => [
       ...prev,
-      {
-        id: newId,
-        element: (
-          <InputAdd
-            value=""
-            type={type}
-            taskOrBoard="board"
-            key={newId}
-            inputCount={prev.length}
-          />
-        )
-      }
+      <InputAdd
+        value=""
+        type={type}
+        taskOrBoard="task"
+        key={0}
+        inputCount={prev.length}
+      />
     ]);
   };
 
@@ -139,9 +187,11 @@ const TaskModal = ({ type }: { type: "add" | "edit"; taskItem: TaskProps }) => {
   // };
 
   const handleAddInput = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
 
     [...allInputs].forEach((input, index) => {
       const inputElement = input as HTMLInputElement;
@@ -153,7 +203,7 @@ const TaskModal = ({ type }: { type: "add" | "edit"; taskItem: TaskProps }) => {
       }
     });
 
-    const emptyInputs = [...allInputs].filter((input, idx) => {
+    const emptyInputs = [...allInputs].filter((input) => {
       const inputElement = input as HTMLInputElement;
       return inputElement.value === "";
     });
@@ -163,102 +213,139 @@ const TaskModal = ({ type }: { type: "add" | "edit"; taskItem: TaskProps }) => {
     }
   };
 
-  const handleSubmitTask = (e, type) => {
+  const handleSubmitTask = (
+    e: FormEvent<HTMLFormElement>,
+    type: "add" | "edit"
+  ) => {
     e.preventDefault();
-    const subtasksValues: string[] = [];
-    const parentColumn = modalValue?.item[0];
-    const taskToEditItem = modalValue?.item[1];
 
-    console.log({ taskToEdit });
+    let currentColumn: ColumnProps[] = [];
+    let taskToEditItem: TaskProps | undefined;
 
-    const subtasksInputValues = [...allInputs].map((input) => {
-      const inputElement = input as HTMLInputElement;
-      subtasksValues.push(inputElement.value);
-    });
-    console.log({ parentColumn });
+    if (isTaskTuple(modalValue?.item)) {
+      const subtasksValues: string[] = [];
 
-    if (type === "edit") {
-      const columnName = taskToEdit?.status;
+      currentColumn = modalValue?.item[0];
+      taskToEditItem = modalValue?.item[1];
 
-      const columnToSearch = parentColumn.find(
-        (col: ColumnProps) => col.name === columnName
-      );
+      console.log({ taskToEdit });
 
-      if (taskToEditItem.status.toLowerCase() !== columnName.toLowerCase()) {
-        console.log({
-          colstate: "Not the same oooo",
-          columnName,
-          taskName: taskToEditItem.status
-        });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const subtasksInputValues = [...allInputs].map((input) => {
+        const inputElement = input as HTMLInputElement;
+        subtasksValues.push(inputElement.value);
+      });
 
-        const taskToAdd = {
-          ...taskToEdit
-        };
+      if (type === "edit") {
+        if (!taskToEditItem.status) {
+          taskToEditItem.status = currentColumn[0].name;
+        }
 
-        subtasksValues.map((val, index) => {
-          if (index > taskToAdd.subtasks.length - 1) {
-            const subtaskData: SubtaskProps = {
-              title: val,
-              isCompleted: false
-            };
-            taskToAdd.subtasks.push(subtaskData);
-          } else {
-            taskToAdd.subtasks[index].title = val;
-          }
-        });
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const prevColumnName = taskToEditItem.status || currentColumn[0].name;
 
-        boards.map(
-          (board) =>
-            board._id === id &&
-            board.columns.map(
-              (col) =>
-                col.name.toLowerCase() === columnName.toLowerCase() &&
-                col.tasks.push(taskToAdd) & console.log(col.tasks)
-            )
+        const currentColumnName = taskToEdit?.status || currentColumn[0].name;
+
+        console.log({ taskToEdit, currentColumnName, taskToEditItem });
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const columnToSearch = currentColumn.find(
+          (col: ColumnProps) => col.name === currentColumnName
         );
 
-        //DO NEXT: Remove edited item with different status from prev column
-      } else {
-        boards.map(
-          (board) =>
-            board._id === id &&
-            board.columns.map(
-              (col: ColumnProps) =>
-                col.name === columnName &&
-                col.tasks.map((task: TaskProps) => {
-                  if (task.title === taskToEditItem.title) {
-                    console.log({
-                      taskto: taskToEdit.title,
-                      taskfrom: task.title
-                    });
-                    task.title = taskToEdit.title;
-                    task.description = taskToEdit.description;
+        if (
+          taskToEditItem.status.toLowerCase() !==
+          currentColumnName.toLowerCase()
+        ) {
+          console.log({
+            colstate: "Not the same oooo",
+            currentColumnName,
+            taskName: taskToEditItem.status
+          });
 
-                    subtasksValues.map((val, index) => {
-                      if (index > task.subtasks.length - 1) {
-                        const subtaskData: SubtaskProps = {
-                          title: val,
-                          isCompleted: false
-                        };
-                        task.subtasks.push(subtaskData);
-                      } else {
-                        task.subtasks[index].title = val;
-                      }
-                    });
+          const taskToAdd = {
+            ...taskToEdit
+          };
+
+          subtasksValues.map((val, index) => {
+            if (index > taskToAdd.subtasks.length - 1) {
+              const subtaskData: SubtaskProps = {
+                title: val,
+                isCompleted: false
+              };
+              taskToAdd.subtasks.push(subtaskData);
+            } else {
+              taskToAdd.subtasks[index].title = val;
+            }
+          });
+
+          boards.map(
+            (board) =>
+              board._id === id &&
+              board.columns.map((col) => {
+                if (
+                  col.name.toLowerCase() === currentColumnName.toLowerCase()
+                ) {
+                  col.tasks.push(taskToAdd);
+                }
+
+                if (taskToEditItem) {
+                  if (
+                    col.name.toLowerCase() ===
+                    taskToEditItem.status.toLowerCase()
+                  ) {
+                    console.log({ taskToEditItem });
+                    // col.tasks.filter((task) => task.title !== taskToEditItem.title);
                   }
-                })
-            )
-        );
+                }
+              })
+          );
+
+          //DO NEXT: Remove edited item with different status from prev column
+        } else {
+          boards.map(
+            (board) =>
+              board._id === id &&
+              board.columns.map(
+                (col: ColumnProps) =>
+                  col.name === currentColumnName &&
+                  col.tasks.map((task: TaskProps) => {
+                    if (taskToEditItem) {
+                      if (task.title === taskToEditItem.title) {
+                        console.log({
+                          taskto: taskToEdit.title,
+                          taskfrom: task.title
+                        });
+                        task.title = taskToEdit.title;
+                        task.description = taskToEdit.description;
+
+                        subtasksValues.map((val, index) => {
+                          if (index > task.subtasks.length - 1) {
+                            const subtaskData: SubtaskProps = {
+                              title: val,
+                              isCompleted: false
+                            };
+                            task.subtasks.push(subtaskData);
+                          } else {
+                            task.subtasks[index].title = val;
+                          }
+                        });
+                      }
+                    }
+                  })
+              )
+          );
+        }
+        console.log({ boards });
       }
-      console.log({ boards });
     }
   };
 
-  const handleDeleteInput = (id: number) => {
-    const indexToRemove = shouldRender.findIndex((item) => item.id === id);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const handleDeleteInput = (id: number) => {
+  //   const indexToRemove = shouldRender.findIndex((item) => item.id === id);
 
-    if (indexToRemove === -1) return; // If not found, do nothing
-  };
+  //   if (indexToRemove === -1) return; // If not found, do nothing
+  // };
 
   console.log({ taskToEdit });
 
@@ -307,38 +394,38 @@ const TaskModal = ({ type }: { type: "add" | "edit"; taskItem: TaskProps }) => {
               {" "}
               {/* <label htmlFor="subtasks">Columns</label> */}
               <div className="all-col-input-container">
-                {/* {type === "add" ? ( */}
-                <>
-                  {shouldRender.map((subtask, index) => (
-                    <InputAdd
-                      value={type === "edit" ? subtask.title : ""}
-                      type={type}
-                      taskOrBoard="board"
-                      key={index}
-                      inputCount={index}
-                      // id={component.id}
-                      setShouldRender={setShouldRender}
-                      shouldRender={shouldRender}
-                      // handleDeleteInput={handleDeleteInput}
-                    />
-                  ))}
-                </>
-                {/* ) : (
+                {type === "add" ? (
+                  <>
+                    {shouldRender.map((subtaskInput, index) => (
+                      <InputAdd
+                        value=""
+                        type={type}
+                        taskOrBoard="board"
+                        key={index}
+                        inputCount={index}
+                        // id={component.id}
+                        // setShouldRender={setShouldRender}
+                        shouldRender={shouldRender}
+                        // handleDeleteInput={handleDeleteInput}
+                      />
+                    ))}
+                  </>
+                ) : (
                   taskToEdit?.subtasks.map((subtask, index) => (
                     <InputAdd
                       key={index}
                       inputCount={index}
                       value={subtask.title}
                       type={type}
-                      setTaskToEdit={setTaskToEdit}
-                      taskToEdit={taskToEdit}
-                      subtask={subtask}
+                      // setTaskToEdit={setTaskToEdit}
+                      // taskToEdit={taskToEdit}
+                      // subtask={subtask}
                       taskOrBoard="board"
-                      setShouldRender={setShouldRender}
+                      // setShouldRender={setShouldRender}
                       shouldRender={shouldRender}
                     />
-                  )) */}
-                {/* )} */}
+                  ))
+                )}
               </div>
               <Button
                 type="add"

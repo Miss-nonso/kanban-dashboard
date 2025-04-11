@@ -12,7 +12,7 @@ option {
   @apply text-black;
 }
 .modal-content-wrapper {
-  @apply grid gap-6 bg-[var(--foreground)] w-full max-w-[480px] max-h-[90vh] p-8 rounded-md;
+  @apply relative grid gap-6 bg-[var(--foreground)] w-full max-w-[480px] max-h-[90vh] p-8 rounded-md;
 }
 
 .modal-content-wrapper h5,
@@ -83,8 +83,9 @@ option {
   @apply w-2 h-5;
 }
 
-#view-task-modal-header button img {
-  @apply w-full h-full;
+.view-task-modal-header span {
+  @apply absolute right-6
+  /* @apply w-full h-full; */;
 }
 
 #view-task-content-wrapper > p {

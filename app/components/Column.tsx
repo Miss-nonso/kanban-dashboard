@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import TaskCard from "./TaskCard";
 import { ColumnProps } from "../utils/interface";
 
@@ -8,9 +8,9 @@ const Column = ({ column }: ColumnType) => {
   return (
     <div className="column-wrapper">
       {column.tasks.map((task, index) => (
-        <div key={index}>
+        <Fragment key={index}>
           <TaskCard task={task} />
-        </div>
+        </Fragment>
       ))}
     </div>
   );

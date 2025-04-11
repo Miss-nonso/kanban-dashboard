@@ -1,6 +1,6 @@
 import { createNewBoard } from "@/app/utils/helpers/CreateBoard";
 import { BoardProps, ColumnProps } from "@/app/utils/interface";
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Button from "../Button";
 import InputAdd from "../InputAdd";
 import { JSX } from "react";
@@ -9,7 +9,7 @@ import { boards } from "@/public/assets/data";
 import { useParams } from "next/navigation";
 
 type BoardModalProps = {
-  type: "add" | "edit";
+  type?: "add" | "edit";
 };
 
 const BoardModal = ({ type }: BoardModalProps) => {
@@ -18,47 +18,63 @@ const BoardModal = ({ type }: BoardModalProps) => {
   const { id } = params;
   const { modalValue, modalRef } = useModal();
 
-  const [boardname, setBoardname] = useState(
-    type === "edit" ? modalValue?.item?.name : ""
-  );
+  const [boardname, setBoardname] = useState<string>(() => {
+    if (type === "edit" && modalValue?.item && "name" in modalValue.item) {
+      return modalValue.item.name;
+    }
+    return "";
+  });
 
   let errMsgs;
-  const [isError, setIsError] = useState(false);
+  // const [isError, setIsError] = useState(false);
 
   // const [shouldRender, setShouldRender] = useState<JSX.Element[]>([
   //   <InputAdd value="" inputCount={0} type={type} taskOrBoard="board" key={0} />
   // ]);
 
   const [shouldRender, setShouldRender] = useState<{ element: JSX.Element }[]>(
-    type === "edit"
-      ? modalValue?.item.columns || (
-          <InputAdd
-            value=""
-            inputCount={0}
-            type={type}
-            taskOrBoard="board"
-            key={0}
-          />
-        )
-      : [
-          <InputAdd
-            value=""
-            inputCount={0}
-            type={type}
-            taskOrBoard="board"
-            key={0}
-          />
-        ]
+    () => {
+      if (type === "edit" && modalValue?.item && "columns" in modalValue.item) {
+        return modalValue.item.columns.map(
+          (col: ColumnProps, index: number) => ({
+            element: (
+              <InputAdd
+                value={col.name}
+                inputCount={index}
+                type={type}
+                taskOrBoard="board"
+                key={index}
+              />
+            )
+          })
+        );
+      }
+
+      return [
+        {
+          element: (
+            <InputAdd
+              value=""
+              inputCount={0}
+              type={type === "edit" ? "edit" : "add"}
+              taskOrBoard="board"
+              key={0}
+            />
+          )
+        }
+      ];
+    }
   );
-  const [board, setBoard] = useState<BoardProps>({
-    name: "",
-    _id: "",
-    columns: []
-  });
+
+  // const [board, setBoard] = useState<BoardProps>({
+  //   name: "",
+  //   _id: "",
+  //   columns: []
+  // });
 
   const handleSubmitBoardForm = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    type: "add" | "edit"
+    e: FormEvent<HTMLFormElement>,
+    type?: "add" | "edit"
   ) => {
     e.preventDefault();
     const columnValues: string[] = [];
@@ -92,7 +108,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
         });
       }
     } else {
-      const boardObj = {
+      const boardObj: Omit<BoardProps, "_id"> = {
         name: boardname
           .split(" ")
           .map(
@@ -115,9 +131,9 @@ const BoardModal = ({ type }: BoardModalProps) => {
     }
   };
 
-  const editExistingBoard = () => {
-    console.log("Editing...");
-  };
+  // const editExistingBoard = () => {
+  //   console.log("Editing...");
+  // };
 
   const addComponent = () => {
     const newId = Date.now();
@@ -128,7 +144,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
         element: (
           <InputAdd
             value=""
-            type={type}
+            type={type === "edit" ? "edit" : "add"}
             taskOrBoard="board"
             key={newId}
             inputCount={prev.length}
@@ -138,11 +154,11 @@ const BoardModal = ({ type }: BoardModalProps) => {
     ]);
   };
 
-  const handleDeleteInput = (id: number) => {
-    const indexToRemove = shouldRender.findIndex((item) => item.id === id);
+  // const handleDeleteInput = (id: number) => {
+  //   const indexToRemove = shouldRender.findIndex((item) => item.id === id);
 
-    if (indexToRemove === -1) return; // If not found, do nothing
-  };
+  //   if (indexToRemove === -1) return; // If not found, do nothing
+  // };
 
   useEffect(() => {
     [...allInputs].forEach((el, index) =>
@@ -155,9 +171,11 @@ const BoardModal = ({ type }: BoardModalProps) => {
   });
 
   const handleAddInput = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
 
     [...allInputs].forEach((input, index) => {
       const inputElement = input as HTMLInputElement;
@@ -169,7 +187,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
       }
     });
 
-    const emptyInputs = [...allInputs].filter((input, idx) => {
+    const emptyInputs = [...allInputs].filter((input) => {
       const inputElement = input as HTMLInputElement;
       return inputElement.value === "";
     });
@@ -202,35 +220,28 @@ const BoardModal = ({ type }: BoardModalProps) => {
             {" "}
             <label htmlFor="subtasks">Columns</label>
             <div className="all-col-input-container">
-              <>
-                {shouldRender.map((col, index) => (
-                  <InputAdd
-                    key={index}
-                    type={type}
-                    value={type === "edit" ? col.name : ""}
-                    taskOrBoard="board"
-                    inputCount={index}
-                    id={col.id}
-                    setShouldRender={setShouldRender}
-                    shouldRender={shouldRender}
-                    handleDeleteInput={handleDeleteInput}
-                  />
-                ))}
-              </>
-
-              {/* // : (
-              //   shouldRender.map((col, index) => (
-              //     <InputAdd
-              //       key={index}
-              //       type={type}
-              //       value={col.name}
-              //       inputCount={index}
-              //       taskOrBoard="board"
-              //       setShouldRender={setShouldRender}
-              //       shouldRender={shouldRender}
-              //     />
-              //   ))
-              // )} */}
+              {modalValue &&
+              type === "edit" &&
+              modalValue.item &&
+              "columns" in modalValue.item
+                ? (modalValue.item as BoardProps).columns.map((col, index) => (
+                    <InputAdd
+                      key={index}
+                      type="edit"
+                      value={col.name}
+                      inputCount={index}
+                      taskOrBoard="board"
+                    />
+                  ))
+                : shouldRender.map((col, index) => (
+                    <InputAdd
+                      key={index}
+                      type="add"
+                      value=""
+                      taskOrBoard="board"
+                      inputCount={index}
+                    />
+                  ))}
             </div>
           </div>
 

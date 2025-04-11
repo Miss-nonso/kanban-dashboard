@@ -48,9 +48,15 @@ const Main = () => {
   return (
     <div>
       {openModal && (
+        // <Modal
+        //   ModalContent={modalValue?.modalContent}
+        //   type={modalValue?.type}
+        //   taskOrBoard={modalValue?.taskOrBoard}
+        //   item={modalValue?.item}
+        // />
         <Modal
           ModalContent={modalValue?.modalContent}
-          type={modalValue?.type}
+          // type={modalValue?.type}
           taskOrBoard={modalValue?.taskOrBoard}
           item={modalValue?.item}
         />

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Button from "./Button";
 import Dropdown from "./Dropdown";
 import { useState } from "react";
-import Modal from "./Modal";
+// import Modal from "./Modal";
 import TaskModal from "./ModalContent/TaskModal";
 import { useModal } from "../context/ModalContext";
 import { useParams } from "next/navigation";
@@ -15,7 +15,7 @@ const handleBoardControl = () => {
 
 const Header = ({ boardName }: HeaderProps) => {
   const [displayDropdown, setDisplayDropdown] = useState(false);
-  const [taskModal, setTaskModal] = useState(false);
+  // const [taskModal, setTaskModal] = useState(false);
   const { handleModalOpen } = useModal();
   const params = useParams();
   const { id } = params;
@@ -24,7 +24,12 @@ const Header = ({ boardName }: HeaderProps) => {
     const currentBoard = boards.find((board) => board._id === id);
 
     const ColumnsToAddTasksTo = currentBoard?.columns;
-    return handleModalOpen(TaskModal, "add", "task", [ColumnsToAddTasksTo]);
+
+    if (ColumnsToAddTasksTo) {
+      handleModalOpen(<TaskModal type="add" />, "task", "add", [
+        ColumnsToAddTasksTo
+      ]);
+    }
   };
 
   return (
@@ -34,8 +39,8 @@ const Header = ({ boardName }: HeaderProps) => {
         <Button
           type="add"
           text="Add New Task"
-          state={taskModal}
-          stateFn={setTaskModal}
+          // state={taskModal}
+          // stateFn={setTaskModal}
           fn={handleTaskModalOpen}
           btnClass="primary"
         />

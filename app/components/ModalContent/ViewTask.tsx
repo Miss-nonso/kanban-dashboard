@@ -1,59 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Dropdown from "../Dropdown";
 import { useModal } from "@/app/context/ModalContext";
-import { ColumnProps, SubtaskProps, TaskProps } from "@/app/utils/interface";
-// import { useState } from "react";
+import { BoardProps, ColumnProps, TaskProps } from "@/app/utils/interface";
 
 const handleEditTask = () => {
   console.log("editing...");
 };
 
-const ViewTask = ({ task }: TaskProps) => {
+export const isTaskTuple = (
+  item:
+    | TaskProps
+    | BoardProps
+    | [ColumnProps[]]
+    | [ColumnProps[], TaskProps]
+    | undefined
+): item is [ColumnProps[], TaskProps] =>
+  Array.isArray(item) &&
+  item.length === 2 &&
+  Array.isArray(item[0]) &&
+  typeof item[1] === "object";
+
+const ViewTask = () => {
   const { modalValue, modalRef } = useModal();
-  console.log({ modalValue: modalValue.item });
-  const taskToDisplay = {
-    title: modalValue?.item[1]?.title,
-    description: modalValue?.item[1].description,
-    status: modalValue?.item[1].status,
-    subtasks: []
-  };
-
-  const subtasks = modalValue?.item[1].subtasks.map((subtask) =>
-    taskToDisplay.subtasks.push(subtask)
-  );
-
   const [displayDropdown, setDisplayDropdown] = useState(false);
-  const [statusList, setStatusList] = useState(
-    modalValue?.item[0].map((col: ColumnProps) => col.name)
-  );
-  const [status, setStatus] = useState(taskToDisplay.status);
+  const [statusList, setStatusList] = useState<string[]>([]);
+  const [status, setStatus] = useState("");
+  const item = modalValue?.item;
 
-  console.log({ taskToDisplay });
+  // Move the task destructuring and useEffect inside the component body
+  // but protect against null/invalid values
+  const validTaskTuple = isTaskTuple(item);
+  const task = validTaskTuple ? item[1] : null;
 
-  const getCompleteTasks = () => {
-    const completedTasks =
-      subtasks &&
-      taskToDisplay.subtasks.filter(
-        (subtask: SubtaskProps) => subtask.isCompleted
-      );
+  useEffect(() => {
+    const columns = validTaskTuple ? item[0] : [];
+    if (validTaskTuple && task) {
+      setStatusList(columns.map((col) => col.name));
+      setStatus(task.status);
+    }
+  }, [task, validTaskTuple, item]);
 
-    return completedTasks.length;
+  // Return early if no valid task
+  if (!validTaskTuple || !task) return null;
+
+  const taskToDisplay = {
+    title: task.title,
+    description: task.description,
+    status: task.status,
+    subtasks: [...task.subtasks]
   };
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setStatus(e.target.value);
-  };
+  const getCompleteTasks = () =>
+    taskToDisplay.subtasks.filter((subtask) => subtask.isCompleted).length;
 
   return (
-    <div
-      className="modal-content-wrapper"
-      id="view-task-content-wrapper"
-      ref={modalRef}
-    >
+    <div className="modal-content-wrapper" ref={modalRef}>
       <div className="view-task-modal-header">
         <h5>{taskToDisplay.title}</h5>
-        <div className="relative">
+        <span className="">
           <button
             onClick={() => setDisplayDropdown(!displayDropdown)}
             className="task-option-btn"
@@ -65,35 +70,30 @@ const ViewTask = ({ task }: TaskProps) => {
               height={20}
             />
           </button>
-
           {displayDropdown && (
             <Dropdown
               taskOrBoard="task"
               fn={handleEditTask}
               setDisplayDropdown={setDisplayDropdown}
-              taskItem={modalValue?.item[1]}
+              taskItem={task}
             />
           )}
-        </div>
+        </span>
       </div>
       {taskToDisplay.description && <p>{taskToDisplay.description}</p>}
-
       <div>
         <label htmlFor="subtasks">
-          Subtasks({getCompleteTasks()} of {subtasks.length})
+          Subtasks({getCompleteTasks()} of {taskToDisplay.subtasks.length})
         </label>
         <div>
-          {taskToDisplay.subtasks.map(
-            (subtask: SubtaskProps, index: number) => (
-              <label className="container" key={index}>
-                <input type="checkbox" defaultChecked={subtask.isCompleted} />
-                <span className="checkmark"></span> <p>{subtask.title}</p>
-              </label>
-            )
-          )}
+          {taskToDisplay.subtasks.map((subtask, index) => (
+            <label className="container" key={index}>
+              <input type="checkbox" defaultChecked={subtask.isCompleted} />
+              <span className="checkmark"></span> <p>{subtask.title}</p>
+            </label>
+          ))}
         </div>
       </div>
-
       <div>
         <label htmlFor="status">Current status</label>
         <select
@@ -103,15 +103,11 @@ const ViewTask = ({ task }: TaskProps) => {
           // onChange={handleStatusChange}
         >
           <option value="">Select status</option>
-
-          {statusList.map((columnName: string, index: number) => (
+          {statusList.map((columnName, index) => (
             <option key={index} value={columnName.toLowerCase()}>
               {columnName}
             </option>
           ))}
-          {/* <option value="todo">Todo</option>
-          <option value="doing">Doing</option>
-          <option value="done">Done</option> */}
         </select>
       </div>
     </div>

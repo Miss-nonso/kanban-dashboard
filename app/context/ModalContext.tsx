@@ -1,18 +1,49 @@
 "use client";
-import { createContext, useContext, useEffect, useState, useRef } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  Ref
+} from "react";
 import { JSX } from "react";
 import { BoardProps, ColumnProps, TaskProps } from "../utils/interface";
 
+// interface ItemProps {
+//   item?:
+//     | TaskProps
+//     | BoardProps
+//     | ColumnProps[]
+//     | [ColumnProps, TaskProps]
+
+// }
+
 type HandleModalOpenProps = {
-  modalContent: JSX.Element | null;
-  type: "add" | "edit" | null;
-  taskOrBoard: "task" | "board" | null;
-  item: TaskProps | BoardProps | null;
+  modalContent: JSX.Element;
+  type?: "add" | "edit";
+  taskOrBoard: "task" | "board";
+  item?:
+    | TaskProps
+    | BoardProps
+    | [ColumnProps[]]
+    | [ColumnProps[], TaskProps]
+    | undefined;
 };
 
 interface ModalContextProps {
   openModal: boolean;
-  handleModalOpen: (modalContent: JSX.Element, type: "add" | "edit") => void;
+  handleModalOpen: (
+    modalContent: JSX.Element,
+    taskOrBoard: "task" | "board",
+    type?: "add" | "edit",
+    item?:
+      | TaskProps
+      | BoardProps
+      | [ColumnProps[]]
+      | [ColumnProps[], TaskProps]
+      | undefined
+  ) => void;
   closeModal: () => void;
   modalValue: HandleModalOpenProps | null;
   modalRef: Ref<HTMLDivElement>;
@@ -29,9 +60,14 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleModalOpen = (
     modalContent: JSX.Element,
-    type: "add" | "edit",
     taskOrBoard: "task" | "board",
-    item?: TaskProps | BoardProps | ColumnProps[] | [ColumnProps, TaskProps]
+    type?: "add" | "edit",
+    item?:
+      | TaskProps
+      | BoardProps
+      | [ColumnProps[]]
+      | [ColumnProps[], TaskProps]
+      | undefined
   ) => {
     setOpenModal(true);
     setModalValue({ modalContent, type, taskOrBoard, item });
@@ -64,7 +100,7 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ModalContext.Provider
-      value={{ openModal, handleModalOpen, modalValue, modalRef }}
+      value={{ openModal, closeModal, handleModalOpen, modalValue, modalRef }}
     >
       {children}
     </ModalContext.Provider>

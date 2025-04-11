@@ -3,22 +3,22 @@
 import Logo from "./Logo";
 import { boards } from "../../public/assets/data";
 import Link from "next/link";
-import { JSX } from "react";
+// import { JSX } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import Toggle from "./Toggle";
 import { useModal } from "../context/ModalContext";
-import Modal from "./Modal";
+// import Modal from "./Modal";
 import BoardModal from "./ModalContent/BoardModal";
 
 const Sidebar = () => {
   const params = useParams();
   const { id } = params;
-  const { handleModalOpen, modalValue } = useModal();
+  const { handleModalOpen } = useModal();
 
   const handleOpenModal = () => {
     const currentBoard = boards.find((board) => board._id === id);
-    handleModalOpen(BoardModal, "add", "board", currentBoard);
+    handleModalOpen(<BoardModal type="add" />, "board", "add", currentBoard);
   };
 
   return (

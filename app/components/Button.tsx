@@ -1,16 +1,15 @@
 import React from "react";
-import Image from "next/image";
+// import Image from "next/image";
 
 type BtnProps = {
   type?: string;
   text: string;
   fn?: (e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  state?: boolean;
-  stateFn?: any;
+
   btnClass: "primary" | "secondary" | "danger";
 };
 
-const Button = ({ type, text, state, stateFn, fn, btnClass }: BtnProps) => {
+const Button = ({ type, text, fn, btnClass }: BtnProps) => {
   return (
     <button
       className={`${btnClass} btn ${type !== "add" && "btnLg"}`}

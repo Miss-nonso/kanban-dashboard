@@ -4,7 +4,7 @@ import { boards } from "@/public/assets/data";
 import { BoardProps } from "../interface";
 import { setToLocalStorage } from "./helpers";
 
-export const createNewBoard = (boardObj: BoardProps) => {
+export const createNewBoard = (boardObj: Omit<BoardProps, "_id">) => {
   if (boardObj.name) {
     const newBoard = {
       ...boardObj,

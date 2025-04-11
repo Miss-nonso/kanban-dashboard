@@ -1,12 +1,12 @@
 export interface BoardProps {
   name: string;
   _id: string;
-  columns: ColumnProps[] | [];
+  columns: ColumnProps[];
 }
 
 export interface ColumnProps {
   name: string;
-  tasks: TaskProps[] | [];
+  tasks: TaskProps[];
 }
 
 export interface TaskProps {
