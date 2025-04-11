@@ -102,16 +102,13 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [statusList, setStatusList] = useState(() => {
-    if (isTaskTuple(modalValue?.item)) {
-      const columns = getTaskToEdit(modalValue.item)?.[0];
-      if (Array.isArray(columns)) {
-        return columns.map((col) => col.name);
-      }
+    const currentBoard = boards.find((board) => board._id === id);
+    if (currentBoard) {
+      return currentBoard.columns.map((column) => column.name);
     }
-    return [];
   });
 
-  console.log({ taskToEdit });
+  console.log({ statusList });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [task, setTask] = useState<TaskProps>(
     type === "add"
@@ -447,11 +444,12 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
           >
             <>
               <option value="">Select status</option>
-              {statusList.map((status: string, index: number) => (
-                <option key={index} value={status.toLowerCase()}>
-                  {status}
-                </option>
-              ))}
+              {statusList &&
+                statusList.map((status: string, index: number) => (
+                  <option key={index} value={status.toLowerCase()}>
+                    {status}
+                  </option>
+                ))}
             </>
           </select>
         </div>
