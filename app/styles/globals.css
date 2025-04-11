@@ -231,10 +231,10 @@ button {
   @apply bg-white rounded-full aspect-square transition-all duration-700 ease-in-out;
 }
 
-.light {
+.dark {
   @apply justify-end;
 }
 
-.dark {
+.light {
   @apply justify-start;
 }

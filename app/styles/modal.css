@@ -35,7 +35,7 @@ option {
 .modal-content-wrapper div input,
 select,
 textarea {
-  @apply py-2 pl-1.5 w-full text-[15px] border border-[var(--mediumgray)] bg-transparent;
+  @apply py-2 pl-1.5 w-full text-[15px] border border-[var(--mediumgray)] bg-transparent text-[var(--textcolor)];
 }
 
 option {
