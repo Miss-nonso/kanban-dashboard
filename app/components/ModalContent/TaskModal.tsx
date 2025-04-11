@@ -29,6 +29,22 @@ function isTaskTuple(
   );
 }
 
+function isTaskMono(
+  item:
+    | TaskProps
+    | BoardProps
+    | [ColumnProps[]]
+    | [ColumnProps[], TaskProps]
+    | undefined
+): item is [ColumnProps[], TaskProps] {
+  return (
+    Array.isArray(item) &&
+    item.length === 1 &&
+    Array.isArray(item[0]) &&
+    typeof item[0] === "object"
+  );
+}
+
 // const InputAddElementProps = {
 //   value={type === "edit" ? subtask.title : ""}
 //   type={type}
@@ -218,8 +234,9 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
 
     let currentColumn: ColumnProps[] = [];
     let taskToEditItem: TaskProps | undefined;
+    console.log(type === "add");
 
-    if (isTaskTuple(modalValue?.item)) {
+    if (isTaskTuple(modalValue?.item) || isTaskMono(modalValue?.item)) {
       const subtasksValues: string[] = [];
 
       currentColumn = modalValue?.item[0];
@@ -231,6 +248,22 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
       const subtasksInputValues = [...allInputs].map((input) => {
         const inputElement = input as HTMLInputElement;
         subtasksValues.push(inputElement.value);
+      });
+
+      const taskToAdd = {
+        ...taskToEdit
+      };
+
+      subtasksValues.map((val, index) => {
+        if (index > taskToAdd.subtasks.length - 1) {
+          const subtaskData: SubtaskProps = {
+            title: val,
+            isCompleted: false
+          };
+          taskToAdd.subtasks.push(subtaskData);
+        } else {
+          taskToAdd.subtasks[index].title = val;
+        }
       });
 
       if (type === "edit") {
@@ -257,22 +290,6 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
             colstate: "Not the same oooo",
             currentColumnName,
             taskName: taskToEditItem.status
-          });
-
-          const taskToAdd = {
-            ...taskToEdit
-          };
-
-          subtasksValues.map((val, index) => {
-            if (index > taskToAdd.subtasks.length - 1) {
-              const subtaskData: SubtaskProps = {
-                title: val,
-                isCompleted: false
-              };
-              taskToAdd.subtasks.push(subtaskData);
-            } else {
-              taskToAdd.subtasks[index].title = val;
-            }
           });
 
           boards.map(
@@ -332,7 +349,16 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
               )
           );
         }
-        console.log({ boards });
+      }
+
+      if (type === "add") {
+        boards.map((board) =>
+          board.columns.map((col) =>
+            col.name.toLowerCase() === taskToAdd.status.toLowerCase()
+              ? col.tasks.push(taskToAdd)
+              : col
+          )
+        );
       }
     }
   };
@@ -437,7 +463,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
           <select
             name="status"
             id="status"
-            value={type === "edit" ? taskToEdit?.status.toLowerCase() : ""}
+            value={taskToEdit?.status.toLowerCase()}
             onChange={(e) =>
               setTaskToEdit({ ...taskToEdit, status: e.target.value })
             }
