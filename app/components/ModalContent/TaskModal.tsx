@@ -183,6 +183,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
   });
 
   const addComponent = () => {
+    console.log("in add function");
     setShouldRender((prev) => [
       ...prev,
       <InputAdd
@@ -193,6 +194,8 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
         inputCount={prev.length}
       />
     ]);
+
+    console.log({ shouldRender });
   };
 
   // const handleOnChange = (e) => {
@@ -205,6 +208,8 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
     if (e) {
       e.preventDefault();
     }
+
+    console.log("in the function");
 
     [...allInputs].forEach((input, index) => {
       const inputElement = input as HTMLInputElement;
@@ -417,38 +422,16 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
               {" "}
               {/* <label htmlFor="subtasks">Columns</label> */}
               <div className="all-col-input-container">
-                {type === "add" ? (
-                  <>
-                    {shouldRender.map((subtaskInput, index) => (
-                      <InputAdd
-                        value=""
-                        type={type}
-                        taskOrBoard="board"
-                        key={index}
-                        inputCount={index}
-                        // id={component.id}
-                        // setShouldRender={setShouldRender}
-                        shouldRender={shouldRender}
-                        // handleDeleteInput={handleDeleteInput}
-                      />
-                    ))}
-                  </>
-                ) : (
-                  taskToEdit?.subtasks.map((subtask, index) => (
-                    <InputAdd
-                      key={index}
-                      inputCount={index}
-                      value={subtask.title}
-                      type={type}
-                      // setTaskToEdit={setTaskToEdit}
-                      // taskToEdit={taskToEdit}
-                      // subtask={subtask}
-                      taskOrBoard="board"
-                      // setShouldRender={setShouldRender}
-                      shouldRender={shouldRender}
-                    />
-                  ))
-                )}
+                {shouldRender.map((_, index) => (
+                  <InputAdd
+                    value={
+                      type === "edit" ? taskToEdit.subtasks[index]?.title : ""
+                    }
+                    type={type}
+                    taskOrBoard="task"
+                    key={index}
+                  />
+                ))}
               </div>
               <Button
                 type="add"
