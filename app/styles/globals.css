@@ -208,7 +208,7 @@ button {
 
 .toggle-container,
 .toggle-wrapper {
-  @apply flex justify-center;
+  @apply flex justify-center items-center;
 }
 
 .toggle-container {
@@ -223,8 +223,12 @@ button {
   @apply h-[1rem] aspect-square;
 }
 
-.toggle {
+#toggle-btn {
   @apply bg-[var(--darkpurple)] cursor-pointer flex h-[20px] rounded-3xl p-0.5 w-[40px] transition-all duration-700 ease-in-out;
+}
+
+#toggle-btn:hover span {
+  @apply scale-[1.05];
 }
 
 .toggle span {

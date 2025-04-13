@@ -16,12 +16,13 @@ const Toggle = () => {
           height={18.33}
         />
 
-        <div
+        <button
           className={`${theme === "dark" ? "dark" : "light"} toggle`}
+          id="toggle-btn"
           onClick={toggleTheme}
         >
           <span></span>
-        </div>
+        </button>
         <Image
           src="/assets/icons/icon-dark-theme.svg"
           alt="light theme icon"

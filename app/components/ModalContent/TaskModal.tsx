@@ -307,19 +307,17 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
                   col.tasks.push(taskToAdd);
                 }
 
-                if (taskToEditItem) {
-                  if (
-                    col.name.toLowerCase() ===
-                    taskToEditItem.status.toLowerCase()
-                  ) {
-                    console.log({ taskToEditItem });
-                    // col.tasks.filter((task) => task.title !== taskToEditItem.title);
-                  }
+                if (col.name.toLowerCase() === prevColumnName.toLowerCase()) {
+                  console.log({ prevColumnName });
+                  const indexOfTaskToRmv = col.tasks.findIndex(
+                    (task) =>
+                      task.title.toLowerCase() === prevColumnName.toLowerCase()
+                  );
+
+                  return col.tasks.splice(indexOfTaskToRmv - 1, 1);
                 }
               })
           );
-
-          //DO NEXT: Remove edited item with different status from prev column
         } else {
           boards.map(
             (board) =>
