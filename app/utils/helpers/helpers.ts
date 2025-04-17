@@ -8,5 +8,7 @@ export const getFromLocalStorage = (key: string) => {
   const JSONBoard = localStorage.getItem(key);
   if (JSONBoard) {
     return JSON.parse(JSONBoard);
+  } else {
+    return null;
   }
 };

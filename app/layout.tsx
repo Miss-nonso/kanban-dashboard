@@ -4,6 +4,7 @@ import "./styles/globals.css";
 import Sidebar from "./components/Sidebar";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ModalProvider } from "./context/ModalContext";
+import { BoardProvider } from "./context/BoardContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +32,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen`}
       >
         <ThemeProvider>
-          <ModalProvider>
-            <Sidebar />
+          <BoardProvider>
+            <ModalProvider>
+              <Sidebar />
 
-            <main className="flex-1"> {children}</main>
-          </ModalProvider>
+              <main className="flex-1"> {children}</main>
+            </ModalProvider>
+          </BoardProvider>
         </ThemeProvider>
       </body>
     </html>

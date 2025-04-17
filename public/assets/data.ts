@@ -1,6 +1,9 @@
+import // getFromLocalStorage,
+// setToLocalStorage
+"@/app/utils/helpers/helpers";
 import { BoardProps } from "../../app/utils/interface";
 
-export const boards: BoardProps[] = [
+export const staticBoards: BoardProps[] = [
   {
     name: "Platform Launch",
     _id: "0e750726-5c63-43a5-950c-95830824753b",
@@ -443,3 +446,17 @@ export const boards: BoardProps[] = [
     ]
   }
 ];
+
+// const storedBoards = getFromLocalStorage("boards");
+// let boards: BoardProps[];
+
+// if (storedBoards) {
+//   boards = storedBoards;
+// } else {
+//   setToLocalStorage("boards", staticBoards);
+//   boards = storedBoards;
+
+//   console.log("boards stored");
+// }
+
+// export default boards;

@@ -8,41 +8,20 @@ import {
   Ref
 } from "react";
 import { JSX } from "react";
-import { BoardProps, ColumnProps, TaskProps } from "../utils/interface";
-
-// interface ItemProps {
-//   item?:
-//     | TaskProps
-//     | BoardProps
-//     | ColumnProps[]
-//     | [ColumnProps, TaskProps]
-
-// }
+import { ItemType } from "../utils/types";
 
 type HandleModalOpenProps = {
   modalContent: JSX.Element;
-  type?: "add" | "edit";
-  taskOrBoard: "task" | "board";
-  item?:
-    | TaskProps
-    | BoardProps
-    | [ColumnProps[]]
-    | [ColumnProps[], TaskProps]
-    | undefined;
+  index?: number;
+  item?: ItemType;
 };
 
 interface ModalContextProps {
   openModal: boolean;
   handleModalOpen: (
     modalContent: JSX.Element,
-    taskOrBoard: "task" | "board",
-    type?: "add" | "edit",
-    item?:
-      | TaskProps
-      | BoardProps
-      | [ColumnProps[]]
-      | [ColumnProps[], TaskProps]
-      | undefined
+    index?: number,
+    item?: ItemType
   ) => void;
   closeModal: () => void;
   modalValue: HandleModalOpenProps | null;
@@ -60,18 +39,16 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleModalOpen = (
     modalContent: JSX.Element,
-    taskOrBoard: "task" | "board",
-    type?: "add" | "edit",
-    item?:
-      | TaskProps
-      | BoardProps
-      | [ColumnProps[]]
-      | [ColumnProps[], TaskProps]
-      | undefined
+    index?: number,
+    item?: ItemType
   ) => {
     setOpenModal(true);
-    setModalValue({ modalContent, type, taskOrBoard, item });
-    console.log({ openModal, modalValue });
+
+    if (index) {
+      setModalValue({ modalContent, index, item });
+    } else {
+      setModalValue({ modalContent, item });
+    }
   };
 
   const closeModal = () => {

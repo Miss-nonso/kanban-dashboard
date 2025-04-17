@@ -6,7 +6,9 @@ import { useState } from "react";
 import TaskModal from "./ModalContent/TaskModal";
 import { useModal } from "../context/ModalContext";
 import { useParams } from "next/navigation";
-import { boards } from "@/public/assets/data";
+// import boards from "@/public/assets/data";
+import { BoardProps } from "../utils/interface";
+import { useBoards } from "../context/BoardContext";
 type HeaderProps = { boardName: string };
 
 const handleBoardControl = () => {
@@ -19,16 +21,15 @@ const Header = ({ boardName }: HeaderProps) => {
   const { handleModalOpen } = useModal();
   const params = useParams();
   const { id } = params;
+  const { boards } = useBoards();
 
   const handleTaskModalOpen = () => {
-    const currentBoard = boards.find((board) => board._id === id);
+    const currentBoard = boards.find((board: BoardProps) => board._id === id);
 
     const ColumnsToAddTasksTo = currentBoard?.columns;
 
     if (ColumnsToAddTasksTo) {
-      handleModalOpen(<TaskModal type="add" />, "task", "add", [
-        ColumnsToAddTasksTo
-      ]);
+      handleModalOpen(<TaskModal type="add" />, 0, [ColumnsToAddTasksTo]);
     }
   };
 

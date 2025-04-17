@@ -2,10 +2,11 @@ import React from "react";
 import { ColumnProps, SubtaskProps, TaskProps } from "../utils/interface";
 import { useModal } from "../context/ModalContext";
 import ViewTask from "./ModalContent/ViewTask";
-import { getCurrentBoard } from "../utils/helpers/FindBoard";
+// import { getCurrentBoard } from "../utils/helpers/FindBoard";
 import { useParams } from "next/navigation";
+import { useBoards } from "../context/BoardContext";
 
-type TaskCardProps = { task: TaskProps };
+type TaskCardProps = { task: TaskProps; index: number };
 
 const getCompletedSubtasks = (subtasks: SubtaskProps[]) => {
   const completedSubTasks = subtasks.filter(
@@ -14,29 +15,30 @@ const getCompletedSubtasks = (subtasks: SubtaskProps[]) => {
   return completedSubTasks.length;
 };
 
-const TaskCard = ({ task }: TaskCardProps) => {
+const TaskCard = ({ task, index }: TaskCardProps) => {
   const params = useParams();
   const { id } = params;
   const { handleModalOpen } = useModal();
-  const currentBoard = getCurrentBoard(id);
+  const { getCurrentBoard } = useBoards();
+  const currentBoard = getCurrentBoard(`${id}`);
   const ColumnsToAddTasksTo = currentBoard?.columns;
 
   const handleTaskModalOpen = (
+    index: number,
     task: TaskProps,
     ColumnsToAddTasksTo?: ColumnProps[]
   ) => {
     if (ColumnsToAddTasksTo && task) {
-      handleModalOpen(<ViewTask />, "task", "edit", [
-        ColumnsToAddTasksTo,
-        task
-      ]);
+      handleModalOpen(<ViewTask />, index, [ColumnsToAddTasksTo, task]);
     }
   };
 
   return (
     <div
       className="card"
-      onClick={() => handleTaskModalOpen(task, ColumnsToAddTasksTo)}
+      onClick={() => {
+        handleTaskModalOpen(index, task, ColumnsToAddTasksTo);
+      }}
     >
       <h4>{task.title}</h4>{" "}
       <p>

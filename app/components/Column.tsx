@@ -9,7 +9,7 @@ const Column = ({ column }: ColumnType) => {
     <div className="column-wrapper">
       {column.tasks.map((task, index) => (
         <Fragment key={index}>
-          <TaskCard task={task} />
+          <TaskCard task={task} index={index} />
         </Fragment>
       ))}
     </div>

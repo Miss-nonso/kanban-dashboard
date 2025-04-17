@@ -1,12 +1,12 @@
-import { createNewBoard } from "@/app/utils/helpers/CreateBoard";
 import { BoardProps, ColumnProps } from "@/app/utils/interface";
 import React, { FormEvent, useEffect, useState } from "react";
 import Button from "../Button";
 import InputAdd from "../InputAdd";
 import { JSX } from "react";
 import { useModal } from "@/app/context/ModalContext";
-import { boards } from "@/public/assets/data";
+// import boards from "@/public/assets/data";
 import { useParams } from "next/navigation";
+import { useBoards } from "@/app/context/BoardContext";
 
 type BoardModalProps = {
   type?: "add" | "edit";
@@ -16,7 +16,8 @@ const BoardModal = ({ type }: BoardModalProps) => {
   const allInputs = document.getElementsByName(`${type}`);
   const params = useParams();
   const { id } = params;
-  const { modalValue, modalRef } = useModal();
+  const { modalValue, modalRef, closeModal } = useModal();
+  const { createNewBoard, editBoard, boards } = useBoards();
 
   const [boardname, setBoardname] = useState<string>(() => {
     if (type === "edit" && modalValue?.item && "name" in modalValue.item) {
@@ -67,7 +68,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
   ) => {
     e.preventDefault();
     const columnValues: string[] = [];
-    console.log({ columnValues });
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const columnInputValues = [...allInputs].map((input) => {
       const inputElement = input as HTMLInputElement;
@@ -79,8 +80,8 @@ const BoardModal = ({ type }: BoardModalProps) => {
     });
 
     if (type === "edit") {
-      const currentBoard = boards.find((board) => board._id === id);
-      console.log({ currentBoard });
+      const currentBoard = boards.find((board: BoardProps) => board._id === id);
+
       if (currentBoard) {
         currentBoard.name = boardname;
 
@@ -95,6 +96,10 @@ const BoardModal = ({ type }: BoardModalProps) => {
             currentBoard.columns[index].name = colVal;
           }
         });
+
+        editBoard(boards);
+
+        closeModal();
       }
     } else {
       const boardObj: Omit<BoardProps, "_id"> = {
@@ -115,8 +120,8 @@ const BoardModal = ({ type }: BoardModalProps) => {
         });
       });
 
-      console.log({ boardObj });
-      return createNewBoard(boardObj);
+      createNewBoard(boardObj);
+      closeModal();
     }
   };
 

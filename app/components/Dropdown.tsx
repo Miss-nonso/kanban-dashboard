@@ -4,27 +4,29 @@ import { useModal } from "../context/ModalContext";
 import BoardModal from "./ModalContent/BoardModal";
 import TaskModal from "./ModalContent/TaskModal";
 import DeleteModal from "./ModalContent/DeleteModal";
-import { getCurrentBoard } from "../utils/helpers/FindBoard";
 import { useParams } from "next/navigation";
 import { TaskProps } from "../utils/interface";
+import { useBoards } from "../context/BoardContext";
 
 type DropdownProps = {
   taskOrBoard: "task" | "board";
   fn: () => void;
   setDisplayDropdown: (val: boolean) => void;
   taskItem?: TaskProps;
+  taskIndex?: number;
 };
 
 const Dropdown = ({
   taskOrBoard,
-  // fn,
   setDisplayDropdown,
-  taskItem
+  taskItem,
+  taskIndex
 }: DropdownProps) => {
   const { handleModalOpen } = useModal();
   const params = useParams();
   const { id } = params;
-  console.log({ taskItemDrop: taskItem });
+  const { getCurrentBoard } = useBoards();
+  const currentBoard = getCurrentBoard(`${id}`);
 
   return (
     <div className="dropdown">
@@ -35,20 +37,17 @@ const Dropdown = ({
               setDisplayDropdown(false);
 
               if (taskOrBoard === "task" && id && taskItem) {
-                return handleModalOpen(
-                  <TaskModal type="edit" />,
-                  "task",
-                  "edit",
-                  [getCurrentBoard(id)?.columns || [], taskItem]
-                );
+                return handleModalOpen(<TaskModal type="edit" />, 0, [
+                  getCurrentBoard(`${id}`)?.columns || [],
+                  taskItem
+                ]);
               }
 
               if (taskOrBoard === "board" && id) {
                 return handleModalOpen(
                   <BoardModal type="edit" />,
-                  "board",
-                  "edit",
-                  getCurrentBoard(id) || undefined
+                  0,
+                  getCurrentBoard(`${id}`)
                 );
               }
             }}
@@ -60,17 +59,26 @@ const Dropdown = ({
           <button
             onClick={() => {
               setDisplayDropdown(false);
-              return taskOrBoard === "task"
-                ? handleModalOpen(
-                    <DeleteModal taskOrBoard="task" name="jhdjn" />,
-                    "task",
-                    "add"
-                  )
-                : handleModalOpen(
-                    <DeleteModal taskOrBoard="board" name="ijisj" />,
-                    "board",
-                    "add"
-                  );
+
+              if (
+                taskOrBoard === "task" &&
+                id &&
+                currentBoard &&
+                // modalValue?.index
+                taskItem
+              ) {
+                handleModalOpen(<DeleteModal taskOrBoard="task" />, taskIndex, [
+                  currentBoard,
+                  taskItem
+                ]);
+              }
+              if (taskOrBoard === "board" && id) {
+                handleModalOpen(
+                  <DeleteModal taskOrBoard="board" />,
+                  0,
+                  getCurrentBoard(`${id}`) || undefined
+                );
+              }
             }}
           >
             Delete {taskOrBoard === "task" ? "task" : "board"}

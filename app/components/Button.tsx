@@ -1,9 +1,11 @@
 import React from "react";
+
 // import Image from "next/image";
 
 type BtnProps = {
   type?: string;
   text: string;
+  // fn?: (e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   fn?: (e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 
   btnClass: "primary" | "secondary" | "danger";
