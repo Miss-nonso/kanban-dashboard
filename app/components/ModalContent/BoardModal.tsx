@@ -7,11 +7,11 @@ import { useModal } from "@/app/context/ModalContext";
 // import boards from "@/public/assets/data";
 import { useParams } from "next/navigation";
 import { useBoards } from "@/app/context/BoardContext";
+let errMsgs;
 
 type BoardModalProps = {
   type?: "add" | "edit";
 };
-
 const BoardModal = ({ type }: BoardModalProps) => {
   const allInputs = document.getElementsByName(`${type}`);
   const params = useParams();
@@ -25,8 +25,6 @@ const BoardModal = ({ type }: BoardModalProps) => {
     }
     return "";
   });
-
-  let errMsgs;
 
   const [shouldRender, setShouldRender] = useState<{ element: JSX.Element }[]>(
     () => {

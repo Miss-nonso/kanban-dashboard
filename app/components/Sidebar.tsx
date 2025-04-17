@@ -2,7 +2,6 @@
 
 import Logo from "./Logo";
 import Link from "next/link";
-// import { JSX } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import Toggle from "./Toggle";
@@ -20,43 +19,6 @@ const Sidebar = () => {
   const [savedBoards, setSavedBoards] = useState<BoardProps[]>([]);
   const { boards } = useBoards();
 
-  console.log({ boards });
-
-  // useEffect(() => {
-  //   const updateBoards = () => {
-  //     const storedData = getFromLocalStorage("boards") || [];
-  //     setSavedBoards(storedData);
-  //   };
-
-  //   // Listen to both same-tab and other-tab changes
-  //   window.addEventListener("boardsUpdated", updateBoards);
-  //   window.addEventListener("storage", updateBoards); // optional for other tabs
-  //   updateBoards(); // initial load
-
-  //   return () => {
-  //     window.removeEventListener("boardsUpdated", updateBoards);
-  //     window.removeEventListener("storage", updateBoards);
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   const handleStorageChange = () => {
-  //     const storedData = getFromLocalStorage("boards") || [];
-  //     setSavedBoards(storedData);
-  //   };
-
-  //   window.addEventListener("boardsUpdated", handleStorageChange);
-  //   window.addEventListener("storage", handleStorageChange);
-
-  //   handleStorageChange();
-
-  //   return () => {
-  //     window.removeEventListener("boardsUpdated", handleStorageChange);
-  //     window.removeEventListener("storage", handleStorageChange);
-  //   };
-  // }, []);
-
-  console.log({ localStored: boards });
   const handleOpenModal = () => {
     if (boards) {
       const currentBoard = boards.find((board: BoardProps) => board._id === id);

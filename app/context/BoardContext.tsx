@@ -14,6 +14,7 @@ import {
 } from "../utils/helpers/helpers";
 import { BoardProps } from "../utils/interface";
 import { staticBoards } from "@/public/assets/data";
+import { useRouter } from "next/navigation";
 
 interface BoardContextProps {
   boards: BoardProps[];
@@ -32,6 +33,7 @@ interface BoardContextProps {
 const BoardContext = createContext<BoardContextProps | undefined>(undefined);
 
 export function BoardProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [boards, setBoards] = useState<BoardProps[]>(
     getFromLocalStorage("boards") || staticBoards
   );
@@ -60,10 +62,10 @@ export function BoardProvider({ children }: { children: ReactNode }) {
       };
 
       boards.push(newBoard);
-      window.location.href = `/boards/${newBoard._id}/${newBoard.name.replace(
-        / /g,
-        "-"
-      )}`;
+
+      router.push(
+        `/boards/${newBoard._id}/${newBoard.name.replace(/ /g, "-")}`
+      );
     }
 
     updateBoards(boards);
@@ -83,17 +85,19 @@ export function BoardProvider({ children }: { children: ReactNode }) {
       (!boards[indexOfBoardToDelete - 1] || !boards[0]) &&
       (!boards[indexOfBoardToDelete - 1] || !boards[0])
     ) {
-      window.location.href = `/`;
+      router.push(`/`);
     } else {
-      window.location.href = `/boards/${
-        boards[indexOfBoardToDelete - 1]._id ||
-        boards[0]._id ||
-        boards[indexOfBoardToDelete + 1]
-      }/${
-        boards[indexOfBoardToDelete - 1].name.replace(/ /g, "-") ||
-        boards[0].name.replace(/ /g, "-") ||
-        boards[indexOfBoardToDelete + 1].name.replace(/ /g, "-")
-      }`;
+      router.push(
+        `/boards/${
+          boards[indexOfBoardToDelete - 1]._id ||
+          boards[indexOfBoardToDelete + 1] ||
+          boards[0]._id
+        }/${
+          boards[indexOfBoardToDelete - 1].name.replace(/ /g, "-") ||
+          boards[indexOfBoardToDelete + 1].name.replace(/ /g, "-") ||
+          boards[0].name.replace(/ /g, "-")
+        }`
+      );
     }
 
     return updateBoards(boards);

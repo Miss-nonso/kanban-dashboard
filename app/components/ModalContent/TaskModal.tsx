@@ -12,6 +12,7 @@ import { useModal } from "@/app/context/ModalContext";
 import InputAdd from "../InputAdd";
 import { JSX } from "react";
 import { useBoards } from "@/app/context/BoardContext";
+let errMsgs;
 
 function isTaskTuple(item: ItemType): item is [ColumnProps[], TaskProps] {
   return (
@@ -39,8 +40,6 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
   const params = useParams();
   const { id } = params;
   const { editTask, boards } = useBoards();
-
-  let errMsgs;
 
   const getTaskToEdit = (
     ArrOfColumnsAndTaskItem: [ColumnProps[] | ColumnProps, TaskProps]
@@ -243,7 +242,6 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
           taskToEditItem.status = currentColumn[0].name;
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const prevColumnName = taskToEditItem.status || currentColumn[0].name;
 
         const currentColumnName = taskToEdit?.status || currentColumn[0].name;
