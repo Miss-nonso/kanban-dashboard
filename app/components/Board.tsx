@@ -7,7 +7,6 @@ import { indicatorColors } from "../lib/lib";
 type ColumnPropsType = { columns: ColumnProps[] };
 
 const Board = ({ columns }: ColumnPropsType) => {
-  console.log({ columns });
   return (
     <div className="board">
       {columns &&

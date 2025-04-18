@@ -1,6 +1,3 @@
-import // getFromLocalStorage,
-// setToLocalStorage
-"@/app/utils/helpers/helpers";
 import { BoardProps } from "../../app/utils/interface";
 
 export const staticBoards: BoardProps[] = [
@@ -446,17 +443,3 @@ export const staticBoards: BoardProps[] = [
     ]
   }
 ];
-
-// const storedBoards = getFromLocalStorage("boards");
-// let boards: BoardProps[];
-
-// if (storedBoards) {
-//   boards = storedBoards;
-// } else {
-//   setToLocalStorage("boards", staticBoards);
-//   boards = storedBoards;
-
-//   console.log("boards stored");
-// }
-
-// export default boards;

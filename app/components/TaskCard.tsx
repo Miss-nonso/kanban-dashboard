@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { ColumnProps, SubtaskProps, TaskProps } from "../utils/interface";
 import { useModal } from "../context/ModalContext";

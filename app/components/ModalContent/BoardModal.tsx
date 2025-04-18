@@ -1,3 +1,5 @@
+"use client";
+
 import { BoardProps, ColumnProps } from "@/app/utils/interface";
 import React, { FormEvent, useEffect, useState } from "react";
 import Button from "../Button";
