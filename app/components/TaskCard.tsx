@@ -2,7 +2,6 @@ import React from "react";
 import { ColumnProps, SubtaskProps, TaskProps } from "../utils/interface";
 import { useModal } from "../context/ModalContext";
 import ViewTask from "./ModalContent/ViewTask";
-// import { getCurrentBoard } from "../utils/helpers/FindBoard";
 import { useParams } from "next/navigation";
 import { useBoards } from "../context/BoardContext";
 

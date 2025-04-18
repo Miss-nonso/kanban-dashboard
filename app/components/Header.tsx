@@ -11,10 +11,6 @@ import { BoardProps } from "../utils/interface";
 import { useBoards } from "../context/BoardContext";
 type HeaderProps = { boardName: string };
 
-const handleBoardControl = () => {
-  console.log("Board work...");
-};
-
 const Header = ({ boardName }: HeaderProps) => {
   const [displayDropdown, setDisplayDropdown] = useState(false);
   // const [taskModal, setTaskModal] = useState(false);
@@ -58,7 +54,6 @@ const Header = ({ boardName }: HeaderProps) => {
           {displayDropdown && (
             <Dropdown
               taskOrBoard="board"
-              fn={handleBoardControl}
               setDisplayDropdown={setDisplayDropdown}
             />
           )}

@@ -14,11 +14,13 @@ type BoardModalProps = {
 };
 const BoardModal = ({ type }: BoardModalProps) => {
   const allInputs = document.getElementsByName(`${type}`);
+  const cancelInputElements = document.getElementsByClassName("cancel-input");
   const params = useParams();
   const { id } = params;
   const { modalValue, modalRef, closeModal } = useModal();
   const { createNewBoard, editBoard, boards } = useBoards();
 
+  console.log({ cancelInputElements });
   const [boardname, setBoardname] = useState<string>(() => {
     if (type === "edit" && modalValue?.item && "name" in modalValue.item) {
       return modalValue.item.name;
@@ -231,7 +233,6 @@ const BoardModal = ({ type }: BoardModalProps) => {
         <Button
           text={type === "add" ? "Create Board" : "Save Changes"}
           btnClass="primary"
-          // fn={type === "add" ? handleSubmitBoardForm() : editExistingBoard()}
         />
       </form>
     </div>

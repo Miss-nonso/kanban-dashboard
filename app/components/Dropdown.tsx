@@ -10,7 +10,7 @@ import { useBoards } from "../context/BoardContext";
 
 type DropdownProps = {
   taskOrBoard: "task" | "board";
-  fn: () => void;
+  // fn: () => void;
   setDisplayDropdown: (val: boolean) => void;
   taskItem?: TaskProps;
   taskIndex?: number;

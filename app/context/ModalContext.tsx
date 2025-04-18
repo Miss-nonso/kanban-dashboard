@@ -44,7 +44,7 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   ) => {
     setOpenModal(true);
 
-    if (index) {
+    if (typeof index === "number") {
       setModalValue({ modalContent, index, item });
     } else {
       setModalValue({ modalContent, item });

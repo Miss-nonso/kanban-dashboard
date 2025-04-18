@@ -5,10 +5,6 @@ import { useModal } from "@/app/context/ModalContext";
 import { ColumnProps, TaskProps } from "@/app/utils/interface";
 import { ItemType } from "@/app/utils/types";
 
-const handleEditTask = () => {
-  console.log("editing...");
-};
-
 export const isTaskTuple = (
   item: ItemType
 ): item is [ColumnProps[], TaskProps] =>
@@ -23,10 +19,8 @@ const ViewTask = () => {
   const [statusList, setStatusList] = useState<string[]>([]);
   const [status, setStatus] = useState("");
   const item = modalValue?.item;
-  console.log({ viewtask: modalValue?.index });
+  console.log({ viewtask: modalValue });
 
-  // Move the task destructuring and useEffect inside the component body
-  // but protect against null/invalid values
   const validTaskTuple = isTaskTuple(item);
   const task = validTaskTuple ? item[1] : null;
 
@@ -38,7 +32,6 @@ const ViewTask = () => {
     }
   }, [task, validTaskTuple, item]);
 
-  // Return early if no valid task
   if (!validTaskTuple || !task) return null;
 
   const taskToDisplay = {
@@ -67,10 +60,9 @@ const ViewTask = () => {
               height={20}
             />
           </button>
-          {displayDropdown && modalValue?.index && (
+          {displayDropdown && typeof modalValue?.index === "number" && (
             <Dropdown
               taskOrBoard="task"
-              fn={handleEditTask}
               setDisplayDropdown={setDisplayDropdown}
               taskItem={task}
               taskIndex={modalValue?.index}
