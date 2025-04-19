@@ -42,6 +42,7 @@ const Header = ({ boardName }: HeaderProps) => {
           // stateFn={setTaskModal}
           fn={handleTaskModalOpen}
           btnClass="primary"
+          btnType="button"
         />
         <div className="relative board-option-btn">
           <button onClick={() => setDisplayDropdown(!displayDropdown)}>

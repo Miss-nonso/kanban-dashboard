@@ -246,12 +246,14 @@ const BoardModal = ({ type }: BoardModalProps) => {
             text=" Add New Column"
             btnClass="secondary"
             fn={(e) => handleAddInput(e)}
+            btnType="button"
           />
         </div>
 
         <Button
           text={type === "add" ? "Create Board" : "Save Changes"}
           btnClass="primary"
+          btnType="submit"
         />
       </form>
     </div>

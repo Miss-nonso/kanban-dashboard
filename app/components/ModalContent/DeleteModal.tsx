@@ -86,8 +86,18 @@ const DeleteModal = ({ taskOrBoard }: DeleteModalProps) => {
       </p>
 
       <div className="btns-wrapper">
-        <Button text="Delete" btnClass="danger" fn={handleDeleteItem} />
-        <Button text="Cancel" btnClass="secondary" fn={closeModal} />
+        <Button
+          text="Delete"
+          btnClass="danger"
+          fn={handleDeleteItem}
+          btnType="button"
+        />
+        <Button
+          text="Cancel"
+          btnClass="secondary"
+          fn={closeModal}
+          btnType="button"
+        />
       </div>
     </div>
   );

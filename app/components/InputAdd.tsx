@@ -29,14 +29,17 @@ const InputAdd = ({
     return setInputText(e.target.value);
   };
 
-  // const handleDeleteInput = (e, idx: number) => {
-  //   e.preventDefault();
+  const handleDeleteInput = (
+    e: React.MouseEvent<HTMLButtonElement>
+    // idx: number
+  ) => {
+    e.preventDefault();
 
-  //   console.log({ target: e.target, idx });
-  //   const newRender = shouldRender?.splice(idx, 1);
-  //   setShouldRender(shouldRender);
-  //   console.log({ shouldRender, newRender });
-  // };
+    console.log({ target: e.target });
+    // const newRender = shouldRender?.splice(idx, 1);
+    // setShouldRender(shouldRender);
+    // console.log({ shouldRender, newRender });
+  };
 
   return (
     <div className="col-input-wrapper relative">
@@ -59,7 +62,7 @@ const InputAdd = ({
         Can&apos;t be empty
       </p>
 
-      <button className="cancel-input">
+      <button className="cancel-input" onClick={(e) => handleDeleteInput(e)}>
         {" "}
         <Image
           className="cursor-pointer cancel-input"
@@ -67,7 +70,6 @@ const InputAdd = ({
           alt="cancel"
           width={14.48}
           height={14.48}
-          // onClick={(e) => handleDeleteInput(e, index)}
         />
       </button>
     </div>

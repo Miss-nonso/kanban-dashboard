@@ -208,6 +208,8 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
   ) => {
     e.preventDefault();
 
+    console.log({ intaskSubmitFunc: type });
+
     let currentColumn: ColumnProps[] = [];
     let taskToEditItem: TaskProps | undefined;
 
@@ -278,6 +280,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
               })
           );
 
+          console.log({ boards });
           editTask(boards);
           closeModal();
         } else {
@@ -390,6 +393,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
                 text="Add New Subtask"
                 btnClass="secondary"
                 fn={(e) => handleAddInput(e)}
+                btnType="button"
               />
             </div>
           </div>
@@ -418,6 +422,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
         <Button
           text={type === "add" ? "Create Task" : "Save Changes"}
           btnClass="primary"
+          btnType="submit"
         />
       </form>
     </div>

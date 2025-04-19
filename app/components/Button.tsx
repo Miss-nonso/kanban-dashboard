@@ -9,13 +9,15 @@ type BtnProps = {
   fn?: (e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 
   btnClass: "primary" | "secondary" | "danger";
+  btnType: "button" | "submit";
 };
 
-const Button = ({ type, text, fn, btnClass }: BtnProps) => {
+const Button = ({ type, text, fn, btnClass, btnType }: BtnProps) => {
   return (
     <button
       className={`${btnClass} btn ${type !== "add" && "btnLg"}`}
       onClick={(e) => fn && fn(e)}
+      type={btnType}
       //   onClick={stateFn(!state)}
     >
       {type === "add" && (
