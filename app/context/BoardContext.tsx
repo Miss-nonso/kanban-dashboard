@@ -1,6 +1,5 @@
 "use client";
 import { v4 as uuidv4 } from "uuid";
-
 import {
   createContext,
   useContext,
@@ -8,10 +7,6 @@ import {
   useEffect,
   ReactNode
 } from "react";
-import {
-  getFromLocalStorage,
-  setToLocalStorage
-} from "../utils/helpers/helpers";
 import { BoardProps } from "../utils/interface";
 import { staticBoards } from "@/public/assets/data";
 import { useRouter } from "next/navigation";
@@ -30,6 +25,21 @@ interface BoardContextProps {
   ) => void;
 }
 
+// ✅ Safe localStorage helpers
+const setToLocalStorage = (key: string, value: BoardProps[]) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+};
+
+const getFromLocalStorage = (key: string): BoardProps[] | null => {
+  if (typeof window !== "undefined") {
+    const JSONBoard = localStorage.getItem(key);
+    return JSONBoard ? JSON.parse(JSONBoard) : null;
+  }
+  return null;
+};
+
 const BoardContext = createContext<BoardContextProps | undefined>(undefined);
 
 export function BoardProvider({ children }: { children: ReactNode }) {
@@ -38,20 +48,28 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     getFromLocalStorage("boards") || staticBoards
   );
 
+  // ✅ On mount: load from localStorage or fallback to staticBoards
+  useEffect(() => {
+    const storedBoards = getFromLocalStorage("boards");
+    if (storedBoards) {
+      setBoards(storedBoards);
+    } else {
+      setBoards(staticBoards);
+      setToLocalStorage("boards", staticBoards);
+    }
+  }, []);
+
+  // ✅ Whenever boards change: update localStorage
   useEffect(() => {
     setToLocalStorage("boards", boards);
   }, [boards]);
 
   const updateBoards = (newBoards: BoardProps[]) => {
     setBoards(newBoards);
-    setToLocalStorage("boards", newBoards);
   };
 
   const getCurrentBoard = (id: string) => {
-    if (id) {
-      const board = boards.find((board: BoardProps) => board._id === id);
-      return board;
-    }
+    return boards.find((board) => board._id === id);
   };
 
   const createNewBoard = (boardObj: Omit<BoardProps, "_id">) => {
@@ -61,46 +79,38 @@ export function BoardProvider({ children }: { children: ReactNode }) {
         _id: uuidv4()
       };
 
-      boards.push(newBoard);
+      const updated = [...boards, newBoard];
+      updateBoards(updated);
 
       router.push(
         `/boards/${newBoard._id}/${newBoard.name.replace(/ /g, "-")}`
       );
     }
-
-    updateBoards(boards);
   };
 
   const editBoard = (updatedBoard: BoardProps[]) => {
     updateBoards(updatedBoard);
   };
+
   const editTask = (updatedBoard: BoardProps[]) => {
     updateBoards(updatedBoard);
   };
 
-  const deleteBoard = (indexOfBoardToDelete: number) => {
-    boards.splice(indexOfBoardToDelete, 1);
+  const deleteBoard = (index: number) => {
+    const updated = [...boards];
+    updated.splice(index, 1);
 
-    if (
-      (!boards[indexOfBoardToDelete - 1] || !boards[0]) &&
-      (!boards[indexOfBoardToDelete - 1] || !boards[0])
-    ) {
-      router.push(`/`);
-    } else {
+    updateBoards(updated);
+
+    const fallback = updated[index - 1] || updated[index] || updated[0] || null;
+
+    if (fallback) {
       router.push(
-        `/boards/${
-          boards[indexOfBoardToDelete - 1]._id ||
-          boards[indexOfBoardToDelete + 1] ||
-          boards[0]._id
-        }/${
-          boards[indexOfBoardToDelete - 1].name.replace(/ /g, "-") ||
-          boards[indexOfBoardToDelete + 1].name.replace(/ /g, "-") ||
-          boards[0].name.replace(/ /g, "-")
-        }`
+        `/boards/${fallback._id}/${fallback.name.replace(/ /g, "-")}`
       );
+    } else {
+      router.push(`/`);
     }
-
-    return updateBoards(boards);
   };
 
   const deleteTask = (
@@ -108,17 +118,24 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     currentBoard: BoardProps,
     currentColumnName: string
   ) => {
-    boards.map(
-      (board: BoardProps) =>
-        board._id === currentBoard._id &&
-        board.columns.map(
-          (col) =>
-            col.name.toLowerCase() === currentColumnName.toLowerCase() &&
-            col.tasks.splice(taskIndex, 1)
-        )
-    );
+    const updatedBoards = boards.map((board) => {
+      if (board._id === currentBoard._id) {
+        return {
+          ...board,
+          columns: board.columns.map((col) => {
+            if (col.name.toLowerCase() === currentColumnName.toLowerCase()) {
+              const updatedTasks = [...col.tasks];
+              updatedTasks.splice(taskIndex, 1);
+              return { ...col, tasks: updatedTasks };
+            }
+            return col;
+          })
+        };
+      }
+      return board;
+    });
 
-    return updateBoards(boards);
+    updateBoards(updatedBoards);
   };
 
   return (

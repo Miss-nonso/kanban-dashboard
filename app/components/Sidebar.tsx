@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import Toggle from "./Toggle";
 import { useModal } from "../context/ModalContext";
 import BoardModal from "./ModalContent/BoardModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BoardProps } from "../utils/interface";
 import { useBoards } from "../context/BoardContext";
 
@@ -17,7 +17,12 @@ const Sidebar = () => {
   const { handleModalOpen } = useModal();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [savedBoards, setSavedBoards] = useState<BoardProps[]>([]);
+  const [isClient, setIsClient] = useState(false);
   const { boards } = useBoards();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleOpenModal = () => {
     if (boards) {
@@ -33,12 +38,12 @@ const Sidebar = () => {
       </div>
 
       <p className="board-length">
-        ALL BOARDS <span>({boards && boards.length})</span>
+        ALL BOARDS <span>({isClient && boards.length})</span>
       </p>
 
       <div className="boards-wrapper">
         <ul>
-          {boards &&
+          {isClient &&
             boards.map(({ name, _id }: { name: string; _id: string }) => (
               <Link
                 href={`/boards/${_id}/${name.replace(/ /g, "-")}`}

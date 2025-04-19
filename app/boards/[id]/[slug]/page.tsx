@@ -6,7 +6,6 @@ import InvalidURL from "@/app/components/InvalidURL";
 import Modal from "@/app/components/Modal";
 import { useBoards } from "@/app/context/BoardContext";
 import { useModal } from "@/app/context/ModalContext";
-// import { getCurrentBoard } from "@/app/utils/helpers/FindBoard";
 
 import { BoardProps } from "@/app/utils/interface";
 
@@ -32,6 +31,7 @@ const Main = () => {
   useEffect(() => {
     if (id) {
       const foundBoard = getCurrentBoard(`${id}`);
+      console.log({ currentBoard: getCurrentBoard(`${id}`) });
 
       if (!foundBoard) {
         setInvalidURL(true);
