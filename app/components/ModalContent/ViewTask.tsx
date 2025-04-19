@@ -19,7 +19,6 @@ const ViewTask = () => {
   const [statusList, setStatusList] = useState<string[]>([]);
   const [status, setStatus] = useState("");
   const item = modalValue?.item;
-  console.log({ viewtask: modalValue });
 
   const validTaskTuple = isTaskTuple(item);
   const task = validTaskTuple ? item[1] : null;

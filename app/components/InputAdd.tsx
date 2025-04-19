@@ -7,23 +7,19 @@ type InputAddProps = {
   type: "add" | "edit";
   taskOrBoard: "task" | "board";
   // setShouldRender: React.Dispatch<React.SetStateAction<React.ReactElement[]>>;
-  shouldRender?: React.ReactElement[];
+  // shouldRender?: React.ReactElement[];
+  // index?: number;
 };
 
 const InputAdd = ({
   inputCount,
-  // id,
   value,
   type,
-  // taskToEdit,
-  // setTaskToEdit,
-  // subtask,
+  // shouldRender,
+  // setShouldRender,
+  // index,
   taskOrBoard
-}: // setShouldRender,
-// shouldRender,
-// onChange,
-// handleDeleteInput
-InputAddProps) => {
+}: InputAddProps) => {
   const [inputText, setInputText] = useState(type === "edit" ? value : "");
   // const [cancelImgs, setCancelImgs] = useState(
   //   document.querySelectorAll(".cancel-input")
@@ -32,6 +28,15 @@ InputAddProps) => {
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     return setInputText(e.target.value);
   };
+
+  // const handleDeleteInput = (e, idx: number) => {
+  //   e.preventDefault();
+
+  //   console.log({ target: e.target, idx });
+  //   const newRender = shouldRender?.splice(idx, 1);
+  //   setShouldRender(shouldRender);
+  //   console.log({ shouldRender, newRender });
+  // };
 
   return (
     <div className="col-input-wrapper relative">
@@ -54,14 +59,17 @@ InputAddProps) => {
         Can&apos;t be empty
       </p>
 
-      <Image
-        className="cursor-pointer cancel-input"
-        src="/assets/icons/icon-cross.svg"
-        alt="cancel"
-        width={14.48}
-        height={14.48}
-        // onClick={() => handleDeleteInput(id)}
-      />
+      <button className="cancel-input">
+        {" "}
+        <Image
+          className="cursor-pointer cancel-input"
+          src="/assets/icons/icon-cross.svg"
+          alt="cancel"
+          width={14.48}
+          height={14.48}
+          // onClick={(e) => handleDeleteInput(e, index)}
+        />
+      </button>
     </div>
   );
 };

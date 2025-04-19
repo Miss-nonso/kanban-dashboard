@@ -16,10 +16,12 @@ const Main = () => {
   const [invalidURL, setInvalidURL] = useState(false);
   const [headerName, setHeaderName] = useState("");
   const [board, setBoard] = useState<BoardProps | null>(null);
+  // const [isClient, setIsClient] = useState(false);
+
   const params = useParams();
   const { id } = params;
   const { openModal, modalValue } = useModal();
-  const { getCurrentBoard } = useBoards();
+  const { getCurrentBoard, boards } = useBoards();
 
   const extractHeaderName = (board: BoardProps | null) => {
     if (!board) {
@@ -28,10 +30,13 @@ const Main = () => {
     return board.name.toString();
   };
 
+  // useEffect(() => {
+  //   setIsClient(true);
+  // }, []);
+
   useEffect(() => {
     if (id) {
       const foundBoard = getCurrentBoard(`${id}`);
-      console.log({ currentBoard: getCurrentBoard(`${id}`) });
 
       if (!foundBoard) {
         setInvalidURL(true);
@@ -40,8 +45,9 @@ const Main = () => {
       setHeaderName(extractHeaderName(foundBoard));
       setBoard(foundBoard);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, boards]);
 
   return (
     <div>

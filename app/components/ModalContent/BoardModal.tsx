@@ -17,6 +17,7 @@ type BoardModalProps = {
 const BoardModal = ({ type }: BoardModalProps) => {
   const allInputs = document.getElementsByName(`${type}`);
   const cancelInputElements = document.getElementsByClassName("cancel-input");
+  // const inputWrapper = document.getElementsByClassName("col-input-wrapper");
   const params = useParams();
   const { id } = params;
   const { modalValue, modalRef, closeModal } = useModal();
@@ -42,6 +43,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
                 type={type}
                 taskOrBoard="board"
                 key={index}
+                // index={index}
               />
             )
           })
@@ -64,10 +66,34 @@ const BoardModal = ({ type }: BoardModalProps) => {
     }
   );
 
-  const handleSubmitBoardForm = (
+  // useEffect(() => {
+  //   setShouldRender(shouldRender);
+  // }, [shouldRender]);
+
+  useEffect(() => {
+    [...allInputs].forEach((el, index) =>
+      el.addEventListener("keydown", () => {
+        errMsgs = document.querySelectorAll(".input-error");
+        errMsgs[index].classList.add("hidden");
+        el.classList.remove("error");
+      })
+    );
+
+    // [...cancelInputElements].forEach((el, index) =>
+    //   el.addEventListener("click", handleInputDelete(index))
+    // );
+  });
+
+  // function handleInputDelete(index: number) {
+  //   [...inputWrapper].splice(index, 1);
+  // }
+
+  console.log({ shouldRenderInModal: shouldRender });
+
+  function handleSubmitBoardForm(
     e: FormEvent<HTMLFormElement>,
     type?: "add" | "edit"
-  ) => {
+  ) {
     e.preventDefault();
     const columnValues: string[] = [];
 
@@ -125,7 +151,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
       createNewBoard(boardObj);
       closeModal();
     }
-  };
+  }
 
   const addComponent = () => {
     const newId = Date.now();
@@ -146,19 +172,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
     ]);
   };
 
-  useEffect(() => {
-    [...allInputs].forEach((el, index) =>
-      el.addEventListener("keydown", () => {
-        errMsgs = document.querySelectorAll(".input-error");
-        errMsgs[index].classList.add("hidden");
-        el.classList.remove("error");
-      })
-    );
-  });
-
-  const handleAddInput = (
-    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  function handleAddInput(e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     if (e) {
       e.preventDefault();
     }
@@ -181,7 +195,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
     if (emptyInputs.length < 1) {
       addComponent();
     }
-  };
+  }
 
   return (
     <div className="modal-content-wrapper" ref={modalRef}>
@@ -219,6 +233,9 @@ const BoardModal = ({ type }: BoardModalProps) => {
                     type={type === "edit" ? "edit" : "add"}
                     taskOrBoard="board"
                     key={index}
+                    // index={index}
+                    // setShouldRender={setShouldRender}
+                    // shouldRender={shouldRender}
                   />
                 ))}
             </div>

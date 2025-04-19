@@ -48,7 +48,6 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     getFromLocalStorage("boards") || staticBoards
   );
 
-  // ✅ On mount: load from localStorage or fallback to staticBoards
   useEffect(() => {
     const storedBoards = getFromLocalStorage("boards");
     if (storedBoards) {
@@ -59,13 +58,13 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // ✅ Whenever boards change: update localStorage
   useEffect(() => {
     setToLocalStorage("boards", boards);
   }, [boards]);
 
   const updateBoards = (newBoards: BoardProps[]) => {
     setBoards(newBoards);
+    setToLocalStorage("boards", newBoards);
   };
 
   const getCurrentBoard = (id: string) => {
