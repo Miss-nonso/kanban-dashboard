@@ -4,6 +4,8 @@ import Dropdown from "../Dropdown";
 import { useModal } from "@/app/context/ModalContext";
 import { ColumnProps, TaskProps } from "@/app/utils/interface";
 import { ItemType } from "@/app/utils/types";
+import { useBoards } from "@/app/context/BoardContext";
+import { useParams } from "next/navigation";
 
 export const isTaskTuple = (
   item: ItemType
@@ -14,7 +16,10 @@ export const isTaskTuple = (
   typeof item[1] === "object";
 
 const ViewTask = () => {
-  const { modalValue, modalRef } = useModal();
+  const { modalValue, modalRef, closeModal } = useModal();
+  const { boards, editBoard } = useBoards();
+  const params = useParams();
+  const { id } = params;
   const [displayDropdown, setDisplayDropdown] = useState(false);
   const [statusList, setStatusList] = useState<string[]>([]);
   const [status, setStatus] = useState("");
@@ -22,6 +27,7 @@ const ViewTask = () => {
 
   const validTaskTuple = isTaskTuple(item);
   const task = validTaskTuple ? item[1] : null;
+  const taskIndex = modalValue?.index;
 
   useEffect(() => {
     const columns = validTaskTuple ? item[0] : [];
@@ -42,6 +48,42 @@ const ViewTask = () => {
 
   const getCompleteTasks = () =>
     taskToDisplay.subtasks.filter((subtask) => subtask.isCompleted).length;
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newColumnName = e.target.value;
+    const prevColumn = task.status || statusList[0];
+
+    const newBoards = [...boards];
+    const board = newBoards.find((board) => board._id === id);
+
+    if (!board) {
+      return;
+    }
+
+    const column = board.columns.find(
+      (col) => col.name.toLowerCase() === prevColumn.toLowerCase()
+    );
+
+    if (!column || typeof taskIndex === "undefined") {
+      return;
+    }
+
+    const modifiedTask = column.tasks.splice(taskIndex, 1)[0];
+    modifiedTask.status = newColumnName;
+
+    const newColumn = board.columns.find(
+      (col) => col.name.toLowerCase() === newColumnName.toLowerCase()
+    );
+
+    if (!newColumn) {
+      return;
+    }
+
+    newColumn.tasks.push(modifiedTask);
+
+    editBoard(newBoards);
+    closeModal();
+  };
 
   return (
     <div className="modal-content-wrapper" ref={modalRef}>
@@ -89,7 +131,7 @@ const ViewTask = () => {
           name="status"
           id="status"
           value={status.toLowerCase()}
-          // onChange={handleStatusChange}
+          onChange={handleStatusChange}
         >
           <option value="">Select status</option>
           {statusList.map((columnName, index) => (

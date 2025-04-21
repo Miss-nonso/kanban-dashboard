@@ -208,8 +208,6 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
   ) => {
     e.preventDefault();
 
-    console.log({ intaskSubmitFunc: type });
-
     let currentColumn: ColumnProps[] = [];
     let taskToEditItem: TaskProps | undefined;
 
@@ -280,7 +278,6 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
               })
           );
 
-          console.log({ boards });
           editTask(boards);
           closeModal();
         } else {

@@ -1,11 +1,19 @@
 "use client";
 
 import React from "react";
-import { ColumnProps, SubtaskProps, TaskProps } from "../utils/interface";
+import {
+  ColumnProps,
+  // BoardProps,
+  // ColumnProps,
+  SubtaskProps,
+  TaskProps
+} from "../utils/interface";
 import { useModal } from "../context/ModalContext";
 import ViewTask from "./ModalContent/ViewTask";
 import { useParams } from "next/navigation";
 import { useBoards } from "../context/BoardContext";
+// import { useParams } from "next/navigation";
+// import { useBoards } from "../context/BoardContext";
 
 type TaskCardProps = { task: TaskProps; index: number };
 

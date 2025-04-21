@@ -10,5 +10,6 @@ export type ItemType =
   | [BoardProps, TaskProps]
   | [ColumnProps[]]
   | [ColumnProps[], TaskProps]
+  | [string, TaskProps]
   | [ColumnProps[], number]
   | undefined;
