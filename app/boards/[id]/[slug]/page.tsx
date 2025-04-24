@@ -4,6 +4,7 @@ import Board from "@/app/components/Board";
 import Header from "@/app/components/Header";
 import InvalidURL from "@/app/components/InvalidURL";
 import Modal from "@/app/components/Modal";
+import NoColumn from "@/app/components/NoColumn";
 import { useBoards } from "@/app/context/BoardContext";
 import { useModal } from "@/app/context/ModalContext";
 
@@ -56,10 +57,10 @@ const Main = () => {
       {!invalidURL && <Header boardName={headerName} />}
 
       {!invalidURL ? (
-        board?.columns ? (
+        board?.columns && board?.columns.length > 0 ? (
           <Board columns={board.columns} />
         ) : (
-          ""
+          <NoColumn />
         )
       ) : (
         <InvalidURL />

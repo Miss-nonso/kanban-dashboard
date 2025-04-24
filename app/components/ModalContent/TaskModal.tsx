@@ -168,10 +168,10 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
 
       inputValues.map((val, index) => {
         if (index <= taskToEdit.subtasks.length - 1 && val) {
-          taskToEdit.subtasks[index].title = val;
+          taskToEdit.subtasks[index].title = val.trim();
         } else {
           const subtaskData: SubtaskProps = {
-            title: val,
+            title: val.trim(),
             isCompleted: false
           };
           taskToEdit.subtasks.push(subtaskData);
@@ -193,7 +193,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
 
         const subtasks = inputValues.map((val, index) => {
           return {
-            title: val,
+            title: val.trim(),
             isCompleted: taskToEdit.subtasks[index].isCompleted
           };
         });

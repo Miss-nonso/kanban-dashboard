@@ -9,6 +9,8 @@ type ColumnPropsType = { columns: ColumnProps[] };
 
 const Board = ({ columns }: ColumnPropsType) => {
   const { showSidebar } = useSidebar();
+
+  console.log({ columns });
   return (
     <div className={`board ${showSidebar && "ml-[19rem]"}`}>
       {columns &&
@@ -30,7 +32,7 @@ const Board = ({ columns }: ColumnPropsType) => {
             <Column column={col} />
           </div>
         ))}
-      <EmptyColumn />
+      {columns.length > 0 && <EmptyColumn />}
     </div>
   );
 };

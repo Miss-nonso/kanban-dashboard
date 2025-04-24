@@ -1,6 +1,6 @@
 "use client";
 
-import { BoardProps, ColumnProps } from "@/app/utils/interface";
+import { BoardProps } from "@/app/utils/interface";
 import React, { FormEvent, useState } from "react";
 import Button from "../Button";
 import InputAdd from "../InputAdd";
@@ -23,14 +23,21 @@ const BoardModal = ({ type }: BoardModalProps) => {
       modalValue?.item &&
       "columns" in modalValue.item
     ) {
-      return modalValue.item.columns.map((col) => col.name);
+      if (type === "edit") {
+        return modalValue.item.columns.map((col) => col.name);
+      } else if (type === "addColumn") {
+        const columnNames = modalValue.item.columns.map((col) => col.name);
+        return [...columnNames, ""];
+      } else {
+        return [""];
+      }
     } else {
       return [""];
     }
   });
 
-  // FIX EDIT BOARD TO REMOVE COLUMNS THAT ARE REMOVED ON THE FORM
-  console.log({ modalValue, type });
+  // FIX: EDIT BOARD TO REMOVE COLUMNS THAT ARE REMOVED ON THE FORM
+
   const [boardname, setBoardname] = useState<string>(() => {
     if (
       (type === "edit" || type === "addColumn") &&
@@ -43,26 +50,17 @@ const BoardModal = ({ type }: BoardModalProps) => {
     }
   });
 
-  console.log(
-    inputValues.length >= 1,
-    inputValues.every(Boolean),
-    inputErrors.every((err) => err === ""),
-    boardname.length > 2
-  );
-
-  console.log({ inputErrors });
-
   const formValid =
-    inputValues.length >= 1 &&
+    // inputValues.length >= 1 &&
     inputValues.every(Boolean) &&
     inputErrors.every((err) => !err) &&
     (type === "addColumn" ? boardname.length > 2 : true);
 
   function deleteInput(index: number) {
-    if (inputValues.length > 1) {
-      setInputValues((prev) => prev.filter((_, idx) => idx !== index));
-      setInputErrors((prev) => prev.filter((_, idx) => idx !== index));
-    }
+    // if (inputValues.length > 1) {
+    setInputValues((prev) => prev.filter((_, idx) => idx !== index));
+    setInputErrors((prev) => prev.filter((_, idx) => idx !== index));
+    // }
   }
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
@@ -101,11 +99,8 @@ const BoardModal = ({ type }: BoardModalProps) => {
 
       columnValues.map((colVal, index) => {
         if (index > currentBoard.columns.length - 1) {
-          const columnData: ColumnProps = {
-            name: colVal,
-            tasks: []
-          };
-          currentBoard.columns.push(columnData);
+          const columnItem = { name: colVal, tasks: [] };
+          currentBoard.columns.push(columnItem);
         } else {
           currentBoard.columns[index].name = colVal;
         }
@@ -166,27 +161,16 @@ const BoardModal = ({ type }: BoardModalProps) => {
       <form action="" onSubmit={(e) => handleSubmitBoardForm(e, type)}>
         <div className="form-input-wrapper">
           <label htmlFor="boardName">Name</label>
-          {type === "addColumn" ? (
-            <input
-              type="text"
-              name="boardName"
-              id="boardName"
-              required
-              value={boardname}
-              onChange={(e) => setBoardname(e.target.value)}
-              disabled
-            />
-          ) : (
-            <input
-              type="text"
-              name="boardName"
-              id="boardName"
-              placeholder={type === "add" ? "e.g. Web Design" : ""}
-              required
-              value={boardname}
-              onChange={(e) => setBoardname(e.target.value)}
-            />
-          )}
+
+          <input
+            type="text"
+            name="boardName"
+            id="boardName"
+            required
+            value={boardname}
+            onChange={(e) => setBoardname(e.target.value)}
+            disabled={type === "addColumn"}
+          />
         </div>
 
         <div>
@@ -203,6 +187,12 @@ const BoardModal = ({ type }: BoardModalProps) => {
                     key={index}
                     deleteInput={() => deleteInput(index)}
                     onChange={(e) => onChange(e, index)}
+                    disabled={
+                      modalValue?.item &&
+                      "columns" in modalValue.item &&
+                      type === "addColumn" &&
+                      index <= modalValue.item.columns.length - 1
+                    }
                   />
                 ))}
             </div>

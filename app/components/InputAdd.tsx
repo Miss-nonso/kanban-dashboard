@@ -6,6 +6,7 @@ type InputAddProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   deleteInput: () => void;
   error: string;
+  disabled?: boolean;
 };
 
 const InputAdd = ({
@@ -13,7 +14,8 @@ const InputAdd = ({
   type,
   onChange,
   deleteInput,
-  error
+  error,
+  disabled
 }: InputAddProps) => {
   return (
     <div className="col-input-wrapper relative">
@@ -22,7 +24,8 @@ const InputAdd = ({
         name={type}
         value={value}
         onChange={onChange}
-        className={`${error ? "error" : ""}`}
+        className={`${error && "error"} disabled:opacity-50`}
+        disabled={disabled}
       />
       <small className="input-error absolute right-14 text-red-500 text-[14px]">
         {error}
