@@ -4,8 +4,12 @@
 
 form input,
 textarea {
-  @apply text-[var(--textcolor)];
+  @apply text-[var(--textcolor)] disabled:opacity-20;
 }
+
+/* input:disabled {
+  @apply border border-red-700;
+} */
 
 select,
 option {

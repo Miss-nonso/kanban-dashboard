@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 import { useBoards } from "@/app/context/BoardContext";
 
 type BoardModalProps = {
-  type?: "add" | "edit";
+  type?: "add" | "edit" | "addColumn";
 };
 const BoardModal = ({ type }: BoardModalProps) => {
   const params = useParams();
@@ -18,24 +18,45 @@ const BoardModal = ({ type }: BoardModalProps) => {
   const { createNewBoard, editBoard, boards } = useBoards();
   const [inputErrors, setInputErrors] = useState([""]);
   const [inputValues, setInputValues] = useState(() => {
-    if (type === "edit" && modalValue?.item && "columns" in modalValue.item) {
+    if (
+      (type === "edit" || type === "addColumn") &&
+      modalValue?.item &&
+      "columns" in modalValue.item
+    ) {
       return modalValue.item.columns.map((col) => col.name);
     } else {
       return [""];
     }
   });
+
+  // FIX EDIT BOARD TO REMOVE COLUMNS THAT ARE REMOVED ON THE FORM
+  console.log({ modalValue, type });
   const [boardname, setBoardname] = useState<string>(() => {
-    if (type === "edit" && modalValue?.item && "name" in modalValue.item) {
+    if (
+      (type === "edit" || type === "addColumn") &&
+      modalValue?.item &&
+      "name" in modalValue.item
+    ) {
       return modalValue.item.name;
+    } else {
+      return "";
     }
-    return "";
   });
+
+  console.log(
+    inputValues.length >= 1,
+    inputValues.every(Boolean),
+    inputErrors.every((err) => err === ""),
+    boardname.length > 2
+  );
+
+  console.log({ inputErrors });
 
   const formValid =
     inputValues.length >= 1 &&
     inputValues.every(Boolean) &&
-    inputErrors.every((err) => err === "") &&
-    boardname.length > 2;
+    inputErrors.every((err) => !err) &&
+    (type === "addColumn" ? boardname.length > 2 : true);
 
   function deleteInput(index: number) {
     if (inputValues.length > 1) {
@@ -61,10 +82,13 @@ const BoardModal = ({ type }: BoardModalProps) => {
 
   function handleSubmitBoardForm(
     e: FormEvent<HTMLFormElement>,
-    type?: "add" | "edit"
+    type?: "add" | "edit" | "addColumn"
   ) {
     e.preventDefault();
     const columnValues = inputValues.map((val) => val.trim());
+    if (type === "addColumn") {
+      type = "edit";
+    }
 
     if (type === "edit") {
       const currentBoard = boards.find((board: BoardProps) => board._id === id);
@@ -142,15 +166,27 @@ const BoardModal = ({ type }: BoardModalProps) => {
       <form action="" onSubmit={(e) => handleSubmitBoardForm(e, type)}>
         <div className="form-input-wrapper">
           <label htmlFor="boardName">Name</label>
-          <input
-            type="text"
-            name="boardName"
-            id="boardName"
-            placeholder={type === "add" ? "e.g. Web Design" : ""}
-            required
-            value={boardname}
-            onChange={(e) => setBoardname(e.target.value)}
-          />
+          {type === "addColumn" ? (
+            <input
+              type="text"
+              name="boardName"
+              id="boardName"
+              required
+              value={boardname}
+              onChange={(e) => setBoardname(e.target.value)}
+              disabled
+            />
+          ) : (
+            <input
+              type="text"
+              name="boardName"
+              id="boardName"
+              placeholder={type === "add" ? "e.g. Web Design" : ""}
+              required
+              value={boardname}
+              onChange={(e) => setBoardname(e.target.value)}
+            />
+          )}
         </div>
 
         <div>

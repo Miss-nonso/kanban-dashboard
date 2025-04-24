@@ -66,7 +66,6 @@ const ViewTask = () => {
     displayTask.subtasks.filter((subtask) => subtask.isCompleted).length;
 
   function handleTaskChange() {
-    console.log("changing task viw sgfs");
     const board = boards.find((board) => board._id === id);
     const prevStatus =
       task?.status.toLowerCase() || board?.columns[0].name.toLowerCase();
@@ -98,8 +97,6 @@ const ViewTask = () => {
         newColumn.tasks.push(displayTask);
       }
     }
-
-    console.log({ displayTask });
 
     editBoard(boards);
   }

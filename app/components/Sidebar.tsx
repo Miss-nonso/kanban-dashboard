@@ -10,6 +10,7 @@ import BoardModal from "./ModalContent/BoardModal";
 import { useState, useEffect } from "react";
 import { BoardProps } from "../utils/interface";
 import { useBoards } from "../context/BoardContext";
+import { useSidebar } from "../context/SidebarContext";
 
 const Sidebar = () => {
   const params = useParams();
@@ -19,6 +20,7 @@ const Sidebar = () => {
   const [savedBoards, setSavedBoards] = useState<BoardProps[]>([]);
   const [isClient, setIsClient] = useState(false);
   const { boards } = useBoards();
+  const { showSidebar, handleSidebar } = useSidebar();
 
   useEffect(() => {
     setIsClient(true);
@@ -32,59 +34,63 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="sidebar ">
-      <div className="logo-wrapper">
-        <Logo />
-      </div>
+    <>
+      {showSidebar && (
+        <aside className="sidebar ">
+          <div className="logo-wrapper">
+            <Logo />
+          </div>
 
-      <p className="board-length">
-        ALL BOARDS <span>({isClient && boards.length})</span>
-      </p>
+          <p className="board-length">
+            ALL BOARDS <span>({isClient && boards.length})</span>
+          </p>
 
-      <div className="boards-wrapper">
-        <ul>
-          {isClient &&
-            boards.map(({ name, _id }: { name: string; _id: string }) => (
-              <Link
-                href={`/boards/${_id}/${name.replace(/ /g, "-")}`}
-                key={_id}
-                className={id === _id ? "active" : ""}
-              >
+          <div className="boards-wrapper">
+            <ul>
+              {isClient &&
+                boards.map(({ name, _id }: { name: string; _id: string }) => (
+                  <Link
+                    href={`/boards/${_id}/${name.replace(/ /g, "-")}`}
+                    key={_id}
+                    className={id === _id ? "active" : ""}
+                  >
+                    <Image
+                      src="/assets/icons/icon-board.svg"
+                      alt="board"
+                      width={16}
+                      height={16}
+                    />
+                    <li>{name}</li>
+                  </Link>
+                ))}
+
+              <button onClick={handleOpenModal}>
                 <Image
                   src="/assets/icons/icon-board.svg"
                   alt="board"
                   width={16}
                   height={16}
                 />
-                <li>{name}</li>
-              </Link>
-            ))}
+                <span>+ Create New Board</span>
+              </button>
+            </ul>
 
-          <button onClick={handleOpenModal}>
-            <Image
-              src="/assets/icons/icon-board.svg"
-              alt="board"
-              width={16}
-              height={16}
-            />
-            <span>+ Create New Board</span>
-          </button>
-        </ul>
-
-        <div>
-          <Toggle />
-          <button>
-            <Image
-              src="/assets/icons/icon-hide-sidebar.svg"
-              alt="board"
-              width={16}
-              height={16}
-            />
-            <span>Hide Sidebar</span>
-          </button>
-        </div>
-      </div>
-    </aside>
+            <div>
+              <Toggle />
+              <button onClick={handleSidebar}>
+                <Image
+                  src="/assets/icons/icon-hide-sidebar.svg"
+                  alt="board"
+                  width={16}
+                  height={16}
+                />
+                <span>Hide Sidebar</span>
+              </button>
+            </div>
+          </div>
+        </aside>
+      )}
+    </>
   );
 };
 

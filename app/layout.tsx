@@ -5,6 +5,7 @@ import Sidebar from "./components/Sidebar";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ModalProvider } from "./context/ModalContext";
 import { BoardProvider } from "./context/BoardContext";
+import { SidebarProvider } from "./context/SidebarContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,11 +34,13 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <BoardProvider>
-            <ModalProvider>
-              <Sidebar />
+            <SidebarProvider>
+              <ModalProvider>
+                <Sidebar />
 
-              <main className="flex-1"> {children}</main>
-            </ModalProvider>
+                <main className="flex-1"> {children}</main>
+              </ModalProvider>
+            </SidebarProvider>
           </BoardProvider>
         </ThemeProvider>
       </body>

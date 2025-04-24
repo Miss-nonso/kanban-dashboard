@@ -51,7 +51,7 @@ html.light {
 }
 
 header {
-  @apply bg-[var(--foreground)] flex justify-between py-6 px-2 ml-[18.75rem] fixed top-0 right-0 left-0 text-[var(--textcolor)];
+  @apply bg-[var(--foreground)] flex justify-between py-6   fixed top-0 right-0 left-0 text-[var(--textcolor)];
 }
 
 body {
@@ -108,7 +108,7 @@ button {
 } */
 
 .sidebar {
-  @apply bg-[var(--foreground)] h-[100vh] min-w-[18.75rem] pr-6 gap-4 fixed bottom-0 top-0 left-0;
+  @apply bg-[var(--foreground)] h-[100vh] min-w-[18.75rem] pr-6 gap-4 fixed bottom-0 top-0 left-0 transition-all duration-1000 ease-linear;
   /* color: var(--textcolor); */
 }
 
@@ -163,8 +163,9 @@ button {
 }
 
 .board {
-  @apply ml-[19rem] pl-[2rem] pr-[7rem] mt-[6rem] pt-[2rem] pb-[20rem] h-[100vh] overflow-x-scroll overflow-y-scroll  flex gap-6;
-  width: calc(100vw - 20rem);
+  @apply pl-[2rem] pr-[7rem] mt-[6rem] pt-[2rem] pb-[20rem] w-full  overflow-x-auto overflow-y-scroll  flex gap-6;
+  /* width: calc(100vw - 20rem); */
+  height: calc(100vh - 7rem);
 }
 
 .column-wrapper {

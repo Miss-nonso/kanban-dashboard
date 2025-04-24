@@ -3,12 +3,14 @@ import Column from "./Column";
 import { ColumnProps } from "../utils/interface";
 import EmptyColumn from "./EmptyColumn";
 import { indicatorColors } from "../lib/lib";
+import { useSidebar } from "../context/SidebarContext";
 
 type ColumnPropsType = { columns: ColumnProps[] };
 
 const Board = ({ columns }: ColumnPropsType) => {
+  const { showSidebar } = useSidebar();
   return (
-    <div className="board">
+    <div className={`board ${showSidebar && "ml-[19rem]"}`}>
       {columns &&
         columns.map((col, index) => (
           <div key={index}>
