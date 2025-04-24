@@ -25,7 +25,6 @@ interface BoardContextProps {
   ) => void;
 }
 
-// ✅ Safe localStorage helpers
 const setToLocalStorage = (key: string, value: BoardProps[]) => {
   if (typeof window !== "undefined") {
     localStorage.setItem(key, JSON.stringify(value));

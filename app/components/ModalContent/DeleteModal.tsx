@@ -36,9 +36,11 @@ const DeleteModal = ({ taskOrBoard }: DeleteModalProps) => {
     );
   }
 
+  console.log({ modalValue: modalValue?.item });
+
   const itemName =
     taskOrBoard === "task"
-      ? "Task title"
+      ? isTaskTuple(modalValue?.item) && modalValue.item[1].title
       : isValidObj(modalValue?.item) && modalValue?.item
       ? modalValue?.item?.name
       : "";
@@ -81,8 +83,12 @@ const DeleteModal = ({ taskOrBoard }: DeleteModalProps) => {
       <h5>Delete this {taskOrBoard === "task" ? "task" : "board"}?</h5>
 
       <p>
-        Are you sure you want to delete the ‘{itemName}’ {taskOrBoard}? This
-        action will remove all columns and tasks and cannot be reversed.
+        Are you sure you want to delete the{" "}
+        <span className="text-[var(--darkpurple)]">
+          &apos;{itemName}&apos;{" "}
+        </span>
+        {taskOrBoard}? This action will remove all columns and tasks and cannot
+        be reversed.
       </p>
 
       <div className="btns-wrapper">

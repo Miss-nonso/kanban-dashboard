@@ -37,7 +37,7 @@ const Dropdown = ({
               setDisplayDropdown(false);
 
               if (taskOrBoard === "task" && id && taskItem) {
-                return handleModalOpen(<TaskModal type="edit" />, 0, [
+                return handleModalOpen(<TaskModal type="edit" />, taskIndex, [
                   getCurrentBoard(`${id}`)?.columns || [],
                   taskItem
                 ]);

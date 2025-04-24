@@ -1,68 +1,34 @@
-import React, { useState } from "react";
 import Image from "next/image";
 
 type InputAddProps = {
-  inputCount?: number;
   value: string;
   type: "add" | "edit";
-  taskOrBoard: "task" | "board";
-  // setShouldRender: React.Dispatch<React.SetStateAction<React.ReactElement[]>>;
-  // shouldRender?: React.ReactElement[];
-  // index?: number;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  deleteInput: () => void;
+  error: string;
 };
 
 const InputAdd = ({
-  inputCount,
   value,
   type,
-  // shouldRender,
-  // setShouldRender,
-  // index,
-  taskOrBoard
+  onChange,
+  deleteInput,
+  error
 }: InputAddProps) => {
-  const [inputText, setInputText] = useState(type === "edit" ? value : "");
-  // const [cancelImgs, setCancelImgs] = useState(
-  //   document.querySelectorAll(".cancel-input")
-  // );
-
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    return setInputText(e.target.value);
-  };
-
-  const handleDeleteInput = (
-    e: React.MouseEvent<HTMLButtonElement>
-    // idx: number
-  ) => {
-    e.preventDefault();
-
-    console.log({ target: e.target });
-    // const newRender = shouldRender?.splice(idx, 1);
-    // setShouldRender(shouldRender);
-    // console.log({ shouldRender, newRender });
-  };
-
   return (
     <div className="col-input-wrapper relative">
       <input
         type="text"
         name={type}
-        placeholder={
-          taskOrBoard === "task"
-            ? inputCount === 0
-              ? "e.g. Make coffee"
-              : inputCount === 1
-              ? "e.g. Drink coffee & smile"
-              : ""
-            : ""
-        }
-        value={inputText}
-        onChange={(e) => handleOnChange(e)}
+        value={value}
+        onChange={onChange}
+        className={`${error ? "error" : ""}`}
       />
-      <p className="input-error absolute right-14 text-red-500 text-[14px] hidden">
-        Can&apos;t be empty
-      </p>
+      <small className="input-error absolute right-14 text-red-500 text-[14px]">
+        {error}
+      </small>
 
-      <button className="cancel-input" onClick={(e) => handleDeleteInput(e)}>
+      <button className="cancel-input" type="button" onClick={deleteInput}>
         {" "}
         <Image
           className="cursor-pointer cancel-input"

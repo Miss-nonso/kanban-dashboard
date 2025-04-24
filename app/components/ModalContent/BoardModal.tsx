@@ -1,29 +1,29 @@
 "use client";
 
 import { BoardProps, ColumnProps } from "@/app/utils/interface";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import Button from "../Button";
 import InputAdd from "../InputAdd";
-import { JSX } from "react";
 import { useModal } from "@/app/context/ModalContext";
-// import boards from "@/public/assets/data";
 import { useParams } from "next/navigation";
 import { useBoards } from "@/app/context/BoardContext";
-let errMsgs;
 
 type BoardModalProps = {
   type?: "add" | "edit";
 };
 const BoardModal = ({ type }: BoardModalProps) => {
-  const allInputs = document.getElementsByName(`${type}`);
-  const cancelInputElements = document.getElementsByClassName("cancel-input");
-  // const inputWrapper = document.getElementsByClassName("col-input-wrapper");
   const params = useParams();
   const { id } = params;
   const { modalValue, modalRef, closeModal } = useModal();
   const { createNewBoard, editBoard, boards } = useBoards();
-
-  console.log({ cancelInputElements });
+  const [inputErrors, setInputErrors] = useState([""]);
+  const [inputValues, setInputValues] = useState(() => {
+    if (type === "edit" && modalValue?.item && "columns" in modalValue.item) {
+      return modalValue.item.columns.map((col) => col.name);
+    } else {
+      return [""];
+    }
+  });
   const [boardname, setBoardname] = useState<string>(() => {
     if (type === "edit" && modalValue?.item && "name" in modalValue.item) {
       return modalValue.item.name;
@@ -31,104 +31,65 @@ const BoardModal = ({ type }: BoardModalProps) => {
     return "";
   });
 
-  const [shouldRender, setShouldRender] = useState<{ element: JSX.Element }[]>(
-    () => {
-      if (type === "edit" && modalValue?.item && "columns" in modalValue.item) {
-        return modalValue.item.columns.map(
-          (col: ColumnProps, index: number) => ({
-            element: (
-              <InputAdd
-                value={col.name}
-                inputCount={index}
-                type={type}
-                taskOrBoard="board"
-                key={index}
-                // index={index}
-              />
-            )
-          })
-        );
-      }
+  const formValid =
+    inputValues.length >= 1 &&
+    inputValues.every(Boolean) &&
+    inputErrors.every((err) => err === "") &&
+    boardname.length > 2;
 
-      return [
-        {
-          element: (
-            <InputAdd
-              value=""
-              inputCount={0}
-              type={type === "edit" ? "edit" : "add"}
-              taskOrBoard="board"
-              key={0}
-            />
-          )
-        }
-      ];
+  function deleteInput(index: number) {
+    if (inputValues.length > 1) {
+      setInputValues((prev) => prev.filter((_, idx) => idx !== index));
+      setInputErrors((prev) => prev.filter((_, idx) => idx !== index));
     }
-  );
+  }
 
-  // useEffect(() => {
-  //   setShouldRender(shouldRender);
-  // }, [shouldRender]);
+  function onChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
+    const value = e.target.value;
 
-  useEffect(() => {
-    [...allInputs].forEach((el, index) =>
-      el.addEventListener("keydown", () => {
-        errMsgs = document.querySelectorAll(".input-error");
-        errMsgs[index].classList.add("hidden");
-        el.classList.remove("error");
-      })
-    );
-
-    // [...cancelInputElements].forEach((el, index) =>
-    //   el.addEventListener("click", handleInputDelete(index))
-    // );
-  });
-
-  // function handleInputDelete(index: number) {
-  //   [...inputWrapper].splice(index, 1);
-  // }
-
-  console.log({ shouldRenderInModal: shouldRender });
+    setInputValues((prev) => {
+      const prevCopy = [...prev];
+      prevCopy[index] = value;
+      return prevCopy;
+    });
+    setInputErrors((prev) => {
+      const prevCopy = [...prev];
+      prevCopy[index] = "";
+      return prevCopy;
+    });
+  }
 
   function handleSubmitBoardForm(
     e: FormEvent<HTMLFormElement>,
     type?: "add" | "edit"
   ) {
     e.preventDefault();
-    const columnValues: string[] = [];
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const columnInputValues = [...allInputs].map((input) => {
-      const inputElement = input as HTMLInputElement;
-
-      if (inputElement.value) {
-        columnValues.push(inputElement.value.trim());
-      }
-      return columnValues;
-    });
+    const columnValues = inputValues.map((val) => val.trim());
 
     if (type === "edit") {
       const currentBoard = boards.find((board: BoardProps) => board._id === id);
 
-      if (currentBoard) {
-        currentBoard.name = boardname;
-
-        columnValues.map((colVal, index) => {
-          if (index > currentBoard.columns.length - 1) {
-            const columnData: ColumnProps = {
-              name: colVal,
-              tasks: []
-            };
-            currentBoard.columns.push(columnData);
-          } else {
-            currentBoard.columns[index].name = colVal;
-          }
-        });
-
-        editBoard(boards);
-
-        closeModal();
+      if (!currentBoard) {
+        return;
       }
+
+      currentBoard.name = boardname;
+
+      columnValues.map((colVal, index) => {
+        if (index > currentBoard.columns.length - 1) {
+          const columnData: ColumnProps = {
+            name: colVal,
+            tasks: []
+          };
+          currentBoard.columns.push(columnData);
+        } else {
+          currentBoard.columns[index].name = colVal;
+        }
+      });
+
+      editBoard(boards);
+
+      closeModal();
     } else {
       const boardObj: Omit<BoardProps, "_id"> = {
         name: boardname
@@ -153,47 +114,24 @@ const BoardModal = ({ type }: BoardModalProps) => {
     }
   }
 
-  const addComponent = () => {
-    const newId = Date.now();
-    setShouldRender((prev) => [
-      ...prev,
-      {
-        id: newId,
-        element: (
-          <InputAdd
-            value=""
-            type={type === "edit" ? "edit" : "add"}
-            taskOrBoard="board"
-            key={newId}
-            inputCount={prev.length}
-          />
-        )
-      }
-    ]);
-  };
-
   function handleAddInput(e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    if (e) {
-      e.preventDefault();
-    }
+    e?.preventDefault();
 
-    [...allInputs].forEach((input, index) => {
-      const inputElement = input as HTMLInputElement;
-      errMsgs = document.querySelectorAll(".input-error");
-
-      if (inputElement.value === "") {
-        input.classList.add("error");
-        errMsgs[index].classList.remove("hidden");
+    inputValues.forEach((input, index) => {
+      if (input === "") {
+        setInputErrors((prev) => {
+          const prevCopy = [...prev];
+          prevCopy[index] = "Can't be empty";
+          return prevCopy;
+        });
       }
     });
 
-    const emptyInputs = [...allInputs].filter((input) => {
-      const inputElement = input as HTMLInputElement;
-      return inputElement.value === "";
-    });
+    const emptyValueExists = inputValues.some((input) => input === "");
 
-    if (emptyInputs.length < 1) {
-      addComponent();
+    if (!emptyValueExists) {
+      setInputValues((prev) => [...prev, ""]);
+      setInputErrors((prev) => [...prev, ""]);
     }
   }
 
@@ -221,21 +159,14 @@ const BoardModal = ({ type }: BoardModalProps) => {
             <label htmlFor="subtasks">Columns</label>
             <div className="all-col-input-container">
               {modalValue?.item &&
-                shouldRender.map((_, index) => (
+                inputValues.map((value, index) => (
                   <InputAdd
-                    value={
-                      type === "edit" &&
-                      modalValue?.item &&
-                      "columns" in modalValue?.item
-                        ? modalValue?.item?.columns[index]?.name
-                        : ""
-                    }
+                    value={value}
                     type={type === "edit" ? "edit" : "add"}
-                    taskOrBoard="board"
+                    error={inputErrors[index]}
                     key={index}
-                    // index={index}
-                    // setShouldRender={setShouldRender}
-                    // shouldRender={shouldRender}
+                    deleteInput={() => deleteInput(index)}
+                    onChange={(e) => onChange(e, index)}
                   />
                 ))}
             </div>
@@ -254,6 +185,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
           text={type === "add" ? "Create Board" : "Save Changes"}
           btnClass="primary"
           btnType="submit"
+          disabled={!formValid}
         />
       </form>
     </div>

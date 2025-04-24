@@ -1,8 +1,11 @@
-import React from "react";
+import React, { ButtonHTMLAttributes } from "react";
 
 // import Image from "next/image";
 
-type BtnProps = {
+type BtnProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "type" | "className"
+> & {
   type?: string;
   text: string;
   // fn?: (e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -12,12 +15,15 @@ type BtnProps = {
   btnType: "button" | "submit";
 };
 
-const Button = ({ type, text, fn, btnClass, btnType }: BtnProps) => {
+const Button = ({ type, text, fn, btnClass, btnType, ...props }: BtnProps) => {
   return (
     <button
-      className={`${btnClass} btn ${type !== "add" && "btnLg"}`}
+      className={`${btnClass} btn ${
+        type !== "add" && "btnLg"
+      } disabled:opacity-60`}
       onClick={(e) => fn && fn(e)}
       type={btnType}
+      {...props}
       //   onClick={stateFn(!state)}
     >
       {type === "add" && (

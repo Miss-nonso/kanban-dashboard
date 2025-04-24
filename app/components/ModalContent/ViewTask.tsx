@@ -16,79 +16,98 @@ export const isTaskTuple = (
   typeof item[1] === "object";
 
 const ViewTask = () => {
-  const { modalValue, modalRef, closeModal } = useModal();
+  const { modalValue, modalRef } = useModal();
   const { boards, editBoard } = useBoards();
   const params = useParams();
   const { id } = params;
   const [displayDropdown, setDisplayDropdown] = useState(false);
   const [statusList, setStatusList] = useState<string[]>([]);
-  const [status, setStatus] = useState("");
+
   const item = modalValue?.item;
 
   const validTaskTuple = isTaskTuple(item);
   const task = validTaskTuple ? item[1] : null;
   const taskIndex = modalValue?.index;
 
+  const [displayTask, setDisplayTask] = useState(() => {
+    if (task) {
+      return {
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        subtasks: [...task.subtasks]
+      };
+    } else {
+      return {
+        title: "",
+        description: "",
+        status: "",
+        subtasks: []
+      };
+    }
+  });
+
   useEffect(() => {
     const columns = validTaskTuple ? item[0] : [];
     if (validTaskTuple && task) {
       setStatusList(columns.map((col) => col.name));
-      setStatus(task.status);
     }
   }, [task, validTaskTuple, item]);
 
+  useEffect(() => {
+    handleTaskChange();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayTask]);
+
   if (!validTaskTuple || !task) return null;
 
-  const taskToDisplay = {
-    title: task.title,
-    description: task.description,
-    status: task.status,
-    subtasks: [...task.subtasks]
-  };
-
   const getCompleteTasks = () =>
-    taskToDisplay.subtasks.filter((subtask) => subtask.isCompleted).length;
+    displayTask.subtasks.filter((subtask) => subtask.isCompleted).length;
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newColumnName = e.target.value;
-    const prevColumn = task.status || statusList[0];
-
-    const newBoards = [...boards];
-    const board = newBoards.find((board) => board._id === id);
+  function handleTaskChange() {
+    console.log("changing task viw sgfs");
+    const board = boards.find((board) => board._id === id);
+    const prevStatus =
+      task?.status.toLowerCase() || board?.columns[0].name.toLowerCase();
 
     if (!board) {
       return;
     }
 
     const column = board.columns.find(
-      (col) => col.name.toLowerCase() === prevColumn.toLowerCase()
+      (col) => col.name.toLowerCase() === prevStatus
     );
 
-    if (!column || typeof taskIndex === "undefined") {
+    if (!column) {
       return;
     }
-
-    const modifiedTask = column.tasks.splice(taskIndex, 1)[0];
-    modifiedTask.status = newColumnName;
-
     const newColumn = board.columns.find(
-      (col) => col.name.toLowerCase() === newColumnName.toLowerCase()
+      (col) => col.name.toLowerCase() === displayTask.status.toLowerCase()
     );
 
     if (!newColumn) {
       return;
     }
 
-    newColumn.tasks.push(modifiedTask);
+    if (typeof taskIndex === "number") {
+      if (displayTask.status.toLowerCase() === prevStatus) {
+        column?.tasks.splice(taskIndex, 1, displayTask);
+      } else {
+        column.tasks.splice(taskIndex, 1);
+        newColumn.tasks.push(displayTask);
+      }
+    }
 
-    editBoard(newBoards);
-    closeModal();
-  };
+    console.log({ displayTask });
+
+    editBoard(boards);
+  }
 
   return (
     <div className="modal-content-wrapper" ref={modalRef}>
       <div className="view-task-modal-header">
-        <h5>{taskToDisplay.title}</h5>
+        <h5>{displayTask.title}</h5>
         <span className="">
           <button
             onClick={() => setDisplayDropdown(!displayDropdown)}
@@ -106,20 +125,32 @@ const ViewTask = () => {
               taskOrBoard="task"
               setDisplayDropdown={setDisplayDropdown}
               taskItem={task}
-              taskIndex={modalValue?.index}
+              taskIndex={taskIndex}
             />
           )}
         </span>
       </div>
-      {taskToDisplay.description && <p>{taskToDisplay.description}</p>}
+      {displayTask.description && <p>{displayTask.description}</p>}
       <div>
         <label htmlFor="subtasks">
-          Subtasks({getCompleteTasks()} of {taskToDisplay.subtasks.length})
+          Subtasks({getCompleteTasks()} of {displayTask.subtasks.length})
         </label>
         <div>
-          {taskToDisplay.subtasks.map((subtask, index) => (
+          {displayTask.subtasks.map((subtask, index) => (
             <label className="container" key={index}>
-              <input type="checkbox" defaultChecked={subtask.isCompleted} />
+              <input
+                type="checkbox"
+                defaultChecked={subtask.isCompleted}
+                onChange={() => {
+                  const bool = !subtask.isCompleted;
+
+                  setDisplayTask((prev) => {
+                    const prevCopy = { ...prev };
+                    prevCopy.subtasks[index].isCompleted = bool;
+                    return prevCopy;
+                  });
+                }}
+              />
               <span className="checkmark"></span> <p>{subtask.title}</p>
             </label>
           ))}
@@ -130,8 +161,14 @@ const ViewTask = () => {
         <select
           name="status"
           id="status"
-          value={status.toLowerCase()}
-          onChange={handleStatusChange}
+          value={displayTask.status.toLowerCase()}
+          onChange={(e) =>
+            setDisplayTask((prev) => {
+              const prevCopy = { ...prev };
+              prevCopy.status = e.target.value;
+              return prevCopy;
+            })
+          }
         >
           <option value="">Select status</option>
           {statusList.map((columnName, index) => (

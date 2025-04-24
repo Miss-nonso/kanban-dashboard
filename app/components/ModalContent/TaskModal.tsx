@@ -8,13 +8,11 @@ import {
 } from "@/app/utils/interface";
 import { ItemType } from "@/app/utils/types";
 import Button from "../Button";
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useState, FormEvent } from "react";
 import { useParams } from "next/navigation";
 import { useModal } from "@/app/context/ModalContext";
 import InputAdd from "../InputAdd";
-import { JSX } from "react";
 import { useBoards } from "@/app/context/BoardContext";
-let errMsgs;
 
 function isTaskTuple(item: ItemType): item is [ColumnProps[], TaskProps] {
   return (
@@ -36,21 +34,20 @@ function isTaskMono(item: ItemType): item is [ColumnProps[], TaskProps] {
 }
 
 const TaskModal = ({ type }: { type: "add" | "edit" }) => {
-  const allInputs = document.getElementsByName(`${type}`);
-  // const [inputText, setInputText] = useState("");
   const { modalRef, modalValue, closeModal } = useModal();
   const params = useParams();
   const { id } = params;
   const { editTask, boards } = useBoards();
 
+  const taskIndex = modalValue?.index;
   const getTaskToEdit = (
     ArrOfColumnsAndTaskItem: [ColumnProps[] | ColumnProps, TaskProps]
   ) => {
     if (Array.isArray(ArrOfColumnsAndTaskItem[0])) {
-      // Handle the case where it's an array of ColumnProps
       const parentColumn = ArrOfColumnsAndTaskItem[0];
       if (type === "edit") {
         const itemToEdit = ArrOfColumnsAndTaskItem[1];
+
         if (itemToEdit?.title) {
           const taskToEditObj = {
             title: itemToEdit.title,
@@ -62,14 +59,25 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
         }
       }
     } else {
-      // Handle the case where it's a single ColumnProps
       const parentColumn = ArrOfColumnsAndTaskItem[0];
       return [parentColumn];
     }
   };
 
-  const [taskToEdit, setTaskToEdit] = useState<TaskProps>(() => {
-    if (type === "add") {
+  const [taskToEdit, setTaskToEdit] = useState(() => {
+    if (isTaskTuple(modalValue?.item) && type === "edit") {
+      const maybeTask = getTaskToEdit(modalValue.item)?.[1];
+      if (maybeTask && "title" in maybeTask) {
+        return maybeTask as TaskProps;
+      } else {
+        return {
+          title: "",
+          description: "",
+          status: "todo",
+          subtasks: []
+        };
+      }
+    } else {
       return {
         title: "",
         description: "",
@@ -77,20 +85,6 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
         subtasks: []
       };
     }
-
-    if (isTaskTuple(modalValue?.item)) {
-      const maybeTask = getTaskToEdit(modalValue.item)?.[1];
-      if (maybeTask && "title" in maybeTask) {
-        return maybeTask as TaskProps;
-      }
-    }
-
-    return {
-      title: "",
-      description: "",
-      status: "todo",
-      subtasks: []
-    };
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -101,106 +95,61 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
     }
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [task, setTask] = useState<TaskProps>(
-    type === "add"
-      ? {
-          title: "",
-          description: "",
-          status: "",
-          subtasks: []
-        }
-      : {
-          title: "A title",
-          description: "kjijic",
-          status: "done",
-          subtasks: []
-        }
-  );
-
-  const [shouldRender, setShouldRender] = useState<JSX.Element[]>(
-    type === "edit"
-      ? taskToEdit?.subtasks.map((subtask, index) => (
-          <InputAdd
-            value={subtask.title}
-            inputCount={index}
-            type={type}
-            taskOrBoard="task"
-            key={index}
-          />
-        )) || [
-          <InputAdd
-            value=""
-            inputCount={0}
-            type={type}
-            taskOrBoard="task"
-            key={0}
-          />
-        ]
-      : [
-          <InputAdd
-            value=""
-            inputCount={0}
-            type={type}
-            taskOrBoard="task"
-            key={0}
-          />
-        ]
-  );
-
-  useEffect(() => {
-    [...allInputs].forEach((el, index) =>
-      el.addEventListener("keydown", () => {
-        errMsgs = document.querySelectorAll(".input-error");
-        errMsgs[index].classList.add("hidden");
-        el.classList.remove("error");
-      })
-    );
-  });
-
-  const addComponent = () => {
-    setShouldRender((prev) => [
-      ...prev,
-      <InputAdd
-        value=""
-        type={type}
-        taskOrBoard="task"
-        key={0}
-        inputCount={prev.length}
-      />
-    ]);
-  };
-
-  // const handleOnChange = (e) => {
-  //   return setInputText()
-  // };
-
-  const handleAddInput = (
-    e?: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    if (e) {
-      e.preventDefault();
+  const [inputValues, setInputValues] = useState(() => {
+    if (type === "edit" && modalValue?.item) {
+      if (taskToEdit) {
+        return taskToEdit.subtasks.map((subtask) => subtask.title);
+      } else {
+        return [""];
+      }
+    } else {
+      return [""];
     }
+  });
+  const [inputErrors, setInputErrors] = useState([""]);
 
-    [...allInputs].forEach((input, index) => {
-      const inputElement = input as HTMLInputElement;
-      errMsgs = document.querySelectorAll(".input-error");
+  function deleteInput(index: number) {
+    if (inputValues.length > 1) {
+      setInputValues((prev) => prev.filter((_, idx) => idx !== index));
+      setInputErrors((prev) => prev.filter((_, idx) => idx !== index));
+    }
+  }
 
-      if (inputElement.value === "") {
-        input.classList.add("error");
-        errMsgs[index].classList.remove("hidden");
+  function onChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
+    const value = e.target.value;
+
+    setInputValues((prev) => {
+      const prevCopy = [...prev];
+      prevCopy[index] = value;
+      return prevCopy;
+    });
+    setInputErrors((prev) => {
+      const prevCopy = [...prev];
+      prevCopy[index] = "";
+      return prevCopy;
+    });
+  }
+
+  function handleAddInput(e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e?.preventDefault();
+
+    inputValues.forEach((input, index) => {
+      if (input === "") {
+        setInputErrors((prev) => {
+          const prevCopy = [...prev];
+          prevCopy[index] = "Can't be empty";
+          return prevCopy;
+        });
       }
     });
 
-    const emptyInputs = [...allInputs].filter((input) => {
-      const inputElement = input as HTMLInputElement;
-      return inputElement.value === "";
-    });
+    const emptyValueExists = inputValues.some((input) => input === "");
 
-    if (emptyInputs.length < 1) {
-      addComponent();
+    if (!emptyValueExists) {
+      setInputValues((prev) => [...prev, ""]);
+      setInputErrors((prev) => [...prev, ""]);
     }
-  };
+  }
 
   const handleSubmitTask = (
     e: FormEvent<HTMLFormElement>,
@@ -209,74 +158,71 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
     e.preventDefault();
 
     let currentColumn: ColumnProps[] = [];
-    let taskToEditItem: TaskProps | undefined;
+    let prevStateOfTask: TaskProps | undefined;
 
     if (isTaskTuple(modalValue?.item) || isTaskMono(modalValue?.item)) {
       const subtasksValues: string[] = [];
 
       currentColumn = modalValue?.item[0];
-      taskToEditItem = modalValue?.item[1];
+      prevStateOfTask = modalValue?.item[1];
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const subtasksInputValues = [...allInputs].map((input) => {
-        const inputElement = input as HTMLInputElement;
-        subtasksValues.push(inputElement.value);
-      });
-
-      const taskToAdd = {
-        ...taskToEdit
-      };
-
-      subtasksValues.map((val, index) => {
-        if (index > taskToAdd.subtasks.length - 1) {
+      inputValues.map((val, index) => {
+        if (index <= taskToEdit.subtasks.length - 1 && val) {
+          taskToEdit.subtasks[index].title = val;
+        } else {
           const subtaskData: SubtaskProps = {
             title: val,
             isCompleted: false
           };
-          taskToAdd.subtasks.push(subtaskData);
-        } else {
-          taskToAdd.subtasks[index].title = val;
+          taskToEdit.subtasks.push(subtaskData);
         }
       });
 
       if (type === "edit") {
-        if (!taskToEditItem.status) {
-          taskToEditItem.status = currentColumn[0].name;
+        if (!prevStateOfTask.status) {
+          prevStateOfTask.status = currentColumn[0].name;
         }
 
-        const prevColumnName = taskToEditItem.status || currentColumn[0].name;
+        const prevColumnName =
+          prevStateOfTask.status.toLowerCase() ||
+          currentColumn[0].name.toLowerCase();
 
-        const currentColumnName = taskToEdit?.status || currentColumn[0].name;
+        const currentColumnName =
+          taskToEdit?.status.toLowerCase() ||
+          currentColumn[0].name.toLowerCase();
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const columnToSearch = currentColumn.find(
-          (col: ColumnProps) => col.name === currentColumnName
+        const subtasks = inputValues.map((val, index) => {
+          return {
+            title: val,
+            isCompleted: taskToEdit.subtasks[index].isCompleted
+          };
+        });
+
+        taskToEdit.subtasks = subtasks;
+
+        const currentBoard = boards.find((board) => board._id === id);
+
+        const column = currentBoard?.columns.find(
+          (col) => col.name.toLowerCase() === prevColumnName
+        );
+        const newColumn = currentBoard?.columns.find(
+          (col) => col.name.toLowerCase() === currentColumnName
         );
 
-        if (
-          taskToEditItem.status.toLowerCase() !==
-          currentColumnName.toLowerCase()
-        ) {
-          boards.map(
-            (board: BoardProps) =>
-              board._id === id &&
-              board.columns.map((col) => {
-                if (
-                  col.name.toLowerCase() === currentColumnName.toLowerCase()
-                ) {
-                  col.tasks.push(taskToAdd);
-                }
+        if (!column && newColumn && typeof taskIndex === "undefined") {
+          return;
+        }
 
-                if (col.name.toLowerCase() === prevColumnName.toLowerCase()) {
-                  const indexOfTaskToRmv = col.tasks.findIndex(
-                    (task) =>
-                      task.title.toLowerCase() === prevColumnName.toLowerCase()
-                  );
+        if (typeof taskIndex === "number") {
+          const modifiedTask = { ...taskToEdit };
 
-                  return col.tasks.splice(indexOfTaskToRmv, 1);
-                }
-              })
-          );
+          if (prevColumnName !== currentColumnName) {
+            column?.tasks.splice(taskIndex, 1);
+
+            newColumn?.tasks.push(modifiedTask);
+          } else {
+            column?.tasks.splice(taskIndex, 1, modifiedTask);
+          }
 
           editTask(boards);
           closeModal();
@@ -288,8 +234,8 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
                 (col: ColumnProps) =>
                   col.name === currentColumnName &&
                   col.tasks.map((task: TaskProps) => {
-                    if (taskToEditItem) {
-                      if (task.title === taskToEditItem.title) {
+                    if (prevStateOfTask) {
+                      if (task.title === prevStateOfTask.title) {
                         task.title = taskToEdit.title;
                         task.description = taskToEdit.description;
 
@@ -315,14 +261,25 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
       }
 
       if (type === "add") {
-        boards.map((board: BoardProps) =>
-          board.columns.map((col: ColumnProps) =>
-            col.name.toLowerCase() === taskToAdd.status.toLowerCase()
-              ? col.tasks.push(taskToAdd)
-              : col
-          )
+        const currentBoard = boards.find((board) => board._id === id);
+
+        if (!currentBoard) {
+          return;
+        }
+
+        const taskToAdd = { ...taskToEdit };
+        const columnToAddTask =
+          taskToEdit.status || currentBoard.columns[0].name;
+
+        const column = currentBoard.columns.find(
+          (col) => col.name.toLowerCase() === columnToAddTask.toLowerCase()
         );
 
+        if (!column) {
+          return;
+        }
+
+        column.tasks.push(taskToAdd);
         editTask(boards);
         closeModal();
       }
@@ -371,17 +328,15 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
 
           <div>
             <div>
-              {" "}
-              {/* <label htmlFor="subtasks">Columns</label> */}
               <div className="all-col-input-container">
-                {shouldRender.map((_, index) => (
+                {inputValues.map((value, index) => (
                   <InputAdd
-                    value={
-                      type === "edit" ? taskToEdit.subtasks[index]?.title : ""
-                    }
-                    type={type}
-                    taskOrBoard="task"
+                    value={value}
+                    type={type === "edit" ? "edit" : "add"}
+                    error={inputErrors[index]}
                     key={index}
+                    deleteInput={() => deleteInput(index)}
+                    onChange={(e) => onChange(e, index)}
                   />
                 ))}
               </div>
