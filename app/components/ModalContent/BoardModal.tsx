@@ -178,23 +178,22 @@ const BoardModal = ({ type }: BoardModalProps) => {
             {" "}
             <label htmlFor="subtasks">Columns</label>
             <div className="all-col-input-container">
-              {modalValue?.item &&
-                inputValues.map((value, index) => (
-                  <InputAdd
-                    value={value}
-                    type={type === "edit" ? "edit" : "add"}
-                    error={inputErrors[index]}
-                    key={index}
-                    deleteInput={() => deleteInput(index)}
-                    onChange={(e) => onChange(e, index)}
-                    disabled={
-                      modalValue?.item &&
-                      "columns" in modalValue.item &&
-                      type === "addColumn" &&
-                      index <= modalValue.item.columns.length - 1
-                    }
-                  />
-                ))}
+              {inputValues.map((value, index) => (
+                <InputAdd
+                  value={value}
+                  type={type === "edit" ? "edit" : "add"}
+                  error={inputErrors[index]}
+                  key={index}
+                  deleteInput={() => deleteInput(index)}
+                  onChange={(e) => onChange(e, index)}
+                  disabled={
+                    modalValue?.item &&
+                    "columns" in modalValue.item &&
+                    type === "addColumn" &&
+                    index <= modalValue.item.columns.length - 1
+                  }
+                />
+              ))}
             </div>
           </div>
 

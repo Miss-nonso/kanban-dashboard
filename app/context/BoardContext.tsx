@@ -23,6 +23,7 @@ interface BoardContextProps {
     currentBoard: BoardProps,
     currentColumnName: string
   ) => void;
+  isLoading: boolean;
 }
 
 const setToLocalStorage = (key: string, value: BoardProps[]) => {
@@ -43,11 +44,13 @@ const BoardContext = createContext<BoardContextProps | undefined>(undefined);
 
 export function BoardProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [boards, setBoards] = useState<BoardProps[]>(
     getFromLocalStorage("boards") || staticBoards
   );
 
   useEffect(() => {
+    setIsLoading(true);
     const storedBoards = getFromLocalStorage("boards");
     if (storedBoards) {
       setBoards(storedBoards);
@@ -55,6 +58,10 @@ export function BoardProvider({ children }: { children: ReactNode }) {
       setBoards(staticBoards);
       setToLocalStorage("boards", staticBoards);
     }
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
   }, []);
 
   useEffect(() => {
@@ -67,10 +74,19 @@ export function BoardProvider({ children }: { children: ReactNode }) {
   };
 
   const getCurrentBoard = (id: string) => {
-    return boards.find((board) => board._id === id);
+    // setIsLoading(true);
+    const board = boards.find((board) => board._id === id);
+    return board;
+
+    // setTimeout(() => {
+
+    //   setIsLoading(false);
+    // }, 2000);
   };
 
   const createNewBoard = (boardObj: Omit<BoardProps, "_id">) => {
+    setIsLoading(true);
+
     if (boardObj.name) {
       const newBoard = {
         ...boardObj,
@@ -84,6 +100,10 @@ export function BoardProvider({ children }: { children: ReactNode }) {
         `/boards/${newBoard._id}/${newBoard.name.replace(/ /g, "-")}`
       );
     }
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
   };
 
   const editBoard = (updatedBoard: BoardProps[]) => {
@@ -95,6 +115,7 @@ export function BoardProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteBoard = (index: number) => {
+    setIsLoading(true);
     const updated = [...boards];
     updated.splice(index, 1);
 
@@ -109,6 +130,10 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     } else {
       router.push(`/`);
     }
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3500);
   };
 
   const deleteTask = (
@@ -145,7 +170,8 @@ export function BoardProvider({ children }: { children: ReactNode }) {
         editBoard,
         deleteBoard,
         deleteTask,
-        editTask
+        editTask,
+        isLoading
       }}
     >
       {children}

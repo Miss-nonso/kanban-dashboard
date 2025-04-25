@@ -3,8 +3,10 @@
 import Board from "@/app/components/Board";
 import Header from "@/app/components/Header";
 import InvalidURL from "@/app/components/InvalidURL";
+import Loader from "@/app/components/Loader";
 import Modal from "@/app/components/Modal";
 import NoColumn from "@/app/components/NoColumn";
+import Sidebar from "@/app/components/Sidebar";
 import { useBoards } from "@/app/context/BoardContext";
 import { useModal } from "@/app/context/ModalContext";
 
@@ -17,12 +19,11 @@ const Main = () => {
   const [invalidURL, setInvalidURL] = useState(false);
   const [headerName, setHeaderName] = useState("");
   const [board, setBoard] = useState<BoardProps | null>(null);
-  // const [isClient, setIsClient] = useState(false);
-
   const params = useParams();
   const { id } = params;
   const { openModal, modalValue } = useModal();
   const { getCurrentBoard, boards } = useBoards();
+  const { isLoading } = useBoards();
 
   const extractHeaderName = (board: BoardProps | null) => {
     if (!board) {
@@ -31,9 +32,7 @@ const Main = () => {
     return board.name.toString();
   };
 
-  // useEffect(() => {
-  //   setIsClient(true);
-  // }, []);
+  console.log({ isLoading });
 
   useEffect(() => {
     if (id) {
@@ -50,22 +49,26 @@ const Main = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, boards]);
 
+  console.log({ board });
+
   return (
-    <div>
+    <>
       {openModal && <Modal ModalContent={modalValue?.modalContent} />}
 
-      {!invalidURL && <Header boardName={headerName} />}
-
-      {!invalidURL ? (
-        board?.columns && board?.columns.length > 0 ? (
-          <Board columns={board.columns} />
-        ) : (
-          <NoColumn />
-        )
-      ) : (
+      {isLoading ? (
+        <Loader />
+      ) : invalidURL ? (
         <InvalidURL />
+      ) : board?.columns && board?.columns.length > 0 ? (
+        <>
+          <Sidebar />
+          <Header boardName={headerName} />
+          <Board columns={board.columns} />
+        </>
+      ) : (
+        <NoColumn />
       )}
-    </div>
+    </>
   );
 };
 

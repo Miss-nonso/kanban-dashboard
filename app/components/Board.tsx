@@ -10,13 +10,12 @@ type ColumnPropsType = { columns: ColumnProps[] };
 const Board = ({ columns }: ColumnPropsType) => {
   const { showSidebar } = useSidebar();
 
-  console.log({ columns });
   return (
     <div className={`board ${showSidebar && "ml-[19rem]"}`}>
       {columns &&
         columns.map((col, index) => (
           <div key={index}>
-            <h4 className="uppercase flex items-center gap-2  tracking-[0.27rem] text-[var(--mediumgray)] mb-8 ml-2">
+            <h4 className="uppercase flex items-center gap-2 tracking-[0.27rem] text-[var(--mediumgray)] mb-8 ml-2">
               <div
                 className="h-[15px] aspect-square rounded-2xl"
                 style={{

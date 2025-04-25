@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./styles/globals.css";
-import Sidebar from "./components/Sidebar";
+// import Sidebar from "./components/Sidebar";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ModalProvider } from "./context/ModalContext";
 import { BoardProvider } from "./context/BoardContext";
@@ -36,7 +36,7 @@ export default function RootLayout({
           <BoardProvider>
             <SidebarProvider>
               <ModalProvider>
-                <Sidebar />
+                {/* <Sidebar /> */}
 
                 <main className="flex-1"> {children}</main>
               </ModalProvider>
