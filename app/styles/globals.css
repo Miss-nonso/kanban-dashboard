@@ -50,6 +50,27 @@ html.light {
   }
 }
 
+@keyframes slide {
+  /* 0% {
+    min-width: 7rem;
+  } */
+  0% {
+    max-width: 5rem;
+  }
+
+  50% {
+    max-width: 10rem;
+  }
+
+  75% {
+    max-width: 17rem;
+  }
+
+  100% {
+    min-width: 18.75rem;
+  }
+}
+
 header {
   @apply bg-[var(--foreground)] flex justify-between py-6   fixed top-0 right-0 left-0 text-[var(--textcolor)];
 }
@@ -108,8 +129,9 @@ button {
 } */
 
 .sidebar {
-  @apply bg-[var(--foreground)] h-[100vh] min-w-[18.75rem] pr-6 gap-4 fixed bottom-0 top-0 left-0 transition-all duration-1000 ease-linear;
+  @apply bg-[var(--foreground)] h-[100vh] min-w-[18.75rem]  pr-6 gap-4 animate-[slide] transition-all duration-500 ease-linear;
   /* color: var(--textcolor); */
+  /* fixed bottom-0 top-0 left-0  */
 }
 
 .board-length,
@@ -163,13 +185,19 @@ button {
 }
 
 .board {
-  @apply pl-[2rem] pr-[7rem] mt-[6rem] pt-[2rem] pb-[20rem]   overflow-x-auto overflow-y-scroll  flex gap-6;
-  /* width: calc(100vw - 20rem); */
-  height: calc(100vh - 7rem);
+  @apply pl-[2rem] pr-[7rem] mt-[6rem] pt-[2rem] pb-[25rem] overflow-x-scroll overflow-y-scroll flex gap-6;
+
+  min-width: calc(100vw - 18.75rem);
+  height: calc(100vh - 6rem);
 }
 
 .column-wrapper {
   @apply grid gap-4 w-[300px];
+}
+
+.empty-col:hover p,
+.empty-col:hover p span {
+  @apply text-[var(--lightpurple)] scale-[0.99] transition-all duration-300 ease-in-out;
 }
 
 .card {

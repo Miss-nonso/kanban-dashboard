@@ -25,7 +25,7 @@ const Toggle = () => {
         </button>
         <Image
           src="/assets/icons/icon-dark-theme.svg"
-          alt="light theme icon"
+          alt="dark theme icon"
           width={18.33}
           height={18.33}
         />

@@ -1,8 +1,6 @@
 import React from "react";
-// import { useSidebar } from "../context/SidebarContext";
 
 const Loader = () => {
-  //   const { showSidebar } = useSidebar();
   return (
     <div className={`w-[100vw] h-[100vh] grid place-items-center `}>
       {" "}

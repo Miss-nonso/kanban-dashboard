@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { BoardProps } from "../utils/interface";
 import { useBoards } from "../context/BoardContext";
 import { useSidebar } from "../context/SidebarContext";
+import SidebarButton from "./SidebarButton";
 
 const Sidebar = () => {
   const params = useParams();
@@ -35,8 +36,8 @@ const Sidebar = () => {
 
   return (
     <>
-      {showSidebar && (
-        <aside className="sidebar ">
+      {showSidebar ? (
+        <aside className="sidebar w-[17.2vw]">
           <div className="logo-wrapper">
             <Logo />
           </div>
@@ -89,6 +90,8 @@ const Sidebar = () => {
             </div>
           </div>
         </aside>
+      ) : (
+        <SidebarButton />
       )}
     </>
   );

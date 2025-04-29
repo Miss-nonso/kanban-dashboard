@@ -9,11 +9,14 @@ import NoColumn from "@/app/components/NoColumn";
 import Sidebar from "@/app/components/Sidebar";
 import { useBoards } from "@/app/context/BoardContext";
 import { useModal } from "@/app/context/ModalContext";
-
 import { BoardProps } from "@/app/utils/interface";
-
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Suspense, lazy } from "react";
+// import Skeleton from "react-loading-skeleton";
+// import "react-loading-skeleton/dist/skeleton.css";
+
+const LazyComponent = lazy(() => import("@/app/components/Loader"));
 
 const Main = () => {
   const [invalidURL, setInvalidURL] = useState(false);
@@ -23,7 +26,8 @@ const Main = () => {
   const { id } = params;
   const { openModal, modalValue } = useModal();
   const { getCurrentBoard, boards } = useBoards();
-  const { isLoading } = useBoards();
+  const { isLoading, setIsLoadingTrue, setIsLoadingFalse } = useBoards();
+  const [isClient, setIsClient] = useState(false);
 
   const extractHeaderName = (board: BoardProps | null) => {
     if (!board) {
@@ -31,8 +35,6 @@ const Main = () => {
     }
     return board.name.toString();
   };
-
-  console.log({ isLoading });
 
   useEffect(() => {
     if (id) {
@@ -49,22 +51,34 @@ const Main = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, boards]);
 
-  console.log({ board });
+  useEffect(() => {
+    setIsLoadingTrue();
+    setTimeout(() => {
+      setIsClient(true);
+      setIsLoadingFalse();
+    }, 2500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
       {openModal && <Modal ModalContent={modalValue?.modalContent} />}
 
-      {isLoading ? (
-        <Loader />
+      {isLoading || !isClient ? (
+        <Suspense fallback={<Loader />}>
+          <LazyComponent />
+        </Suspense>
       ) : invalidURL ? (
         <InvalidURL />
       ) : board?.columns && board?.columns.length > 0 ? (
-        <>
+        <div className="flex flex-1">
           <Sidebar />
-          <Header boardName={headerName} />
-          <Board columns={board.columns} />
-        </>
+          <div className="grid w-full h-full">
+            {" "}
+            <Header boardName={headerName} />
+            <Board columns={board.columns} />
+          </div>
+        </div>
       ) : (
         <NoColumn />
       )}

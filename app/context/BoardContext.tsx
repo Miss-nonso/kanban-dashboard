@@ -10,6 +10,7 @@ import {
 import { BoardProps } from "../utils/interface";
 import { staticBoards } from "@/public/assets/data";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 interface BoardContextProps {
   boards: BoardProps[];
@@ -24,6 +25,8 @@ interface BoardContextProps {
     currentColumnName: string
   ) => void;
   isLoading: boolean;
+  setIsLoadingTrue: () => void;
+  setIsLoadingFalse: () => void;
 }
 
 const setToLocalStorage = (key: string, value: BoardProps[]) => {
@@ -44,13 +47,14 @@ const BoardContext = createContext<BoardContextProps | undefined>(undefined);
 
 export function BoardProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [boards, setBoards] = useState<BoardProps[]>(
     getFromLocalStorage("boards") || staticBoards
   );
 
   useEffect(() => {
-    setIsLoading(true);
+    // setIsLoadingTrue();
     const storedBoards = getFromLocalStorage("boards");
     if (storedBoards) {
       setBoards(storedBoards);
@@ -59,9 +63,9 @@ export function BoardProvider({ children }: { children: ReactNode }) {
       setToLocalStorage("boards", staticBoards);
     }
 
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+    // setTimeout(() => {
+    //   setIsLoadingFalse();
+    // }, 3000);
   }, []);
 
   useEffect(() => {
@@ -85,7 +89,7 @@ export function BoardProvider({ children }: { children: ReactNode }) {
   };
 
   const createNewBoard = (boardObj: Omit<BoardProps, "_id">) => {
-    setIsLoading(true);
+    setIsLoadingTrue();
 
     if (boardObj.name) {
       const newBoard = {
@@ -102,8 +106,9 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     }
 
     setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+      setIsLoadingFalse();
+      toast({ title: "Board created successfully ✅" });
+    }, 2500);
   };
 
   const editBoard = (updatedBoard: BoardProps[]) => {
@@ -115,7 +120,7 @@ export function BoardProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteBoard = (index: number) => {
-    setIsLoading(true);
+    setIsLoadingTrue();
     const updated = [...boards];
     updated.splice(index, 1);
 
@@ -132,8 +137,9 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     }
 
     setTimeout(() => {
-      setIsLoading(false);
-    }, 3500);
+      setIsLoadingFalse();
+      toast({ title: "Board deleted" });
+    }, 2500);
   };
 
   const deleteTask = (
@@ -159,6 +165,14 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     });
 
     updateBoards(updatedBoards);
+    toast({ title: "Task deleted" });
+  };
+
+  const setIsLoadingTrue = () => {
+    setIsLoading(true);
+  };
+  const setIsLoadingFalse = () => {
+    setIsLoading(false);
   };
 
   return (
@@ -171,7 +185,9 @@ export function BoardProvider({ children }: { children: ReactNode }) {
         deleteBoard,
         deleteTask,
         editTask,
-        isLoading
+        isLoading,
+        setIsLoadingTrue,
+        setIsLoadingFalse
       }}
     >
       {children}

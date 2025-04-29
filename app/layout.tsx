@@ -6,6 +6,8 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { ModalProvider } from "./context/ModalContext";
 import { BoardProvider } from "./context/BoardContext";
 import { SidebarProvider } from "./context/SidebarContext";
+import { Toaster } from "@/components/ui/toaster";
+// import { Metadata } from "next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +41,7 @@ export default function RootLayout({
                 {/* <Sidebar /> */}
 
                 <main className="flex-1"> {children}</main>
+                <Toaster />
               </ModalProvider>
             </SidebarProvider>
           </BoardProvider>

@@ -6,7 +6,6 @@ import { useModal } from "@/app/context/ModalContext";
 // import boards from "@/public/assets/data";
 import { BoardProps, TaskProps } from "@/app/utils/interface";
 import { ItemType } from "@/app/utils/types";
-
 import { DeleteModalProps } from "@/app/utils/types";
 import { useBoards } from "@/app/context/BoardContext";
 

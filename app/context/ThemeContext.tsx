@@ -21,6 +21,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         .matches
         ? "dark"
         : "light";
+
       const storedTheme = localStorage.getItem("theme") as Theme | null;
       setTheme(storedTheme || systemTheme);
     }

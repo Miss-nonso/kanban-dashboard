@@ -17,7 +17,7 @@ const EmptyColumn = () => {
   }
   return (
     <div
-      className="min-h-[75vh] cursor-pointer mt-[3.5rem] my-auto grid place-items-center min-w-[270px] bg-[var(--contrastGray)]"
+      className="empty-col min-h-[60vh] cursor-pointer mt-[3.5rem] my-auto grid place-items-center min-w-[270px] bg-[var(--contrastGray)]"
       onClick={() =>
         handleModalOpen(
           <BoardModal type="addColumn" />,
@@ -26,8 +26,8 @@ const EmptyColumn = () => {
         )
       }
     >
-      <p className="flex justify-center items-center text-center group-hover:text-[var(--darkpurple)]">
-        <span className="font-bold text-[1.5rem] text-[var(--textcolor)] pb-[0.35rem] pr-[0.1rem]">
+      <p className="flex justify-center items-center text-center ">
+        <span className="font-bold text-[1.3rem]  text-[var(--textcolor)] pr-[0.3rem]">
           +
         </span>
         New Column

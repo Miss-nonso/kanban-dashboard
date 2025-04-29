@@ -1,18 +1,20 @@
 "use client";
 
 import { BoardProps } from "@/app/utils/interface";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Button from "../Button";
 import InputAdd from "../InputAdd";
 import { useModal } from "@/app/context/ModalContext";
 import { useParams } from "next/navigation";
 import { useBoards } from "@/app/context/BoardContext";
+import { useToast } from "@/hooks/use-toast";
 
 type BoardModalProps = {
   type?: "add" | "edit" | "addColumn";
 };
 const BoardModal = ({ type }: BoardModalProps) => {
   const params = useParams();
+  const { toast } = useToast();
   const { id } = params;
   const { modalValue, modalRef, closeModal } = useModal();
   const { createNewBoard, editBoard, boards } = useBoards();
@@ -50,11 +52,33 @@ const BoardModal = ({ type }: BoardModalProps) => {
     }
   });
 
+  useEffect(() => {
+    if (duplicatesExist()) {
+      toast({ title: "Columns can't have same name", variant: "destructive" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValues]);
+
   const formValid =
     // inputValues.length >= 1 &&
     inputValues.every(Boolean) &&
     inputErrors.every((err) => !err) &&
+    !duplicatesExist() &&
     (type === "addColumn" ? boardname.length > 2 : true);
+
+  function duplicatesExist() {
+    const columnValues = inputValues
+      .map((val) => val.trim().toLowerCase())
+      .filter((val) => val);
+
+    const uniqueValues = new Set(columnValues);
+
+    if (columnValues.length > 1) {
+      const bool = [...uniqueValues.values()].length < columnValues.length;
+
+      return bool;
+    } else return false;
+  }
 
   function deleteInput(index: number) {
     // if (inputValues.length > 1) {
@@ -66,14 +90,15 @@ const BoardModal = ({ type }: BoardModalProps) => {
   function onChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
     const value = e.target.value;
 
-    setInputValues((prev) => {
-      const prevCopy = [...prev];
-      prevCopy[index] = value;
-      return prevCopy;
-    });
     setInputErrors((prev) => {
       const prevCopy = [...prev];
       prevCopy[index] = "";
+      return prevCopy;
+    });
+
+    setInputValues((prev) => {
+      const prevCopy = [...prev];
+      prevCopy[index] = value;
       return prevCopy;
     });
   }
@@ -83,7 +108,10 @@ const BoardModal = ({ type }: BoardModalProps) => {
     type?: "add" | "edit" | "addColumn"
   ) {
     e.preventDefault();
-    const columnValues = inputValues.map((val) => val.trim());
+    const columnValues = inputValues
+      .map((val) => val.trim())
+      .filter((val) => val);
+
     if (type === "addColumn") {
       type = "edit";
     }
@@ -107,8 +135,8 @@ const BoardModal = ({ type }: BoardModalProps) => {
       });
 
       editBoard(boards);
-
       closeModal();
+      toast({ title: "Board edited ✅" });
     } else {
       const boardObj: Omit<BoardProps, "_id"> = {
         name: boardname

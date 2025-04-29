@@ -13,6 +13,7 @@ import { useParams } from "next/navigation";
 import { useModal } from "@/app/context/ModalContext";
 import InputAdd from "../InputAdd";
 import { useBoards } from "@/app/context/BoardContext";
+import { useToast } from "@/hooks/use-toast";
 
 function isTaskTuple(item: ItemType): item is [ColumnProps[], TaskProps] {
   return (
@@ -35,6 +36,7 @@ function isTaskMono(item: ItemType): item is [ColumnProps[], TaskProps] {
 
 const TaskModal = ({ type }: { type: "add" | "edit" }) => {
   const { modalRef, modalValue, closeModal } = useModal();
+  const { toast } = useToast();
   const params = useParams();
   const { id } = params;
   const { editTask, boards } = useBoards();
@@ -161,12 +163,14 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
     let prevStateOfTask: TaskProps | undefined;
 
     if (isTaskTuple(modalValue?.item) || isTaskMono(modalValue?.item)) {
-      const subtasksValues: string[] = [];
-
       currentColumn = modalValue?.item[0];
       prevStateOfTask = modalValue?.item[1];
 
-      inputValues.map((val, index) => {
+      const subtasksValues = inputValues
+        .map((val) => val.trim())
+        .filter((val) => val);
+
+      subtasksValues.map((val, index) => {
         if (index <= taskToEdit.subtasks.length - 1 && val) {
           taskToEdit.subtasks[index].title = val.trim();
         } else {
@@ -191,7 +195,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
           taskToEdit?.status.toLowerCase() ||
           currentColumn[0].name.toLowerCase();
 
-        const subtasks = inputValues.map((val, index) => {
+        const subtasks = subtasksValues.map((val, index) => {
           return {
             title: val.trim(),
             isCompleted: taskToEdit.subtasks[index].isCompleted
@@ -226,6 +230,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
 
           editTask(boards);
           closeModal();
+          toast({ title: "Task edited" });
         } else {
           boards.map(
             (board: BoardProps) =>
@@ -257,6 +262,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
           );
           editTask(boards);
           closeModal();
+          toast({ title: "Task edited" });
         }
       }
 
@@ -282,6 +288,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
         column.tasks.push(taskToAdd);
         editTask(boards);
         closeModal();
+        toast({ title: "Task added" });
       }
     }
   };

@@ -31,7 +31,12 @@ const InputAdd = ({
         {error}
       </small>
 
-      <button className="cancel-input" type="button" onClick={deleteInput}>
+      <button
+        className="cancel-input disabled:opacity-50"
+        type="button"
+        onClick={deleteInput}
+        disabled={disabled}
+      >
         {" "}
         <Image
           className="cursor-pointer cancel-input"
