@@ -2,14 +2,11 @@ import React from "react";
 import Column from "./Column";
 import { ColumnProps } from "../utils/interface";
 import EmptyColumn from "./EmptyColumn";
-import { indicatorColors } from "../lib/lib";
-// import { useSidebar } from "../context/SidebarContext";
+import { indicatorColors } from "@/lib/lib";
 
 type ColumnPropsType = { columns: ColumnProps[] };
 
 const Board = ({ columns }: ColumnPropsType) => {
-  // const { showSidebar } = useSidebar(); ${showSidebar && "ml-[19rem]"}
-
   return (
     <div className={`board  `}>
       {columns &&

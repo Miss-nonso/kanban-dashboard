@@ -3,7 +3,7 @@
 import Board from "@/app/components/Board";
 import Header from "@/app/components/Header";
 import InvalidURL from "@/app/components/InvalidURL";
-import Loader from "@/app/components/Loader";
+// import Loader from "@/app/components/Loader";
 import Modal from "@/app/components/Modal";
 import NoColumn from "@/app/components/NoColumn";
 import Sidebar from "@/app/components/Sidebar";
@@ -13,10 +13,10 @@ import { BoardProps } from "@/app/utils/interface";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Suspense, lazy } from "react";
-// import Skeleton from "react-loading-skeleton";
-// import "react-loading-skeleton/dist/skeleton.css";
+import SkeletonCard from "@/app/components/SkeletonCard";
 
-const LazyComponent = lazy(() => import("@/app/components/Loader"));
+// const LazyComponent = lazy(() => import("@/app/components/Loader"));
+const LazyComponent = lazy(() => import("@/app/components/SkeletonCard"));
 
 const Main = () => {
   const [invalidURL, setInvalidURL] = useState(false);
@@ -65,7 +65,7 @@ const Main = () => {
       {openModal && <Modal ModalContent={modalValue?.modalContent} />}
 
       {isLoading || !isClient ? (
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<SkeletonCard />}>
           <LazyComponent />
         </Suspense>
       ) : invalidURL ? (

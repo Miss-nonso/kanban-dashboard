@@ -80,7 +80,11 @@ export function BoardProvider({ children }: { children: ReactNode }) {
   const getCurrentBoard = (id: string) => {
     // setIsLoading(true);
     const board = boards.find((board) => board._id === id);
-    return board;
+    if (!board) {
+      return;
+    } else {
+      return board;
+    }
 
     // setTimeout(() => {
 
