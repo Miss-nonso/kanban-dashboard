@@ -14,7 +14,7 @@ const SkeletonCard = () => {
 
       <div className="grid w-full">
         <Skeleton className="w-[170vh] h-[7rem] rounded-none mb-0" />
-        <div className="flex gap-6 pl-4 w-[70vw]">
+        <div className="flex gap-6 pl-8 w-[70vw]">
           {board?.columns.map((col, index) => (
             <div key={index} className="flex flex-col ">
               <Skeleton className="w-[200px] h-[20px] mb-6" />

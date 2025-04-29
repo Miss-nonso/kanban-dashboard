@@ -3,7 +3,6 @@
 import Board from "@/app/components/Board";
 import Header from "@/app/components/Header";
 import InvalidURL from "@/app/components/InvalidURL";
-// import Loader from "@/app/components/Loader";
 import Modal from "@/app/components/Modal";
 import NoColumn from "@/app/components/NoColumn";
 import Sidebar from "@/app/components/Sidebar";
@@ -15,7 +14,7 @@ import { useEffect, useState } from "react";
 import { Suspense, lazy } from "react";
 import SkeletonCard from "@/app/components/SkeletonCard";
 
-// const LazyComponent = lazy(() => import("@/app/components/Loader"));
+
 const LazyComponent = lazy(() => import("@/app/components/SkeletonCard"));
 
 const Main = () => {
