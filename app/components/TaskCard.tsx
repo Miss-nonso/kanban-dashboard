@@ -42,9 +42,16 @@ const TaskCard = ({ task, index }: TaskCardProps) => {
     }
   };
 
+  // const handleDrag = (e, idx) => {
+  //   // e.dataTransfer.setData("name", idx);
+  //   console.log({ e: e.dataTransfer });
+  // };
+
   return (
     <div
       className="card"
+      draggable
+      // onDragStart={(e) => handleDrag(e, index)}
       onClick={() => {
         handleTaskModalOpen(index, task, ColumnsToAddTasksTo);
       }}

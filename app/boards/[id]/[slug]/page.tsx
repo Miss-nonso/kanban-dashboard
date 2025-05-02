@@ -12,10 +12,12 @@ import { BoardProps } from "@/app/utils/interface";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Suspense, lazy } from "react";
-import SkeletonCard from "@/app/components/SkeletonCard";
+import SkeletonCard from "@/app/components/Skeleton/SkeletonCard";
+// import { DndContext } from "@dnd-kit/core";
 
-
-const LazyComponent = lazy(() => import("@/app/components/SkeletonCard"));
+const LazyComponent = lazy(
+  () => import("@/app/components/Skeleton/SkeletonCard")
+);
 
 const Main = () => {
   const [invalidURL, setInvalidURL] = useState(false);
@@ -70,6 +72,7 @@ const Main = () => {
       ) : invalidURL ? (
         <InvalidURL />
       ) : board?.columns && board?.columns.length > 0 ? (
+        // <DndContext>
         <div className="flex flex-1">
           <Sidebar />
           <div className="grid w-full h-full">
@@ -79,6 +82,7 @@ const Main = () => {
           </div>
         </div>
       ) : (
+        // </DndContext>
         <NoColumn />
       )}
     </>
