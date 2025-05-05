@@ -21,7 +21,7 @@ const Toggle = () => {
           id="toggle-btn"
           onClick={toggleTheme}
         >
-          <span></span>
+          <span className="w-4 "></span>
         </button>
         <Image
           src="/assets/icons/icon-dark-theme.svg"

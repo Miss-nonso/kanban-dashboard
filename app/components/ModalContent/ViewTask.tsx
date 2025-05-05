@@ -102,9 +102,13 @@ const ViewTask = () => {
   }
 
   return (
-    <div className="modal-content-wrapper" ref={modalRef}>
+    <div
+      className="modal-content-wrapper"
+      id="view-task-modal-wrapper"
+      ref={modalRef}
+    >
       <div className="view-task-modal-header">
-        <h5>{displayTask.title}</h5>
+        <h5 className="w-11/12 md:w-full">{displayTask.title}</h5>
         <span className="">
           <button
             onClick={() => setDisplayDropdown(!displayDropdown)}
@@ -127,12 +131,14 @@ const ViewTask = () => {
           )}
         </span>
       </div>
-      {displayTask.description && <p>{displayTask.description}</p>}
+      {displayTask.description && (
+        <p className="view-task-modal-description">{displayTask.description}</p>
+      )}
       <div>
         <label htmlFor="subtasks">
           Subtasks({getCompleteTasks()} of {displayTask.subtasks.length})
         </label>
-        <div>
+        <div className="subtasks-items">
           {displayTask.subtasks.map((subtask, index) => (
             <label className="container" key={index}>
               <input

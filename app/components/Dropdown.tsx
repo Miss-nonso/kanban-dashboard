@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Ref } from "react";
 import { useModal } from "../context/ModalContext";
 import BoardModal from "./ModalContent/BoardModal";
 import TaskModal from "./ModalContent/TaskModal";
@@ -9,6 +9,7 @@ import { TaskProps } from "../utils/interface";
 import { useBoards } from "../context/BoardContext";
 
 type DropdownProps = {
+  dropdownRef?: Ref<HTMLDivElement>;
   taskOrBoard: "task" | "board";
   // fn: () => void;
   setDisplayDropdown: (val: boolean) => void;
@@ -17,6 +18,7 @@ type DropdownProps = {
 };
 
 const Dropdown = ({
+  dropdownRef,
   taskOrBoard,
   setDisplayDropdown,
   taskItem,
@@ -29,7 +31,7 @@ const Dropdown = ({
   const currentBoard = getCurrentBoard(`${id}`);
 
   return (
-    <div className="dropdown">
+    <div className="dropdown" ref={dropdownRef}>
       <ul>
         <li>
           <button

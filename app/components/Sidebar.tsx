@@ -17,8 +17,6 @@ const Sidebar = () => {
   const params = useParams();
   const { id } = params;
   const { handleModalOpen } = useModal();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [savedBoards, setSavedBoards] = useState<BoardProps[]>([]);
   const [isClient, setIsClient] = useState(false);
   const { boards } = useBoards();
   const { showSidebar, handleSidebar } = useSidebar();
@@ -37,42 +35,46 @@ const Sidebar = () => {
   return (
     <>
       {showSidebar ? (
-        <aside className="sidebar w-[17.2vw]">
+        <aside className="sidebar  ">
           <div className="logo-wrapper">
             <Logo />
           </div>
 
-          <p className="board-length">
+          <h6 className="board-length">
             ALL BOARDS <span>({isClient && boards.length})</span>
-          </p>
+          </h6>
 
           <div className="boards-wrapper">
             <ul>
-              {isClient &&
-                boards.map(({ name, _id }: { name: string; _id: string }) => (
-                  <Link
-                    href={`/boards/${_id}/${name.replace(/ /g, "-")}`}
-                    key={_id}
-                    className={id === _id ? "active" : ""}
-                  >
-                    <Image
-                      src="/assets/icons/icon-board.svg"
-                      alt="board"
-                      width={16}
-                      height={16}
-                    />
-                    <li>{name}</li>
-                  </Link>
-                ))}
+              <div className="all-boards-list-container">
+                {isClient &&
+                  boards.map(({ name, _id }: { name: string; _id: string }) => (
+                    <Link
+                      href={`/boards/${_id}/${name.replace(/ /g, "-")}`}
+                      key={_id}
+                      className={id === _id ? "active" : ""}
+                    >
+                      <Image
+                        src="/assets/icons/icon-board.svg"
+                        alt="board"
+                        width={16}
+                        height={16}
+                      />
+                      <li>{name}</li>
+                    </Link>
+                  ))}
+              </div>
 
               <button onClick={handleOpenModal}>
                 <Image
-                  src="/assets/icons/icon-board.svg"
-                  alt="board"
-                  width={16}
+                  src="/assets/icons/purple-icon-board.png"
+                  alt="purple icon board"
                   height={16}
+                  width={16}
                 />
-                <span>+ Create New Board</span>
+                <span className="flex gap-2 items-center">
+                  <b className="font-extrabold text-xl"> +</b> Create New Board
+                </span>
               </button>
             </ul>
 

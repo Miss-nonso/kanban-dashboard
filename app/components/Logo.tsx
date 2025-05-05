@@ -5,8 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 const Logo = () => {
   const { theme } = useTheme();
   return (
-    <div className="">
-      {" "}
+    <div>
       {theme === "dark" ? (
         <Image
           src="/assets/icons/logo-light.svg"

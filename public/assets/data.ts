@@ -68,6 +68,64 @@ export const staticBoards: BoardProps[] = [
                 isCompleted: false
               }
             ]
+          },
+          {
+            title: "Mass deletion",
+            description: " Remove all columns and tasks and cannot be reversed",
+            status: "Todo",
+            subtasks: [
+              {
+                title: "Highlight errors",
+                isCompleted: true
+              },
+              {
+                title: "Seperate authentic data",
+                isCompleted: false
+              },
+              {
+                title: "Run command for deletion ",
+                isCompleted: false
+              }
+            ]
+          },
+          {
+            title: "Modify user journeys",
+            description: "",
+            status: "Todo",
+            subtasks: [
+              {
+                title: "Create phase one",
+                isCompleted: false
+              },
+              {
+                title: "Implement corrections on phase two and three",
+                isCompleted: true
+              },
+              {
+                title: "Remove and isolate rejected patterns",
+                isCompleted: true
+              },
+              {
+                title: "Define structure for phase four and five",
+                isCompleted: false
+              }
+            ]
+          },
+          {
+            title: "Destructure Web App",
+            description:
+              "Break components and web design into smaller structure, send files to dev team ",
+            status: "Todo",
+            subtasks: [
+              {
+                title: "Revisit design system",
+                isCompleted: false
+              },
+              {
+                title: "Break down codebase and assets",
+                isCompleted: false
+              }
+            ]
           }
         ]
       },

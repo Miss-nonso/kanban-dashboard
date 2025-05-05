@@ -318,7 +318,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
           <textarea
             name="description"
             id="description"
-            rows={7}
+            rows={5}
             placeholder={
               type === "add"
                 ? "e.g. It’s always good to take a break. This 15 minute break will recharge the batteries a little"

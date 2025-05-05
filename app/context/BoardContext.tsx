@@ -110,8 +110,8 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     }
 
     setTimeout(() => {
-      setIsLoadingFalse();
-      toast({ title: "Board created successfully ✅" });
+      // setIsLoadingFalse();
+      toast({ title: "Board created ✅" });
     }, 2500);
   };
 
@@ -141,7 +141,7 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     }
 
     setTimeout(() => {
-      setIsLoadingFalse();
+      // setIsLoadingFalse();
       toast({ title: "Board deleted" });
     }, 2500);
   };

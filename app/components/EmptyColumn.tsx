@@ -17,7 +17,7 @@ const EmptyColumn = () => {
   }
   return (
     <div
-      className="empty-col min-h-[60vh] cursor-pointer mt-[3.5rem] my-auto grid place-items-center min-w-[270px] bg-[var(--contrastGray)]"
+      className="empty-col min-h-[60vh] cursor-pointer mt-[3.5rem] my-auto grid place-items-center bg-[var(--contrastGray)] min-w-[230px] md:min-w-[270px]"
       onClick={() =>
         handleModalOpen(
           <BoardModal type="addColumn" />,

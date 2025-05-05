@@ -3,23 +3,51 @@
 import Image from "next/image";
 import Button from "./Button";
 import Dropdown from "./Dropdown";
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import TaskModal from "./ModalContent/TaskModal";
 import { useModal } from "../context/ModalContext";
 import { useParams } from "next/navigation";
 import { BoardProps } from "../utils/interface";
 import { useBoards } from "../context/BoardContext";
 import { useSidebar } from "../context/SidebarContext";
+import MobileBoards from "./MobileBoards";
 type HeaderProps = { boardName: string };
 
 const Header = ({ boardName }: HeaderProps) => {
-  const [displayDropdown, setDisplayDropdown] = useState(false);
-
   const { handleModalOpen } = useModal();
   const params = useParams();
   const { id } = params;
   const { boards } = useBoards();
   const { showSidebar } = useSidebar();
+  const [displayDropdown, setDisplayDropdown] = useState(false);
+  const [showMobileBoards, setShowMobileBoards] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  console.log({ dropdown: showMobileBoards });
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        closeDropdown();
+      }
+    };
+
+    if (displayDropdown || showMobileBoards) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [displayDropdown, showMobileBoards]);
+
+  const closeDropdown = () => {
+    setDisplayDropdown(false);
+    setShowMobileBoards(false);
+  };
 
   const handleTaskModalOpen = () => {
     const currentBoard = boards.find((board: BoardProps) => board._id === id);
@@ -32,11 +60,52 @@ const Header = ({ boardName }: HeaderProps) => {
   };
 
   return (
-    <header className={` ${showSidebar ? "ml-[18.75rem] px-2" : "px-8"}`}>
-      <h2 className={`text-[24px] font-bold tracking-[0.045em] `}>
-        {boardName}
-      </h2>
-      <div className="flex items-center gap-4 pr-4">
+    <header
+      className={` ${showSidebar && "md:ml-[18.75rem] md:px-2 "}  md:px-8 px-3`}
+    >
+      <div className="flex gap-2 justify-center items-center" ref={dropdownRef}>
+        {" "}
+        <Image
+          className="block md:hidden"
+          src="/assets/icons/textlessLogo.png"
+          alt="mobile logo"
+          height={35}
+          width={20}
+        />
+        <h2
+          className={`text-[18px] md:text-[24px] font-bold tracking-[0.045em] `}
+        >
+          {boardName}
+        </h2>
+        <button
+          className="relative block focus:outline-[var(--darkpurple)] focus:p-1 md:hidden"
+          onClick={() => {
+            setShowMobileBoards(!showMobileBoards);
+            if (displayDropdown) {
+              setDisplayDropdown(false);
+            }
+          }}
+        >
+          {" "}
+          {showMobileBoards ? (
+            <Image
+              src="/assets/icons/icon-chevron-up.svg"
+              alt="Show boards"
+              height={10}
+              width={10}
+            />
+          ) : (
+            <Image
+              src="/assets/icons/icon-chevron-down.svg"
+              alt="Show boards"
+              height={10}
+              width={10}
+            />
+          )}
+        </button>
+        {showMobileBoards && <MobileBoards dropdownRef={dropdownRef} />}
+      </div>
+      <div className="flex items-center gap-4 md:pr-4">
         <Button
           type="add"
           text="Add New Task"
@@ -45,17 +114,26 @@ const Header = ({ boardName }: HeaderProps) => {
           btnType="button"
         />
         <div className="relative board-option-btn">
-          <button onClick={() => setDisplayDropdown(!displayDropdown)}>
+          <button
+            onClick={() => {
+              setDisplayDropdown(!displayDropdown);
+              if (showMobileBoards) {
+                setShowMobileBoards(false);
+              }
+            }}
+            className="mt-1.5"
+          >
             <Image
               src="/assets/icons/icon-vertical-ellipsis.svg"
               alt="options"
-              width={4.62}
+              width={5.65}
               height={20}
             />
           </button>
 
           {displayDropdown && (
             <Dropdown
+              dropdownRef={dropdownRef}
               taskOrBoard="board"
               setDisplayDropdown={setDisplayDropdown}
             />

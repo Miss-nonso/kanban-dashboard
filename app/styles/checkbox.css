@@ -1,12 +1,6 @@
 .container {
-  display: block;
-  position: relative;
-  width: 100%;
-  background: var(--darkpurple);
-  padding-left: 35px;
-  padding-block: 0.7rem;
-  cursor: pointer;
-  font-size: 22px;
+  @apply py-2 block relative w-full bg-[var(--lightgray)] text-[var(--textcolor)] cursor-pointer pl-9 md:py-3;
+
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -24,13 +18,14 @@
 
 /* Create a custom checkbox */
 .checkmark {
-  position: absolute;
+  @apply absolute top-1/2 -translate-y-1/2 left-3 bg-[#eee] h-4 w-4 md:w-4 md:h-4;
+  /* position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: 0.8rem;
-  height: 18px;
-  width: 18px;
-  background-color: #eee;
+  left: 0.8rem; */
+  /* height: 18px;
+  width: 18px; */
+  /* background-color: #eee; */
 }
 
 /* On mouse-over, add a grey background color */
@@ -57,11 +52,12 @@
 
 /* Style the checkmark/indicator */
 .container .checkmark:after {
-  left: 6px;
-  top: 3px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
+  @apply w-[5px] h-[10px] left-[6px] top-[2px] border border-s-white md:w-[6px] md:h-[11px] md:left-[5px] md:top-[1px];
+  /* left: 6px;
+  top: 3px; */
+  /* width: 5px;
+  height: 10px; */
+  /* border: solid white; */
   border-width: 0 3px 3px 0;
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
@@ -69,9 +65,13 @@
 }
 
 .container p {
-  padding-left: 0.4rem;
-  font-size: 14px;
-  color: var(--white);
+  @apply text-[13px] md:text-[14px] pl-2;
+
+  /* color: var(--white); */
+}
+
+.modal-content-wrapper .subtasks-items label {
+  @apply text-[13px] md:text-[14px];
 }
 
 .container input:checked > .container {
