@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import TaskCard from "./TaskCard";
 import { ColumnProps } from "../utils/interface";
-// import {Sortable}
 
 type ColumnType = { column: ColumnProps };
 

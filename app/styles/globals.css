@@ -28,7 +28,7 @@ html.light {
   --contrastGray: rgba(130, 143, 163, 0.1);
   --lightline: #828fa3;
   --lightgray: #f4f7fd;
-
+  --secondaryHover: rgba(209, 210, 240, 0.908);
   --red: #ea5555;
   --redhover: #ff9898;
   --textcolor: #20212c;
@@ -76,7 +76,7 @@ header {
 }
 
 header .primary {
-  @apply md:py-1.5;
+  @apply py-2 px-8 md:py-1.5;
 }
 
 body {
@@ -88,13 +88,26 @@ body {
   background: var(--background);
 }
 
-.active {
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-[var(--lightgray)];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[var(--idlehoverpurple)] rounded-3xl;
+}
+
+.active,
+.mobile-boards-container .active {
   @apply bg-[var(--darkpurple)] text-white rounded-r-[4rem] transition-all duration-500 ease-in-out hover:text-white;
 }
 
-.mobile-boards-container .active {
+/* .mobile-boards-container .active {
   @apply rounded-md;
-}
+} */
 
 .error {
   @apply border-2 border-[var(--red)];
@@ -109,7 +122,7 @@ button {
 }
 
 .btn {
-  @apply flex gap-1 items-center justify-center text-[13px] px-6 rounded-[4rem] font-bold md:text-[14px];
+  @apply flex gap-1 items-center justify-center text-[13px] px-6 py-0.5 rounded-[4rem] font-bold md:text-[14px];
 }
 
 .btn span {
@@ -117,19 +130,19 @@ button {
 }
 
 .primary {
-  @apply bg-[var(--darkpurple)] text-[var(--white)] py-1;
+  @apply bg-[var(--darkpurple)] text-[var(--white)] py-1 hover:bg-[var(--lightpurple)]  hover:text-white;
 }
 
 .secondary {
-  @apply bg-[var(--darkpurple25opacity)] text-[var(--darkpurple)] font-bold;
+  @apply bg-[var(--darkpurple25opacity)] text-[var(--darkpurple)] hover:bg-[var(--secondaryHover)] font-bold;
 }
 
 .danger {
-  @apply bg-[var(--red)];
+  @apply bg-[var(--red)] hover:bg-[var(--redhover)];
 }
 
 .btnLg {
-  @apply py-1 md:py-2;
+  @apply py-2 md:py-2;
 }
 
 /* .active:hover {
@@ -137,15 +150,19 @@ button {
 } */
 
 .mobile-boards-container {
-  @apply grid absolute top-24 left-3 bg-[var(--foreground)] px-4 py-4 max-w-[16rem]  max-h-[25rem] min-w-[18rem] md:hidden;
+  @apply grid absolute top-24 left-3 bg-[var(--foreground)] pb-4 shadow-2xl  max-w-[16rem]  max-h-[25rem] min-w-[18rem] md:hidden;
 }
 
 .mobile-boards-container .mobile-boards-wrapper {
-  @apply overflow-y-scroll h-[20rem];
+  @apply overflow-y-scroll h-[20rem] pr-4 py-4;
+}
+
+.mobile-boards-container ::-webkit-scrollbar-track {
+  @apply bg-[var(--foreground)];
 }
 
 .sidebar {
-  @apply bg-[var(--foreground)] h-[100vh] min-w-[18.75rem] pb-2  gap-4 animate-[slide] transition-all duration-500 ease-linear md:block hidden;
+  @apply hidden bg-[var(--foreground)] h-[100vh]  pb-2  gap-4 animate-[slide] transition-all duration-500 ease-linear md:min-w-[16.25rem] md:block  lg:min-w-[18.75rem];
   /* color: var(--textcolor); */
   /* fixed bottom-0 top-0 left-0  */
 }
@@ -171,13 +188,17 @@ button {
 
 .sidebar .boards-wrapper {
   @apply flex flex-col justify-between;
-  max-height: calc(100vh - 10rem);
+  height: calc(100vh - 10rem);
 }
 
 .sidebar .boards-wrapper .all-boards-list-container {
   @apply overflow-y-scroll mt-4 pb-4 mb-4 w-full;
-  /* max-h-[35rem] */
+
   max-height: calc(100vh - 20.5rem);
+}
+
+.sidebar .boards-wrapper .all-boards-list-container::-webkit-scrollbar-track {
+  @apply bg-[var(--foreground)];
 }
 
 .sidebar .boards-wrapper ul a,
@@ -247,11 +268,11 @@ button {
 }
 
 .card {
-  @apply bg-[var(--foreground)] shadow-lg rounded-md py-6 pl-4 pr-2 min-h-[5.5rem] grid gap-1 cursor-grab transition-all duration-300 ease-in-out;
+  @apply bg-[var(--foreground)] shadow-lg rounded-md py-6 pl-4 pr-2 min-h-[5.5rem] grid gap-1 cursor-grab transition-all duration-300 ease-in-out hover:ring-2 hover:ring-inset hover:ring-[var(--contrastGray)];
 }
 
 .card:hover {
-  @apply scale-105;
+  @apply scale-[1.03];
 }
 
 .card p {
@@ -262,7 +283,7 @@ button {
 }
 
 .dropdown {
-  @apply absolute z-30 top-8 min-w-[100px] -left-[4.5rem] bg-[var(--background)] p-4 rounded-lg transition-all duration-300 ease-in-out md:p-4 md:-left-10 md:min-w-[110px];
+  @apply absolute z-30 top-8 min-w-[110px] -left-[5.5rem] bg-[var(--background)] p-4 rounded-lg transition-all duration-300 ease-in-out md:px-4 md:py-4 md:pl-6 md:-left-[5.5rem]  md:min-w-[115px];
 }
 
 .dropdown ul {
@@ -282,7 +303,11 @@ button {
 }
 
 .board-option-btn .dropdown {
-  @apply -left-[10.5rem] top-12;
+  @apply -left-[6rem] top-12 md:-left-[10.5rem];
+}
+
+header .board-option-btn .dropdown {
+  @apply md:-left-[4.5rem];
 }
 
 .toggle-container,

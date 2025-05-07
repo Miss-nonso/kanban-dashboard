@@ -3,12 +3,15 @@ import Column from "./Column";
 import { ColumnProps } from "../utils/interface";
 import EmptyColumn from "./EmptyColumn";
 import { indicatorColors } from "@/lib/lib";
+// import { Sortable } from "@dnd-kit/sortable";
 
 type ColumnPropsType = { columns: ColumnProps[] };
 
 const Board = ({ columns }: ColumnPropsType) => {
+  // const columnsName = useMemo(() => columns.map((col) => col.name), [columns]);
   return (
-    <div className={`board  `}>
+    <div className={`board`}>
+      {/* <Sortable items={columnsName}> */}
       {columns &&
         columns.map((col, index) => (
           <div key={index}>
@@ -28,6 +31,7 @@ const Board = ({ columns }: ColumnPropsType) => {
             <Column column={col} />
           </div>
         ))}
+      {/* </Sortable> */}
       {columns.length > 0 && <EmptyColumn />}
     </div>
   );

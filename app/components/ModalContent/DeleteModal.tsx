@@ -35,8 +35,6 @@ const DeleteModal = ({ taskOrBoard }: DeleteModalProps) => {
     );
   }
 
-  console.log({ modalValue: modalValue?.item });
-
   const itemName =
     taskOrBoard === "task"
       ? isTaskTuple(modalValue?.item) && modalValue.item[1].title
@@ -83,9 +81,7 @@ const DeleteModal = ({ taskOrBoard }: DeleteModalProps) => {
 
       <p>
         Are you sure you want to delete the{" "}
-        <span className="text-[var(--darkpurple)]">
-          &apos;{itemName}&apos;{" "}
-        </span>
+        <span className="font-extrabold">&apos;{itemName}&apos; </span>
         {taskOrBoard}? This action will remove all columns and tasks and cannot
         be reversed.
       </p>

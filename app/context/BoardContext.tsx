@@ -1,5 +1,5 @@
 "use client";
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from "nanoid";
 import {
   createContext,
   useContext,
@@ -54,7 +54,6 @@ export function BoardProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    // setIsLoadingTrue();
     const storedBoards = getFromLocalStorage("boards");
     if (storedBoards) {
       setBoards(storedBoards);
@@ -62,10 +61,6 @@ export function BoardProvider({ children }: { children: ReactNode }) {
       setBoards(staticBoards);
       setToLocalStorage("boards", staticBoards);
     }
-
-    // setTimeout(() => {
-    //   setIsLoadingFalse();
-    // }, 3000);
   }, []);
 
   useEffect(() => {
@@ -78,18 +73,12 @@ export function BoardProvider({ children }: { children: ReactNode }) {
   };
 
   const getCurrentBoard = (id: string) => {
-    // setIsLoading(true);
     const board = boards.find((board) => board._id === id);
     if (!board) {
       return;
     } else {
       return board;
     }
-
-    // setTimeout(() => {
-
-    //   setIsLoading(false);
-    // }, 2000);
   };
 
   const createNewBoard = (boardObj: Omit<BoardProps, "_id">) => {
@@ -98,7 +87,7 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     if (boardObj.name) {
       const newBoard = {
         ...boardObj,
-        _id: uuidv4()
+        _id: nanoid(10)
       };
 
       const updated = [...boards, newBoard];

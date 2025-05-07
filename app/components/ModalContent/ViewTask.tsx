@@ -132,7 +132,9 @@ const ViewTask = () => {
         </span>
       </div>
       {displayTask.description && (
-        <p className="view-task-modal-description">{displayTask.description}</p>
+        <p className="view-task-modal-description whitespace-pre-wrap">
+          {displayTask.description}
+        </p>
       )}
       <div>
         <label htmlFor="subtasks">

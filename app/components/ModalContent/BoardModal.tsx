@@ -61,6 +61,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
 
   const formValid =
     // inputValues.length >= 1 &&
+    boardname.length < 20 &&
     inputValues.every(Boolean) &&
     inputErrors.every((err) => !err) &&
     !duplicatesExist() &&
@@ -124,6 +125,10 @@ const BoardModal = ({ type }: BoardModalProps) => {
       }
 
       currentBoard.name = boardname;
+
+      if (columnValues.length < currentBoard.columns.length) {
+        currentBoard.columns.splice(columnValues.length);
+      }
 
       columnValues.map((colVal, index) => {
         if (index > currentBoard.columns.length - 1) {
@@ -195,8 +200,19 @@ const BoardModal = ({ type }: BoardModalProps) => {
             name="boardName"
             id="boardName"
             required
+            autoFocus
             value={boardname}
-            onChange={(e) => setBoardname(e.target.value)}
+            onChange={(e) => {
+              setBoardname(e.target.value);
+
+              if (boardname.length > 20) {
+                toast({
+                  title: "Board name too long!",
+                  description: "Max 20 characters",
+                  variant: "destructive"
+                });
+              }
+            }}
             disabled={type === "addColumn"}
           />
         </div>

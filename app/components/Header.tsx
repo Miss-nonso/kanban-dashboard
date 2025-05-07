@@ -23,8 +23,6 @@ const Header = ({ boardName }: HeaderProps) => {
   const [showMobileBoards, setShowMobileBoards] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  console.log({ dropdown: showMobileBoards });
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -61,9 +59,20 @@ const Header = ({ boardName }: HeaderProps) => {
 
   return (
     <header
-      className={` ${showSidebar && "md:ml-[18.75rem] md:px-2 "}  md:px-8 px-3`}
+      className={` ${
+        showSidebar && "md:ml-[16.25rem] lg:ml-[18.75rem] md:px-2 "
+      }  md:px-8 px-3`}
     >
-      <div className="flex gap-2 justify-center items-center" ref={dropdownRef}>
+      <div
+        className="flex gap-2 justify-center items-center"
+        ref={dropdownRef}
+        onClick={() => {
+          setShowMobileBoards(!showMobileBoards);
+          if (displayDropdown) {
+            setDisplayDropdown(false);
+          }
+        }}
+      >
         {" "}
         <Image
           className="block md:hidden"
@@ -73,19 +82,13 @@ const Header = ({ boardName }: HeaderProps) => {
           width={20}
         />
         <h2
-          className={`text-[18px] md:text-[24px] font-bold tracking-[0.045em] `}
+          className={`${
+            boardName.length > 15 ? "text-[0.75rem] " : "text-[18px]"
+          } md:text-[24px] font-bold tracking-[0.045em] `}
         >
           {boardName}
         </h2>
-        <button
-          className="relative block focus:outline-[var(--darkpurple)] focus:p-1 md:hidden"
-          onClick={() => {
-            setShowMobileBoards(!showMobileBoards);
-            if (displayDropdown) {
-              setDisplayDropdown(false);
-            }
-          }}
-        >
+        <button className="relative block focus:outline-[var(--darkpurple)] focus:p-1 md:hidden">
           {" "}
           {showMobileBoards ? (
             <Image

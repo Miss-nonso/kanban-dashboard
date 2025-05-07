@@ -30,8 +30,6 @@ const MobileBoards = ({
     }
   };
 
-  console.log({ dropdownRef });
-
   return (
     <div ref={dropdownRef} className="mobile-boards-container">
       <div className="boards-wrapper mobile-boards-wrapper ">
@@ -69,7 +67,7 @@ const MobileBoards = ({
           </span>
         </button>
       </div>
-      <div className="pt-3">
+      <div className="pt-3" ref={dropdownRef}>
         <Toggle />
       </div>
     </div>

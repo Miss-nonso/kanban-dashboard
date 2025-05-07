@@ -75,7 +75,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
         return {
           title: "",
           description: "",
-          status: "todo",
+          status: "",
           subtasks: []
         };
       }
@@ -83,7 +83,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
       return {
         title: "",
         description: "",
-        status: "todo",
+        status: "",
         subtasks: []
       };
     }
@@ -109,6 +109,8 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
     }
   });
   const [inputErrors, setInputErrors] = useState([""]);
+
+  const formValid = taskToEdit.title && taskToEdit.status;
 
   function deleteInput(index: number) {
     if (inputValues.length > 1) {
@@ -307,6 +309,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
             value={taskToEdit && taskToEdit.title}
             placeholder={type === "add" ? "e.g. Take coffee break" : ""}
             required
+            autoFocus
             onChange={(e) =>
               setTaskToEdit({ ...taskToEdit, title: e.target.value })
             }
@@ -319,6 +322,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
             name="description"
             id="description"
             rows={5}
+            autoCorrect="En"
             placeholder={
               type === "add"
                 ? "e.g. It’s always good to take a break. This 15 minute break will recharge the batteries a little"
@@ -382,6 +386,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
           text={type === "add" ? "Create Task" : "Save Changes"}
           btnClass="primary"
           btnType="submit"
+          disabled={!formValid}
         />
       </form>
     </div>

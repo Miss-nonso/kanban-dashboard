@@ -3,7 +3,7 @@ import { BoardProps } from "../../app/utils/interface";
 export const staticBoards: BoardProps[] = [
   {
     name: "Platform Launch",
-    _id: "0e750726-5c63-43a5-950c-95830824753b",
+    _id: "YA6swbl4vV",
     columns: [
       {
         name: "Todo",
@@ -356,7 +356,7 @@ export const staticBoards: BoardProps[] = [
   },
   {
     name: "Marketing Plan",
-    _id: "7e3052d3-d2f6-4e4a-9a93-c5a3ca27f251",
+    _id: "bUsvK8MSEl",
     columns: [
       {
         name: "Todo",
@@ -448,7 +448,7 @@ export const staticBoards: BoardProps[] = [
   },
   {
     name: "Roadmap",
-    _id: "844b3b55-ee4c-41d9-940f-4fcfb9d92301",
+    _id: "JkZoPQ3c6v",
     columns: [
       {
         name: "Now",

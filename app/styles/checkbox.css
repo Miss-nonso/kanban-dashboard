@@ -1,5 +1,5 @@
 .container {
-  @apply py-2 block relative w-full bg-[var(--lightgray)] text-[var(--textcolor)] cursor-pointer pl-9 md:py-3;
+  @apply py-2.5 block relative w-full bg-[var(--lightgray)] text-[var(--textcolor)] cursor-pointer pl-9 md:py-3;
 
   -webkit-user-select: none;
   -moz-user-select: none;

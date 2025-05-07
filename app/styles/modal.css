@@ -4,19 +4,24 @@
 
 form input,
 textarea {
-  @apply text-[var(--textcolor)] disabled:opacity-20;
+  @apply text-[var(--textcolor)] focus:outline-1 focus:outline-[var(--lightpurple)] focus:border-none focus-within:outline-none rounded-sm disabled:opacity-20;
 }
 
-/* input:disabled {
-  @apply border border-red-700;
-} */
+textarea {
+  @apply resize-none;
+}
 
 select,
 option {
   @apply text-black;
 }
+
 .modal-content-wrapper {
-  @apply relative grid gap-3 bg-[var(--foreground)] w-full max-w-[430px] max-h-[70vh] overflow-y-scroll p-4 py-5  rounded-md  md:gap-4 md:p-6;
+  @apply relative grid gap-4 bg-[var(--foreground)] w-full max-w-[430px] max-h-[70vh] overflow-y-scroll p-4 py-6  rounded-md  md:gap-5 md:p-6;
+}
+
+.modal > ::-webkit-scrollbar {
+  @apply w-2 bg-[var(--background)];
 }
 
 .modal-content-wrapper h5,
@@ -29,7 +34,7 @@ option {
 }
 
 .modal-content-wrapper div {
-  @apply gap-1 grid md:gap-2;
+  @apply gap-2 grid md:gap-2;
 }
 
 .modal-content-wrapper div .col-input-wrapper {
@@ -39,7 +44,7 @@ option {
 .modal-content-wrapper div input,
 .modal-content-wrapper select,
 .modal-content-wrapper textarea {
-  @apply py-1.5 pl-1.5 w-full text-[13px] border border-[var(--mediumgray)] bg-transparent text-[var(--textcolor)] md:text-[15px] md:py-2;
+  @apply py-2 pl-1.5 w-full text-[13px] border border-[var(--mediumgray)] bg-transparent text-[var(--textcolor)] md:text-[15px] md:py-2;
 }
 
 option {
@@ -55,7 +60,7 @@ option {
 }
 
 .modal-content-wrapper select {
-  @apply p-1.5 md:p-2;
+  @apply p-2 md:p-2;
 }
 
 .all-col-input-container {
@@ -82,27 +87,14 @@ option {
   @apply w-full md:w-1/2;
 }
 
-/* #view-task-content-wrapper .view-task-modal-header {
-  @apply flex items-center justify-between gap-16;
-} */
-
-/* #view-task-content-wrapper .view-task-modal-header .task-option-btn {
-  @apply w-2 h-5;
-} */
-
 .modal-content-wrapper .view-task-modal-description {
   @apply text-[var(--lightline)] text-[13px] md:text-[14px];
 }
 
 .view-task-modal-header span {
-  @apply absolute right-6 
-  /* @apply w-full h-full; */;
+  @apply absolute right-6;
 }
 
 #view-task-modal-wrapper {
   @apply md:max-w-[450px];
 }
-
-/* #view-task-content-wrapper > p {
-  @apply text-[14px] text-[var(--mediumgray)];
-} */
