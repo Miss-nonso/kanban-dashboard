@@ -204,7 +204,9 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
           };
         });
 
+        taskToEdit.title = taskToEdit.title.trim();
         taskToEdit.subtasks = subtasks;
+        taskToEdit.description = taskToEdit.description.trim();
 
         const currentBoard = boards.find((board) => board._id === id);
 
@@ -243,8 +245,8 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
                   col.tasks.map((task: TaskProps) => {
                     if (prevStateOfTask) {
                       if (task.title === prevStateOfTask.title) {
-                        task.title = taskToEdit.title;
-                        task.description = taskToEdit.description;
+                        task.title = taskToEdit.title.trim();
+                        task.description = taskToEdit.description.trim();
 
                         subtasksValues.map((val, index) => {
                           if (index > task.subtasks.length - 1) {
@@ -274,6 +276,9 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
         if (!currentBoard) {
           return;
         }
+
+        taskToEdit.title = taskToEdit.title.trim();
+        taskToEdit.description = taskToEdit.description.trim();
 
         const taskToAdd = { ...taskToEdit };
         const columnToAddTask =

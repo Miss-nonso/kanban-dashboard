@@ -82,7 +82,7 @@ header .primary {
 body {
   @apply transition-all duration-300 ease-in-out;
   font-family: "Plus Jakarta Sans", serif;
-  height: 100vh;
+  height: 100dvh;
   color: var(--textcolor);
   overflow: hidden;
   background: var(--background);
@@ -162,7 +162,7 @@ button {
 }
 
 .sidebar {
-  @apply hidden bg-[var(--foreground)] h-[100vh]  pb-2  gap-4 animate-[slide] transition-all duration-500 ease-linear md:min-w-[16.25rem] md:block  lg:min-w-[18.75rem];
+  @apply hidden bg-[var(--foreground)] h-[100dvh]  pb-2  gap-4 animate-[slide] transition-all duration-500 ease-linear md:min-w-[16.25rem] md:block  lg:min-w-[18.75rem];
   /* color: var(--textcolor); */
   /* fixed bottom-0 top-0 left-0  */
 }
@@ -188,13 +188,13 @@ button {
 
 .sidebar .boards-wrapper {
   @apply flex flex-col justify-between;
-  height: calc(100vh - 10rem);
+  height: calc(100dvh - 10rem);
 }
 
 .sidebar .boards-wrapper .all-boards-list-container {
   @apply overflow-y-scroll mt-4 pb-4 mb-4 w-full;
 
-  max-height: calc(100vh - 20.5rem);
+  max-height: calc(100dvh - 20.5rem);
 }
 
 .sidebar .boards-wrapper .all-boards-list-container::-webkit-scrollbar-track {
@@ -255,7 +255,7 @@ button {
   @apply pl-[1.5rem] pr-[3rem] mt-[5rem] pt-[2rem] pb-[25rem] overflow-x-scroll overflow-y-scroll flex gap-6 md:pr-[7rem] md:pl-[2rem] md:mt-[6rem];
 
   min-width: calc(100vw - 18.75rem);
-  height: calc(100vh - 6rem);
+  height: calc(100dvh - 6rem);
 }
 
 .column-wrapper {
@@ -268,7 +268,7 @@ button {
 }
 
 .card {
-  @apply bg-[var(--foreground)] shadow-lg rounded-md py-6 pl-4 pr-2 min-h-[5.5rem] grid gap-1 cursor-grab transition-all duration-300 ease-in-out hover:ring-2 hover:ring-inset hover:ring-[var(--contrastGray)];
+  @apply bg-[var(--foreground)] shadow-lg rounded-md py-6 pl-4 pr-2 min-h-[5.5rem] grid gap-1 cursor-grab transition-all duration-300 ease-in-out hover:scale-110 hover:ring-2 hover:ring-inset hover:ring-[var(--contrastGray)];
 }
 
 .card:hover {
