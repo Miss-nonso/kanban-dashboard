@@ -10,7 +10,7 @@ import { useBoards } from "@/app/context/BoardContext";
 import { useModal } from "@/app/context/ModalContext";
 import { BoardProps, ColumnProps, TaskProps } from "@/app/utils/interface";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Suspense, lazy } from "react";
 
 import SkeletonCard from "@/app/components/Skeleton/SkeletonCard";
@@ -21,6 +21,7 @@ import {
   DragOverlay,
   DragStartEvent,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors
 } from "@dnd-kit/core";
@@ -48,6 +49,12 @@ const Main = () => {
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 3
+      }
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5
       }
     })
   );
@@ -84,10 +91,10 @@ const Main = () => {
   }
 
   function onDragStart(event: DragStartEvent) {
-    // if (event.active.data.current?.type === "Column") {
-    //   setActiveColumn(event.active.data.current.column);
-    //   return;
-    // }
+    if (event.active.data.current?.type === "Column") {
+      setActiveColumn(event.active.data.current.column);
+      return;
+    }
 
     if (event.active.data.current?.type === "Task") {
       setActiveTask(event.active.data.current.task);
@@ -95,104 +102,294 @@ const Main = () => {
     }
   }
 
-  function onDragOver(event: DragOverEvent) {
-    const { active, over } = event;
+  const onDragOver = useCallback(
+    (event: DragOverEvent) => {
+      const { active, over } = event;
+      if (!over) return;
 
-    if (!over) return;
+      const activeId = active.id;
+      const overId = over.id;
 
-    const activeId = active.id;
-    const overId = over.id;
+      if (activeId === overId) return;
 
-    if (activeId === overId) return;
+      const isActiveTask = active.data.current?.type === "Task";
+      const isOverATask = over.data.current?.type === "Task";
+      const isOverAColumn = over.data.current?.type === "Column";
 
-    const isActiveTask = active.data.current?.type === "Task";
-    const isOverATask = over.data.current?.type === "Task";
-    // const isOverAColumn = over.data.current?.type === "Column";
+      if (!isActiveTask) return;
 
-    // console.log({ isOverAColumn: over.data.current });
-    if (!isActiveTask) return;
+      if (isActiveTask && isOverATask) {
+        const currentBoard = board;
 
-    if (isActiveTask && isOverATask) {
-      const currentBoard = getCurrentBoard(`${id}`);
+        if (!currentBoard) return;
 
-      if (!currentBoard) return;
+        const activeColumnItem = currentBoard.columns.find((col) => {
+          if (active.data.current) {
+            if (active.data.current.task.status.length < 1) {
+              return (
+                col.name.toLowerCase() ===
+                currentBoard.columns[0].name.toLowerCase()
+              );
+            } else {
+              return (
+                col.name.toLowerCase() ===
+                active.data.current?.task.status.toLowerCase()
+              );
+            }
+          }
+        });
 
-      const activeColumnItem = currentBoard.columns.find((col) => {
-        if (active.data.current) {
-          if (active.data.current.task.status.length < 1) {
-            return (
-              col.name.toLowerCase() ===
-              currentBoard.columns[0].name.toLowerCase()
-            );
+        if (!activeColumnItem) return;
+
+        const overColumnItem = currentBoard.columns.find((col) => {
+          if (over.data.current?.task) {
+            if (over.data.current?.task.status.length < 1) {
+              return (
+                col.name.toLowerCase() ===
+                currentBoard.columns[0].name.toLowerCase()
+              );
+            } else {
+              return (
+                col.name.toLowerCase() ===
+                over.data.current?.task.status.toLowerCase()
+              );
+            }
+          }
+        });
+
+        if (!overColumnItem) return;
+
+        const activeTaskIndex = activeColumnItem.tasks.findIndex(
+          (task) => task.title === activeId
+        );
+
+        const overTaskIndex = overColumnItem.tasks.findIndex(
+          (task) => task.title === overId
+        );
+
+        if (active.data.current?.task && over.data.current?.task) {
+          const activeStatus =
+            active.data.current.task.status.toLowerCase() ||
+            currentBoard.columns[0].name.toLowerCase();
+          const overStatus =
+            over.data.current.task.status.toLowerCase() ||
+            currentBoard.columns[0].name.toLowerCase();
+
+          if (activeStatus !== overStatus) {
+            if (activeTask) {
+              const updatedActiveTasks = [...activeColumnItem.tasks];
+              updatedActiveTasks.splice(activeTaskIndex, 1);
+
+              activeTask.status = overStatus;
+
+              const updatedOverTasks = [...overColumnItem.tasks];
+              updatedOverTasks.splice(overTaskIndex, 0, activeTask);
+
+              activeColumnItem.tasks = updatedActiveTasks;
+              overColumnItem.tasks = updatedOverTasks;
+            }
           } else {
-            return (
-              col.name.toLowerCase() ===
-              active.data.current?.task.status.toLowerCase()
+            const updatedTasks = arrayMove(
+              overColumnItem.tasks,
+              activeTaskIndex,
+              overTaskIndex
             );
+
+            overColumnItem.tasks = updatedTasks;
           }
-        }
-      });
-
-      if (!activeColumnItem) return;
-
-      const overColumnItem = currentBoard.columns.find((col) => {
-        if (over.data.current?.task) {
-          if (over.data.current?.task.status.length < 1) {
-            return (
-              col.name.toLowerCase() ===
-              currentBoard.columns[0].name.toLowerCase()
-            );
-          } else {
-            return (
-              col.name.toLowerCase() ===
-              over.data.current?.task.status.toLowerCase()
-            );
-          }
-        }
-      });
-
-      if (!overColumnItem) return;
-
-      const activeTaskIndex = activeColumnItem.tasks.findIndex(
-        (task) => task.title === activeId
-      );
-
-      const overTaskIndex = overColumnItem.tasks.findIndex(
-        (task) => task.title === overId
-      );
-
-      if (active.data.current?.task && over.data.current?.task) {
-        const activeStatus =
-          active.data.current.task.status.toLowerCase() ||
-          currentBoard.columns[0].name.toLowerCase();
-        const overStatus =
-          over.data.current.task.status.toLowerCase() ||
-          currentBoard.columns[0].name.toLowerCase();
-        if (activeStatus !== overStatus) {
-          console.log({
-            activeColumnItem,
-            overColumnItem,
-            activeTaskIndex,
-            overTaskIndex
-          });
-
-          activeColumnItem.tasks.splice(activeTaskIndex, 1);
-          if (activeTask) {
-            activeTask.status = overStatus;
-            overColumnItem.tasks.splice(overTaskIndex, 0, activeTask);
-          }
-        } else {
-          const updatedTasks = arrayMove(
-            overColumnItem.tasks,
-            activeTaskIndex,
-            overTaskIndex
-          );
-
-          overColumnItem.tasks = updatedTasks;
         }
       }
-    }
-  }
+
+      if (isActiveTask && isOverAColumn && activeTask) {
+        if (over.data.current?.column) {
+          const overColumn = over.data.current?.column;
+          const currentBoard = board;
+          if (!currentBoard) return;
+
+          const activeStatus =
+            activeTask.status.toLowerCase() ||
+            currentBoard.columns[0].name.toLowerCase();
+          // const overStatus =
+          //   over.data.current.task.status.toLowerCase() ||
+          //   currentBoard.columns[0].name.toLowerCase();
+
+          const prevColumn = currentBoard.columns.find(
+            (col) => col.name.toLowerCase() === activeStatus
+          );
+
+          if (!prevColumn) return;
+
+          const newColumn = currentBoard.columns.find(
+            (col) => col.name.toLowerCase() === overColumn.name.toLowerCase()
+          );
+
+          if (!newColumn) return;
+
+          const activeTaskIndex = prevColumn.tasks.findIndex(
+            (task) => task.title === activeId
+          );
+
+          const overTaskIndex = newColumn.tasks.findIndex(
+            (task) => task.title === overId
+          );
+
+          if (overColumn.tasks.length < 1 && activeTask) {
+            prevColumn.tasks.splice(activeTaskIndex, 1);
+            activeTask.status = newColumn.name;
+            newColumn.tasks.push(activeTask);
+          } else {
+            prevColumn.tasks.splice(activeTaskIndex, 1);
+            activeTask.status = newColumn.name;
+            newColumn.tasks.splice(overTaskIndex, 0, activeTask);
+          }
+        }
+      }
+    },
+    [board, activeTask]
+  );
+
+  // const onDragOver = useCallback(
+  //   throttle((event: DragOverEvent) => {
+  //     const { active, over } = event;
+  //     if (!over) return;
+
+  //     const activeId = active.id;
+  //     const overId = over.id;
+
+  //     if (activeId === overId) return;
+
+  //     const isActiveTask = active.data.current?.type === "Task";
+  //     const isOverATask = over.data.current?.type === "Task";
+  //     const isOverAColumn = over.data.current?.type === "Column";
+
+  //     if (!isActiveTask) return;
+
+  //     if (isActiveTask && isOverATask) {
+  //       const currentBoard = board;
+
+  //       if (!currentBoard) return;
+
+  //       const activeColumnItem = currentBoard.columns.find((col) => {
+  //         if (active.data.current) {
+  //           if (active.data.current.task.status.length < 1) {
+  //             return (
+  //               col.name.toLowerCase() ===
+  //               currentBoard.columns[0].name.toLowerCase()
+  //             );
+  //           } else {
+  //             return (
+  //               col.name.toLowerCase() ===
+  //               active.data.current?.task.status.toLowerCase()
+  //             );
+  //           }
+  //         }
+  //       });
+
+  //       if (!activeColumnItem) return;
+
+  //       const overColumnItem = currentBoard.columns.find((col) => {
+  //         if (over.data.current?.task) {
+  //           if (over.data.current?.task.status.length < 1) {
+  //             return (
+  //               col.name.toLowerCase() ===
+  //               currentBoard.columns[0].name.toLowerCase()
+  //             );
+  //           } else {
+  //             return (
+  //               col.name.toLowerCase() ===
+  //               over.data.current?.task.status.toLowerCase()
+  //             );
+  //           }
+  //         }
+  //       });
+
+  //       if (!overColumnItem) return;
+
+  //       const activeTaskIndex = activeColumnItem.tasks.findIndex(
+  //         (task) => task.title === activeId
+  //       );
+
+  //       const overTaskIndex = overColumnItem.tasks.findIndex(
+  //         (task) => task.title === overId
+  //       );
+
+  //       if (active.data.current?.task && over.data.current?.task) {
+  //         const activeStatus =
+  //           active.data.current.task.status.toLowerCase() ||
+  //           currentBoard.columns[0].name.toLowerCase();
+  //         const overStatus =
+  //           over.data.current.task.status.toLowerCase() ||
+  //           currentBoard.columns[0].name.toLowerCase();
+  //         if (activeStatus !== overStatus) {
+  //           const updatedActiveTasks = [...activeColumnItem.tasks];
+  //           updatedActiveTasks.splice(activeTaskIndex, 1);
+
+  //           if (activeTask) {
+  //             activeTask.status = overStatus;
+  //             const updatedOverTasks = [...overColumnItem.tasks];
+  //             updatedOverTasks.splice(overTaskIndex, 0, activeTask);
+  //           }
+  //         } else {
+  //           const updatedTasks = arrayMove(
+  //             overColumnItem.tasks,
+  //             activeTaskIndex,
+  //             overTaskIndex
+  //           );
+
+  //           overColumnItem.tasks = updatedTasks;
+  //         }
+  //       }
+  //     }
+
+  //     console.log({ isOverAColumn, isOverATask });
+
+  //     if (isActiveTask && isOverAColumn && activeTask) {
+  //       if (over.data.current?.column) {
+  //         const overColumn = over.data.current?.column;
+  //         const currentBoard = board;
+  //         if (!currentBoard) return;
+
+  //         const activeStatus =
+  //           activeTask.status.toLowerCase() ||
+  //           currentBoard.columns[0].name.toLowerCase();
+  //         // const overStatus =
+  //         //   over.data.current.task.status.toLowerCase() ||
+  //         //   currentBoard.columns[0].name.toLowerCase();
+
+  //         const prevColumn = currentBoard.columns.find(
+  //           (col) => col.name.toLowerCase() === activeStatus
+  //         );
+
+  //         if (!prevColumn) return;
+
+  //         const newColumn = currentBoard.columns.find(
+  //           (col) => col.name.toLowerCase() === overColumn.name.toLowerCase()
+  //         );
+
+  //         if (!newColumn) return;
+
+  //         const activeTaskIndex = prevColumn.tasks.findIndex(
+  //           (task) => task.title === activeId
+  //         );
+
+  //         const overTaskIndex = newColumn.tasks.findIndex(
+  //           (task) => task.title === overId
+  //         );
+
+  //         if (overColumn.tasks.length < 1 && activeTask) {
+  //           prevColumn.tasks.splice(activeTaskIndex, 1);
+  //           activeTask.status = newColumn.name;
+  //           newColumn.tasks.push(activeTask);
+  //         } else {
+  //           prevColumn.tasks.splice(activeTaskIndex, 1);
+  //           activeTask.status = newColumn.name;
+  //           newColumn.tasks.splice(overTaskIndex, 0, activeTask);
+  //         }
+  //       }
+  //     }
+  //   }, 100),
+  //   [board, activeTask]
+  // );
 
   function onDragEnd(event: DragEndEvent) {
     setActiveColumn(null);

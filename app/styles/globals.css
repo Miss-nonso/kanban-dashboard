@@ -259,7 +259,7 @@ button {
 }
 
 .column-wrapper {
-  @apply grid gap-4 w-[250px] md:w-[280px] lg:w-[300px];
+  @apply grid gap-4 w-[250px] md:w-[280px] lg:w-[300px] min-h-[5.5rem];
 }
 
 .empty-col:hover p,
