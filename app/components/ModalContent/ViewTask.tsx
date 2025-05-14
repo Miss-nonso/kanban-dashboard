@@ -108,7 +108,7 @@ const ViewTask = () => {
       ref={modalRef}
     >
       <div className="view-task-modal-header">
-        <h5 className="w-11/12 md:w-full">{displayTask.title}</h5>
+        <h5 className="w-10/12 md:w-11/12">{displayTask.title}</h5>
         <span className="">
           <button
             onClick={() => setDisplayDropdown(!displayDropdown)}

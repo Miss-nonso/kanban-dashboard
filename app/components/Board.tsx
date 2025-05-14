@@ -4,6 +4,7 @@ import { ColumnProps } from "../utils/interface";
 import EmptyColumn from "./EmptyColumn";
 import { indicatorColors } from "@/lib/lib";
 import { SortableContext } from "@dnd-kit/sortable";
+import NoColumn from "./NoColumn";
 
 type ColumnPropsType = { columns: ColumnProps[] };
 
@@ -12,7 +13,7 @@ const Board = ({ columns }: ColumnPropsType) => {
   return (
     <div className={`board`}>
       <SortableContext items={columnsName}>
-        {columns &&
+        {columns.length > 0 ? (
           columns.map((col, index) => (
             <div key={index}>
               <h4 className="uppercase flex items-center gap-2 tracking-[0.2rem] text-[14px] text-[var(--mediumgray)] mb-4 ml-1 md:mb-8 md:text-[1rem] md:tracking-[0.27rem]">
@@ -30,7 +31,10 @@ const Board = ({ columns }: ColumnPropsType) => {
 
               <Column column={col} />
             </div>
-          ))}
+          ))
+        ) : (
+          <NoColumn />
+        )}
       </SortableContext>
       {columns.length > 0 && <EmptyColumn />}
     </div>

@@ -15,7 +15,7 @@ const NoColumn = () => {
 
   return (
     <div
-      className={`h-[100vh] flex flex-col w-full gap-4 justify-center items-center `}
+      className={`h-[100vh] px-4 flex flex-col w-full gap-4 justify-center items-center `}
     >
       <p>This board is empty. Create a new column to get started.</p>
       <Button

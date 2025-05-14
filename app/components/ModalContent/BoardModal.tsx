@@ -120,6 +120,8 @@ const BoardModal = ({ type }: BoardModalProps) => {
     if (type === "edit") {
       const currentBoard = boards.find((board: BoardProps) => board._id === id);
 
+      console.log({ type, currentBoard });
+
       if (!currentBoard) {
         return;
       }
