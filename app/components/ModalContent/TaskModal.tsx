@@ -6,6 +6,7 @@ import {
   SubtaskProps,
   TaskProps
 } from "@/app/utils/interface";
+import { nanoid } from "nanoid";
 import { ItemType } from "@/app/utils/types";
 import Button from "../Button";
 import React, { useState, FormEvent } from "react";
@@ -66,13 +67,16 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
     }
   };
 
-  const [taskToEdit, setTaskToEdit] = useState(() => {
+  const [taskToEdit, setTaskToEdit] = useState<
+    TaskProps | Omit<TaskProps, "_id">
+  >(() => {
     if (isTaskTuple(modalValue?.item) && type === "edit") {
       const maybeTask = getTaskToEdit(modalValue.item)?.[1];
       if (maybeTask && "title" in maybeTask) {
         return maybeTask as TaskProps;
       } else {
         return {
+          _id: "",
           title: "",
           description: "",
           status: "",
@@ -155,6 +159,95 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
     }
   }
 
+  function handleEditTask(
+    prevStateOfTask: TaskProps,
+    currentColumn: ColumnProps[],
+    subtasksValues: string[]
+  ) {
+    if (!prevStateOfTask.status) {
+      prevStateOfTask.status = currentColumn[0].name;
+    }
+
+    const prevColumnName =
+      prevStateOfTask.status.toLowerCase() ||
+      currentColumn[0].name.toLowerCase();
+
+    const currentColumnName =
+      taskToEdit?.status.toLowerCase() || currentColumn[0].name.toLowerCase();
+
+    const subtasks = subtasksValues.map((val, index) => {
+      return {
+        _id: taskToEdit.subtasks[index]._id,
+        title: val.trim(),
+        isCompleted: taskToEdit.subtasks[index].isCompleted
+      };
+    });
+
+    taskToEdit.title = taskToEdit.title.trim();
+    taskToEdit.subtasks = subtasks;
+    taskToEdit.description = taskToEdit.description.trim();
+
+    const currentBoard = boards.find((board) => board._id === id);
+
+    const column = currentBoard?.columns.find(
+      (col) => col.name.toLowerCase() === prevColumnName
+    );
+    const newColumn = currentBoard?.columns.find(
+      (col) => col.name.toLowerCase() === currentColumnName
+    );
+
+    if (!column && newColumn && typeof taskIndex === "undefined") {
+      return;
+    }
+
+    if (typeof taskIndex === "number") {
+      const modifiedTask = { ...taskToEdit };
+
+      if ("_id" in modifiedTask) {
+        if (prevColumnName !== currentColumnName) {
+          column?.tasks.splice(taskIndex, 1);
+
+          newColumn?.tasks.push(modifiedTask);
+        } else {
+          column?.tasks.splice(taskIndex, 1, modifiedTask);
+        }
+      }
+
+      editTask(boards);
+      closeModal();
+      toast({ title: "Task edited" });
+    }
+  }
+
+  function handleAddTask() {
+    const currentBoard = boards.find((board) => board._id === id);
+
+    if (!currentBoard) {
+      return;
+    }
+
+    taskToEdit.title = taskToEdit.title.trim();
+    taskToEdit.description = taskToEdit.description.trim();
+
+    const taskToAdd = { ...taskToEdit, _id: nanoid(10) };
+    const columnToAddTask = taskToEdit.status || currentBoard.columns[0].name;
+
+    const column = currentBoard.columns.find(
+      (col) => col.name.toLowerCase() === columnToAddTask.toLowerCase()
+    );
+
+    if (!column) {
+      return;
+    }
+
+    column.tasks.push(taskToAdd);
+    editTask(boards);
+    closeModal();
+    toast({ title: "Task added" });
+
+    console.log({ taskToAdd });
+  }
+
   const handleSubmitTask = (
     e: FormEvent<HTMLFormElement>,
     type: "add" | "edit"
@@ -177,6 +270,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
           taskToEdit.subtasks[index].title = val.trim();
         } else {
           const subtaskData: SubtaskProps = {
+            _id: nanoid(),
             title: val.trim(),
             isCompleted: false
           };
@@ -185,118 +279,12 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
       });
 
       if (type === "edit") {
-        if (!prevStateOfTask.status) {
-          prevStateOfTask.status = currentColumn[0].name;
-        }
-
-        const prevColumnName =
-          prevStateOfTask.status.toLowerCase() ||
-          currentColumn[0].name.toLowerCase();
-
-        const currentColumnName =
-          taskToEdit?.status.toLowerCase() ||
-          currentColumn[0].name.toLowerCase();
-
-        const subtasks = subtasksValues.map((val, index) => {
-          return {
-            title: val.trim(),
-            isCompleted: taskToEdit.subtasks[index].isCompleted
-          };
-        });
-
-        taskToEdit.title = taskToEdit.title.trim();
-        taskToEdit.subtasks = subtasks;
-        taskToEdit.description = taskToEdit.description.trim();
-
-        const currentBoard = boards.find((board) => board._id === id);
-
-        const column = currentBoard?.columns.find(
-          (col) => col.name.toLowerCase() === prevColumnName
-        );
-        const newColumn = currentBoard?.columns.find(
-          (col) => col.name.toLowerCase() === currentColumnName
-        );
-
-        if (!column && newColumn && typeof taskIndex === "undefined") {
-          return;
-        }
-
-        if (typeof taskIndex === "number") {
-          const modifiedTask = { ...taskToEdit };
-
-          if (prevColumnName !== currentColumnName) {
-            column?.tasks.splice(taskIndex, 1);
-
-            newColumn?.tasks.push(modifiedTask);
-          } else {
-            column?.tasks.splice(taskIndex, 1, modifiedTask);
-          }
-
-          editTask(boards);
-          closeModal();
-          toast({ title: "Task edited" });
-        } else {
-          boards.map(
-            (board: BoardProps) =>
-              board._id === id &&
-              board.columns.map(
-                (col: ColumnProps) =>
-                  col.name === currentColumnName &&
-                  col.tasks.map((task: TaskProps) => {
-                    if (prevStateOfTask) {
-                      if (task.title === prevStateOfTask.title) {
-                        task.title = taskToEdit.title.trim();
-                        task.description = taskToEdit.description.trim();
-
-                        subtasksValues.map((val, index) => {
-                          if (index > task.subtasks.length - 1) {
-                            const subtaskData: SubtaskProps = {
-                              title: val,
-                              isCompleted: false
-                            };
-                            task.subtasks.push(subtaskData);
-                          } else {
-                            task.subtasks[index].title = val;
-                          }
-                        });
-                      }
-                    }
-                  })
-              )
-          );
-          editTask(boards);
-          closeModal();
-          toast({ title: "Task edited" });
-        }
+        handleEditTask(prevStateOfTask, currentColumn, subtasksValues);
       }
+    }
 
-      if (type === "add") {
-        const currentBoard = boards.find((board) => board._id === id);
-
-        if (!currentBoard) {
-          return;
-        }
-
-        taskToEdit.title = taskToEdit.title.trim();
-        taskToEdit.description = taskToEdit.description.trim();
-
-        const taskToAdd = { ...taskToEdit };
-        const columnToAddTask =
-          taskToEdit.status || currentBoard.columns[0].name;
-
-        const column = currentBoard.columns.find(
-          (col) => col.name.toLowerCase() === columnToAddTask.toLowerCase()
-        );
-
-        if (!column) {
-          return;
-        }
-
-        column.tasks.push(taskToAdd);
-        editTask(boards);
-        closeModal();
-        toast({ title: "Task added" });
-      }
+    if (type === "add") {
+      handleAddTask();
     }
   };
 
@@ -304,7 +292,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
     <div className="modal-content-wrapper" ref={modalRef}>
       <h5>{type === "add" ? "Add New Task" : "Edit Task"}</h5>
 
-      <form action="" onSubmit={(e) => handleSubmitTask(e, type)}>
+      <form onSubmit={(e) => handleSubmitTask(e, type)}>
         <div>
           <label htmlFor="title">Title</label>
           <input

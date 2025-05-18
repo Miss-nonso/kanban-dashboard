@@ -1,15 +1,17 @@
 export interface BoardProps {
-  name: string;
   _id: string;
+  name: string;
   columns: ColumnProps[];
 }
 
 export interface ColumnProps {
+  _id: string;
   name: string;
   tasks: TaskProps[];
 }
 
 export interface TaskProps {
+  _id: string;
   title: string;
   description: string;
   status: string;
@@ -17,6 +19,7 @@ export interface TaskProps {
 }
 
 export interface SubtaskProps {
+  _id: string;
   title: string;
   isCompleted: boolean;
 }

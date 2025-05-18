@@ -9,10 +9,10 @@ import NoColumn from "./NoColumn";
 type ColumnPropsType = { columns: ColumnProps[] };
 
 const Board = ({ columns }: ColumnPropsType) => {
-  const columnsName = useMemo(() => columns.map((col) => col.name), [columns]);
+  const columnId = useMemo(() => columns.map((col) => col._id), [columns]);
   return (
     <div className={`board`}>
-      <SortableContext items={columnsName}>
+      <SortableContext items={columnId}>
         {columns.length > 0 ? (
           columns.map((col, index) => (
             <div key={index}>

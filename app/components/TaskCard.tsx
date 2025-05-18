@@ -34,7 +34,7 @@ const TaskCard = ({ task, index }: TaskCardProps) => {
     transform,
     transition,
     isDragging
-  } = useSortable({ id: task.title, data: { type: "Task", task } });
+  } = useSortable({ id: task._id, data: { type: "Task", task } });
 
   const style = { transition, transform: CSS.Transform.toString(transform) };
 

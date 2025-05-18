@@ -29,23 +29,9 @@ const ViewTask = () => {
   const task = validTaskTuple ? item[1] : null;
   const taskIndex = modalValue?.index;
 
-  const [displayTask, setDisplayTask] = useState(() => {
-    if (task) {
-      return {
-        title: task.title,
-        description: task.description,
-        status: task.status,
-        subtasks: [...task.subtasks]
-      };
-    } else {
-      return {
-        title: "",
-        description: "",
-        status: "",
-        subtasks: []
-      };
-    }
-  });
+  const [displayTask, setDisplayTask] = useState<
+    TaskProps | Omit<TaskProps, "_id">
+  >(getTask);
 
   useEffect(() => {
     const columns = validTaskTuple ? item[0] : [];
@@ -61,6 +47,25 @@ const ViewTask = () => {
   }, [displayTask]);
 
   if (!validTaskTuple || !task) return null;
+
+  function getTask() {
+    if (task) {
+      return {
+        ...task,
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        subtasks: [...task.subtasks]
+      };
+    } else {
+      return {
+        title: "",
+        description: "",
+        status: "",
+        subtasks: []
+      };
+    }
+  }
 
   const getCompleteTasks = () =>
     displayTask.subtasks.filter((subtask) => subtask.isCompleted).length;
@@ -89,7 +94,7 @@ const ViewTask = () => {
       return;
     }
 
-    if (typeof taskIndex === "number") {
+    if (typeof taskIndex === "number" && "_id" in displayTask) {
       if (displayTask.status.toLowerCase() === prevStatus) {
         column?.tasks.splice(taskIndex, 1, displayTask);
       } else {

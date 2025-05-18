@@ -27,6 +27,7 @@ html.light {
   --mediumgray: #828fa3;
   --contrastGray: rgba(130, 143, 163, 0.1);
   --lightline: #828fa3;
+  --darkline: #f4f7fd;
   --lightgray: #f4f7fd;
   --secondaryHover: rgba(209, 210, 240, 0.908);
   --red: #ea5555;
@@ -150,7 +151,7 @@ button {
 } */
 
 .mobile-boards-container {
-  @apply grid absolute top-24 left-3 bg-[var(--foreground)] pb-4 shadow-2xl  max-w-[16rem]  max-h-[25rem] min-w-[18rem] md:hidden;
+  @apply grid absolute z-10 top-24 left-3 bg-[var(--foreground)] pb-4 shadow-2xl  max-w-[16rem]  max-h-[25rem] min-w-[18rem] md:hidden;
 }
 
 .mobile-boards-container .mobile-boards-wrapper {
@@ -259,7 +260,7 @@ button {
 }
 
 .column-wrapper {
-  @apply grid gap-4 w-[250px] md:w-[280px] lg:w-[300px] min-h-[5.5rem];
+  @apply grid gap-4 w-[250px] pb-[5.5rem] md:w-[280px] lg:w-[300px] min-h-[5.5rem];
 }
 
 .empty-col:hover p,
@@ -320,7 +321,7 @@ header .board-option-btn .dropdown {
 }
 
 .toggle-wrapper {
-  @apply w-[80%] py-2 gap-6 bg-[var(--contrastGray)];
+  @apply w-[80%] p-2 gap-6 bg-[var(--contrastGray)];
 }
 
 .toggle-wrapper img {

@@ -8,6 +8,8 @@ import { useModal } from "@/app/context/ModalContext";
 import { useParams } from "next/navigation";
 import { useBoards } from "@/app/context/BoardContext";
 import { useToast } from "@/hooks/use-toast";
+import { nanoid } from "nanoid";
+const MAX_BOARD_NAME_LENGTH = 20;
 
 type BoardModalProps = {
   type?: "add" | "edit" | "addColumn";
@@ -19,26 +21,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
   const { modalValue, modalRef, closeModal } = useModal();
   const { createNewBoard, editBoard, boards } = useBoards();
   const [inputErrors, setInputErrors] = useState([""]);
-  const [inputValues, setInputValues] = useState(() => {
-    if (
-      (type === "edit" || type === "addColumn") &&
-      modalValue?.item &&
-      "columns" in modalValue.item
-    ) {
-      if (type === "edit") {
-        return modalValue.item.columns.map((col) => col.name);
-      } else if (type === "addColumn") {
-        const columnNames = modalValue.item.columns.map((col) => col.name);
-        return [...columnNames, ""];
-      } else {
-        return [""];
-      }
-    } else {
-      return [""];
-    }
-  });
-
-  // FIX: EDIT BOARD TO REMOVE COLUMNS THAT ARE REMOVED ON THE FORM
+  const [inputValues, setInputValues] = useState(getInitialInputValues);
 
   const [boardname, setBoardname] = useState<string>(() => {
     if (
@@ -60,12 +43,23 @@ const BoardModal = ({ type }: BoardModalProps) => {
   }, [inputValues]);
 
   const formValid =
-    // inputValues.length >= 1 &&
-    boardname.length < 20 &&
+    boardname.length < MAX_BOARD_NAME_LENGTH &&
     inputValues.every(Boolean) &&
     inputErrors.every((err) => !err) &&
     !duplicatesExist() &&
     (type === "addColumn" ? boardname.length > 2 : true);
+
+  function getInitialInputValues(): string[] {
+    if (
+      (type === "edit" || type === "addColumn") &&
+      modalValue?.item &&
+      "columns" in modalValue.item
+    ) {
+      const columnNames = modalValue.item.columns.map((col) => col.name);
+      return type === "addColumn" ? [...columnNames, ""] : columnNames;
+    }
+    return [""];
+  }
 
   function duplicatesExist() {
     const columnValues = inputValues
@@ -82,10 +76,8 @@ const BoardModal = ({ type }: BoardModalProps) => {
   }
 
   function deleteInput(index: number) {
-    // if (inputValues.length > 1) {
     setInputValues((prev) => prev.filter((_, idx) => idx !== index));
     setInputErrors((prev) => prev.filter((_, idx) => idx !== index));
-    // }
   }
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
@@ -118,54 +110,55 @@ const BoardModal = ({ type }: BoardModalProps) => {
     }
 
     if (type === "edit") {
-      const currentBoard = boards.find((board: BoardProps) => board._id === id);
-
-      console.log({ type, currentBoard });
-
-      if (!currentBoard) {
-        return;
-      }
-
-      currentBoard.name = boardname;
-
-      if (columnValues.length < currentBoard.columns.length) {
-        currentBoard.columns.splice(columnValues.length);
-      }
-
-      columnValues.map((colVal, index) => {
-        if (index > currentBoard.columns.length - 1) {
-          const columnItem = { name: colVal, tasks: [] };
-          currentBoard.columns.push(columnItem);
-        } else {
-          currentBoard.columns[index].name = colVal;
-        }
-      });
-
-      editBoard(boards);
-      closeModal();
-      toast({ title: "Board edited ✅" });
+      handleEditBoard(columnValues);
     } else {
-      const boardObj: Omit<BoardProps, "_id"> = {
-        name: boardname
-          .split(" ")
-          .map(
-            (word: string) =>
-              word.charAt(0).toUpperCase() + word.slice(1, word.length)
-          )
-          .join(" "),
-        columns: []
-      };
-
-      columnValues.map((columnName) => {
-        boardObj.columns.push({
-          name: columnName,
-          tasks: []
-        });
-      });
-
-      createNewBoard(boardObj);
-      closeModal();
+      handleAddBoard(columnValues);
     }
+  }
+
+  function handleEditBoard(values: string[]) {
+    const updatedBoards = boards.map((b) => {
+      if (b._id === id) {
+        const updatedColumns = values.map((colVal, index) => ({
+          _id: b.columns[index]?._id || nanoid(10),
+          name: colVal,
+          tasks: b.columns[index]?.tasks || []
+        }));
+
+        return { ...b, name: boardname, columns: updatedColumns };
+      }
+      return b;
+    });
+
+    console.log({ updatedBoards });
+    editBoard(updatedBoards);
+
+    closeModal();
+    toast({ title: "Board edited ✅" });
+  }
+
+  function handleAddBoard(values: string[]) {
+    const boardObj: Omit<BoardProps, "_id"> = {
+      name: boardname
+        .split(" ")
+        .map(
+          (word: string) =>
+            word.charAt(0).toUpperCase() + word.slice(1, word.length)
+        )
+        .join(" "),
+      columns: []
+    };
+
+    values.map((val) => {
+      boardObj.columns.push({
+        _id: nanoid(10),
+        name: val,
+        tasks: []
+      });
+    });
+
+    createNewBoard(boardObj);
+    closeModal();
   }
 
   function handleAddInput(e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -193,7 +186,7 @@ const BoardModal = ({ type }: BoardModalProps) => {
     <div className="modal-content-wrapper" ref={modalRef}>
       <h5>{type === "add" ? "Add New Board" : "Edit Board"}</h5>
 
-      <form action="" onSubmit={(e) => handleSubmitBoardForm(e, type)}>
+      <form onSubmit={(e) => handleSubmitBoardForm(e, type)}>
         <div className="form-input-wrapper">
           <label htmlFor="boardName">Name</label>
 
@@ -207,10 +200,10 @@ const BoardModal = ({ type }: BoardModalProps) => {
             onChange={(e) => {
               setBoardname(e.target.value);
 
-              if (boardname.length > 20) {
+              if (e.target.value.length > MAX_BOARD_NAME_LENGTH) {
                 toast({
                   title: "Board name too long!",
-                  description: "Max 20 characters",
+                  description: `Max ${MAX_BOARD_NAME_LENGTH} characters`,
                   variant: "destructive"
                 });
               }

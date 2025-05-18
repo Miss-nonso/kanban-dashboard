@@ -9,14 +9,13 @@ import { useBoards } from "@/app/context/BoardContext";
 import { useModal } from "@/app/context/ModalContext";
 import { BoardProps, ColumnProps, TaskProps } from "@/app/utils/interface";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Suspense, lazy } from "react";
 
 import SkeletonCard from "@/app/components/Skeleton/SkeletonCard";
 import {
   DndContext,
   DragEndEvent,
-  DragOverEvent,
   DragOverlay,
   DragStartEvent,
   PointerSensor,
@@ -41,8 +40,7 @@ const Main = () => {
   const { getCurrentBoard, boards, editBoard } = useBoards();
   const { isLoading, setIsLoadingTrue, setIsLoadingFalse } = useBoards();
   const [isClient, setIsClient] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [activeColumn, setActiveColumn] = useState<ColumnProps | null>(null);
+  const [, setActiveColumn] = useState<ColumnProps | null>(null);
   const [activeTask, setActiveTask] = useState<TaskProps | null>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -84,7 +82,6 @@ const Main = () => {
   }, []);
 
   function onDragStart(event: DragStartEvent) {
-    console.log("Drag started");
     if (event.active.data.current?.type === "Column") {
       setActiveColumn(event.active.data.current.column);
       return;
@@ -96,157 +93,103 @@ const Main = () => {
     }
   }
 
-  const onDragOver = useCallback(
-    (event: DragOverEvent) => {
-      const { active, over } = event;
-      if (!over) return;
-
-      const activeId = active.id;
-      const overId = over.id;
-
-      if (activeId === overId) return;
-
-      const isActiveTask = active.data.current?.type === "Task";
-      const isOverATask = over.data.current?.type === "Task";
-      const isOverAColumn = over.data.current?.type === "Column";
-
-      if (!isActiveTask) return;
-
-      if (isActiveTask && isOverATask) {
-        const currentBoard = board;
-
-        if (!currentBoard) return;
-
-        const activeColumnItem = currentBoard.columns.find((col) => {
-          if (active.data.current) {
-            if (active.data.current.task.status.length < 1) {
-              return (
-                col.name.toLowerCase() ===
-                currentBoard.columns[0].name.toLowerCase()
-              );
-            } else {
-              return (
-                col.name.toLowerCase() ===
-                active.data.current?.task.status.toLowerCase()
-              );
-            }
-          }
-        });
-
-        if (!activeColumnItem) return;
-
-        const overColumnItem = currentBoard.columns.find((col) => {
-          if (over.data.current?.task) {
-            if (over.data.current?.task.status.length < 1) {
-              return (
-                col.name.toLowerCase() ===
-                currentBoard.columns[0].name.toLowerCase()
-              );
-            } else {
-              return (
-                col.name.toLowerCase() ===
-                over.data.current?.task.status.toLowerCase()
-              );
-            }
-          }
-        });
-
-        if (!overColumnItem) return;
-
-        const activeTaskIndex = activeColumnItem.tasks.findIndex(
-          (task) => task.title === activeId
-        );
-
-        const overTaskIndex = overColumnItem.tasks.findIndex(
-          (task) => task.title === overId
-        );
-
-        if (active.data.current?.task && over.data.current?.task) {
-          const activeStatus =
-            active.data.current.task.status.toLowerCase() ||
-            currentBoard.columns[0].name.toLowerCase();
-          const overStatus =
-            over.data.current.task.status.toLowerCase() ||
-            currentBoard.columns[0].name.toLowerCase();
-
-          if (activeStatus !== overStatus) {
-            if (activeTask) {
-              const updatedActiveTasks = [...activeColumnItem.tasks];
-              updatedActiveTasks.splice(activeTaskIndex, 1);
-
-              activeTask.status = overStatus;
-
-              const updatedOverTasks = [...overColumnItem.tasks];
-              updatedOverTasks.splice(overTaskIndex, 0, activeTask);
-
-              activeColumnItem.tasks = updatedActiveTasks;
-              overColumnItem.tasks = updatedOverTasks;
-            }
-          } else {
-            const updatedTasks = arrayMove(
-              overColumnItem.tasks,
-              activeTaskIndex,
-              overTaskIndex
-            );
-
-            overColumnItem.tasks = updatedTasks;
-          }
-        }
-      }
-
-      if (isActiveTask && isOverAColumn && activeTask) {
-        if (over.data.current?.column) {
-          const overColumn = over.data.current?.column;
-          const currentBoard = board;
-          if (!currentBoard) return;
-
-          const activeStatus =
-            activeTask.status.toLowerCase() ||
-            currentBoard.columns[0].name.toLowerCase();
-          // const overStatus =
-          //   over.data.current.task.status.toLowerCase() ||
-          //   currentBoard.columns[0].name.toLowerCase();
-
-          const prevColumn = currentBoard.columns.find(
-            (col) => col.name.toLowerCase() === activeStatus
-          );
-
-          if (!prevColumn) return;
-
-          const newColumn = currentBoard.columns.find(
-            (col) => col.name.toLowerCase() === overColumn.name.toLowerCase()
-          );
-
-          if (!newColumn) return;
-
-          const activeTaskIndex = prevColumn.tasks.findIndex(
-            (task) => task.title === activeId
-          );
-
-          const overTaskIndex = newColumn.tasks.findIndex(
-            (task) => task.title === overId
-          );
-
-          if (overColumn.tasks.length < 1 && activeTask) {
-            prevColumn.tasks.splice(activeTaskIndex, 1);
-            activeTask.status = newColumn.name;
-            newColumn.tasks.push(activeTask);
-          } else {
-            prevColumn.tasks.splice(activeTaskIndex, 1);
-            activeTask.status = newColumn.name;
-            newColumn.tasks.splice(overTaskIndex, 0, activeTask);
-          }
-        }
-      }
-    },
-    [board, activeTask]
-  );
-
   function onDragEnd(event: DragEndEvent) {
-    setActiveColumn(null);
-    setActiveTask(null);
-    const { over } = event;
+    const { active, over } = event;
+
     if (!over) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    const overTask = over.data.current?.task;
+
+    if (activeTask && overTask) {
+      const currentBoard = board;
+
+      if (!currentBoard) return;
+
+      const activeColumn = currentBoard.columns.find(
+        (col) =>
+          col.name.toLowerCase() ===
+          (activeTask.status.toLowerCase() ||
+            currentBoard.columns[0].name.toLowerCase())
+      );
+
+      if (!activeColumn) return;
+
+      const overColumn = currentBoard.columns.find(
+        (col) =>
+          col.name.toLowerCase() ===
+          (overTask.status.toLowerCase() ||
+            currentBoard.columns[0].name.toLowerCase())
+      );
+
+      if (!overColumn) return;
+
+      const activeIndex = activeColumn.tasks.findIndex(
+        (task) => task._id === activeId
+      );
+
+      const overIndex = overColumn.tasks.findIndex(
+        (task) => task._id === overId
+      );
+
+      if (activeColumn._id === overColumn._id) {
+        const updatedTasks = arrayMove(
+          overColumn.tasks,
+          activeIndex,
+          overIndex
+        );
+
+        overColumn.tasks = updatedTasks;
+      } else {
+        const activeColumnTasks = [...activeColumn.tasks];
+        const overColumnTasks = [...overColumn.tasks];
+
+        activeColumnTasks.splice(activeIndex, 1);
+        activeTask.status = overColumn.name;
+        overColumnTasks.splice(overIndex, 0, activeTask);
+
+        activeColumn.tasks = activeColumnTasks;
+        overColumn.tasks = overColumnTasks;
+      }
+    } else if (activeTask && over.data.current?.column) {
+      const overColumn = over.data.current?.column;
+      const currentBoard = board;
+
+      if (!currentBoard) return;
+
+      const prevColumn = currentBoard.columns.find(
+        (col) =>
+          col.name.toLowerCase() ===
+          (activeTask.status.toLowerCase() ||
+            currentBoard.columns[0].name.toLowerCase())
+      );
+
+      if (!prevColumn) return;
+
+      const activeTaskIndex = prevColumn.tasks.findIndex(
+        (task) => task._id === activeId
+      );
+
+      const newColumn = currentBoard.columns.find(
+        (col) => col.name === overColumn.name
+      );
+
+      if (!newColumn) return;
+
+      const overColumnTasks = newColumn.tasks;
+      const prevColumnTasks = prevColumn.tasks;
+
+      prevColumnTasks.splice(activeTaskIndex, 1);
+      activeTask.status = newColumn.name;
+      overColumnTasks.push(activeTask);
+
+      newColumn.tasks = overColumnTasks;
+    }
+
     editBoard(boards);
   }
 
@@ -264,7 +207,6 @@ const Main = () => {
         <DndContext
           sensors={sensors}
           onDragStart={onDragStart}
-          onDragOver={onDragOver}
           onDragEnd={onDragEnd}
         >
           <div className="flex flex-1">

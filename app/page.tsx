@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import Main from "./boards/[id]/[slug]/page";
 import { useBoards } from "./context/BoardContext";
 import { Suspense, lazy } from "react";
 import SkeletonCard from "./components/Skeleton/SkeletonCard";
 import { useRouter } from "next/navigation";
+import LandingPage from "./components/LandingPage/LandingPage";
 
 export default function Home() {
   const router = useRouter();
@@ -54,7 +55,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-full ">
+    <div className=" h-full w-full">
       {isLoading || !isClient ? (
         <Suspense fallback={<SkeletonCard />}>
           <LazyComponent />
@@ -62,15 +63,19 @@ export default function Home() {
       ) : viewBoard ? (
         <Main />
       ) : (
-        <div className="flex flex-col mx-auto gap-8 min-w-[50%] h-full  justify-center align-center">
-          <h2 className="text-center text-3xl">Welcome To KANBAN</h2>
-          <button
-            className="bg-[var(--darkpurple)] p-4 w-1/3 mx-auto"
-            onClick={handleViewBoard}
-          >
-            Get started
-          </button>
-        </div>
+        // <div className="flex flex-col mx-auto gap-8 min-w-[50%] h-full  justify-center align-center">
+        //   <h2 className="text-center text-3xl">Welcome To KANBAN</h2>
+        //   <button
+        //     className="bg-[var(--darkpurple)] p-4 w-1/3 mx-auto"
+        //     onClick={handleViewBoard}
+        //   >
+        //     Get started
+        //   </button>
+        // </div>
+
+        <Fragment>
+          <LandingPage />
+        </Fragment>
       )}
     </div>
   );

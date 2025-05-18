@@ -21,26 +21,7 @@ const Header = ({ boardName }: HeaderProps) => {
   const { showSidebar } = useSidebar();
   const [displayDropdown, setDisplayDropdown] = useState(false);
   const [showMobileBoards, setShowMobileBoards] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        closeDropdown();
-      }
-    };
-
-    if (displayDropdown || showMobileBoards) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [displayDropdown, showMobileBoards]);
+  const dropdownRef = useRef(null);
 
   const closeDropdown = () => {
     setDisplayDropdown(false);
@@ -57,6 +38,26 @@ const Header = ({ boardName }: HeaderProps) => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (target.classList.contains("dropdown-bg")) {
+        closeDropdown();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log({ showMobileBoards });
+  }, [showMobileBoards]);
+
   return (
     <header
       className={` ${
@@ -65,9 +66,9 @@ const Header = ({ boardName }: HeaderProps) => {
     >
       <div
         className="flex gap-2 justify-center items-center"
-        ref={dropdownRef}
         onClick={() => {
-          setShowMobileBoards(!showMobileBoards);
+          console.log("On click");
+          setShowMobileBoards((prev) => !prev);
           if (displayDropdown) {
             setDisplayDropdown(false);
           }
@@ -100,13 +101,13 @@ const Header = ({ boardName }: HeaderProps) => {
           ) : (
             <Image
               src="/assets/icons/icon-chevron-down.svg"
-              alt="Show boards"
+              alt="close boards"
               height={10}
               width={10}
             />
           )}
         </button>
-        {showMobileBoards && <MobileBoards dropdownRef={dropdownRef} />}
+        {showMobileBoards && <MobileBoards />}
       </div>
       <div className="flex items-center gap-4 md:pr-4">
         <Button
