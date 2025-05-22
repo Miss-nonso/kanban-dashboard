@@ -1,10 +1,10 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useBoards } from "../context/BoardContext";
 import { useParams } from "next/navigation";
 import { useModal } from "../context/ModalContext";
-import { BoardProps } from "../utils/interface";
+// import { BoardProps } from "../utils/interface";
 import BoardModal from "./ModalContent/BoardModal";
 import Toggle from "./Toggle";
 
@@ -21,8 +21,8 @@ const MobileBoards = () => {
 
   const handleOpenModal = () => {
     if (boards) {
-      const currentBoard = boards.find((board: BoardProps) => board._id === id);
-      handleModalOpen(<BoardModal type="add" />, 0, currentBoard);
+      // const currentBoard = boards.find((board: BoardProps) => board._id === id);
+      handleModalOpen(<BoardModal type="add" />);
     }
   };
 
@@ -64,7 +64,7 @@ const MobileBoards = () => {
             </span>
           </button>
         </div>
-        <div className="pt-3" >
+        <div className="pt-3">
           <Toggle />
         </div>
       </div>

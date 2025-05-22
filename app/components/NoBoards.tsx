@@ -16,7 +16,7 @@ const NoBoards = () => {
         btnType="button"
         type="add"
         text="Add Board"
-        fn={() => handleModalOpen(<BoardModal type="add" />, 0)}
+        fn={() => handleModalOpen(<BoardModal type="add" />)}
       />
     </div>
   );

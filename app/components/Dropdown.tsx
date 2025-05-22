@@ -11,10 +11,9 @@ import { useBoards } from "../context/BoardContext";
 type DropdownProps = {
   dropdownRef?: Ref<HTMLDivElement>;
   taskOrBoard: "task" | "board";
-  // fn: () => void;
   setDisplayDropdown: (val: boolean) => void;
   taskItem?: TaskProps;
-  taskIndex?: number;
+  taskId?: string;
 };
 
 const Dropdown = ({
@@ -22,13 +21,15 @@ const Dropdown = ({
   taskOrBoard,
   setDisplayDropdown,
   taskItem,
-  taskIndex
+  taskId
 }: DropdownProps) => {
   const { handleModalOpen } = useModal();
   const params = useParams();
   const { id } = params;
   const { getCurrentBoard } = useBoards();
   const currentBoard = getCurrentBoard(`${id}`);
+
+  if (!currentBoard) return;
 
   return (
     <div className="dropdown" ref={dropdownRef}>
@@ -39,18 +40,15 @@ const Dropdown = ({
               setDisplayDropdown(false);
 
               if (taskOrBoard === "task" && id && taskItem) {
-                return handleModalOpen(<TaskModal type="edit" />, taskIndex, [
-                  getCurrentBoard(`${id}`)?.columns || [],
+                return handleModalOpen(
+                  <TaskModal type="edit" />,
+                  taskId,
                   taskItem
-                ]);
+                );
               }
 
-              if (taskOrBoard === "board" && id) {
-                return handleModalOpen(
-                  <BoardModal type="edit" />,
-                  0,
-                  getCurrentBoard(`${id}`)
-                );
+              if (taskOrBoard === "board") {
+                return handleModalOpen(<BoardModal type="edit" />);
               }
             }}
           >
@@ -62,23 +60,17 @@ const Dropdown = ({
             onClick={() => {
               setDisplayDropdown(false);
 
-              if (
-                taskOrBoard === "task" &&
-                id &&
-                currentBoard &&
-                // modalValue?.index
-                taskItem
-              ) {
-                handleModalOpen(<DeleteModal taskOrBoard="task" />, taskIndex, [
-                  currentBoard,
-                  taskItem
-                ]);
+              if (taskOrBoard === "task" && id && currentBoard && taskItem) {
+                handleModalOpen(
+                  <DeleteModal taskOrBoard="task" />,
+                  taskId,
+                  taskItem.status
+                );
               }
-              if (taskOrBoard === "board" && id) {
+              if (taskOrBoard === "board" && currentBoard) {
                 handleModalOpen(
                   <DeleteModal taskOrBoard="board" />,
-                  0,
-                  getCurrentBoard(`${id}`) || undefined
+                  currentBoard._id
                 );
               }
             }}

@@ -7,7 +7,6 @@ import {
   TaskProps
 } from "@/app/utils/interface";
 import { nanoid } from "nanoid";
-import { ItemType } from "@/app/utils/types";
 import Button from "../Button";
 import React, { useState, FormEvent } from "react";
 import { useParams } from "next/navigation";
@@ -16,24 +15,12 @@ import InputAdd from "../InputAdd";
 import { useBoards } from "@/app/context/BoardContext";
 import { useToast } from "@/hooks/use-toast";
 
-function isTaskTuple(item: ItemType): item is [ColumnProps[], TaskProps] {
-  return (
-    Array.isArray(item) &&
-    item.length === 2 &&
-    Array.isArray(item[0]) &&
-    typeof item[1] === "object" &&
-    "title" in item[1]
-  );
-}
-
-function isTaskMono(item: ItemType): item is [ColumnProps[], TaskProps] {
-  return (
-    Array.isArray(item) &&
-    item.length === 1 &&
-    Array.isArray(item[0]) &&
-    typeof item[0] === "object"
-  );
-}
+const taskObj = {
+  title: "",
+  description: "",
+  status: "",
+  subtasks: []
+};
 
 const TaskModal = ({ type }: { type: "add" | "edit" }) => {
   const { modalRef, modalValue, closeModal } = useModal();
@@ -42,56 +29,9 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
   const { id } = params;
   const { editTask, boards } = useBoards();
 
-  const taskIndex = modalValue?.index;
-  const getTaskToEdit = (
-    ArrOfColumnsAndTaskItem: [ColumnProps[] | ColumnProps, TaskProps]
-  ) => {
-    if (Array.isArray(ArrOfColumnsAndTaskItem[0])) {
-      const parentColumn = ArrOfColumnsAndTaskItem[0];
-      if (type === "edit") {
-        const itemToEdit = ArrOfColumnsAndTaskItem[1];
-
-        if (itemToEdit?.title) {
-          const taskToEditObj = {
-            title: itemToEdit.title,
-            description: itemToEdit.description,
-            status: itemToEdit.status,
-            subtasks: [...itemToEdit.subtasks]
-          };
-          return [parentColumn, taskToEditObj];
-        }
-      }
-    } else {
-      const parentColumn = ArrOfColumnsAndTaskItem[0];
-      return [parentColumn];
-    }
-  };
-
   const [taskToEdit, setTaskToEdit] = useState<
-    TaskProps | Omit<TaskProps, "_id">
-  >(() => {
-    if (isTaskTuple(modalValue?.item) && type === "edit") {
-      const maybeTask = getTaskToEdit(modalValue.item)?.[1];
-      if (maybeTask && "title" in maybeTask) {
-        return maybeTask as TaskProps;
-      } else {
-        return {
-          _id: "",
-          title: "",
-          description: "",
-          status: "",
-          subtasks: []
-        };
-      }
-    } else {
-      return {
-        title: "",
-        description: "",
-        status: "",
-        subtasks: []
-      };
-    }
-  });
+    TaskProps | Omit<TaskProps, "_id"> | undefined
+  >(getTask);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [statusList, setStatusList] = useState(() => {
@@ -114,7 +54,31 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
   });
   const [inputErrors, setInputErrors] = useState([""]);
 
-  const formValid = taskToEdit.title && taskToEdit.status;
+  const taskId = modalValue?.itemId;
+  const formValid =
+    taskToEdit && taskToEdit.title && taskToEdit.status.length > 0;
+
+  function getTask(): TaskProps | Omit<TaskProps, "_id"> | undefined {
+    const currentBoard = boards.find((board) => board._id === id);
+
+    if (!currentBoard) return;
+
+    const fallbackStatus = currentBoard?.columns[0].name;
+
+    if (type === "edit") {
+      if (
+        modalValue &&
+        typeof modalValue?.item === "object" &&
+        "title" in modalValue.item
+      ) {
+        const taskToEdit = modalValue.item;
+
+        return { ...taskToEdit, status: taskToEdit.status || fallbackStatus };
+      }
+    } else {
+      return { ...taskObj, status: fallbackStatus };
+    }
+  }
 
   function deleteInput(index: number) {
     if (inputValues.length > 1) {
@@ -161,61 +125,58 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
 
   function handleEditTask(
     prevStateOfTask: TaskProps,
-    currentColumn: ColumnProps[],
     subtasksValues: string[]
   ) {
-    if (!prevStateOfTask.status) {
-      prevStateOfTask.status = currentColumn[0].name;
-    }
+    if (taskToEdit) {
+      const prevColumnName = prevStateOfTask.status.toLowerCase();
+      const currentColumnName = taskToEdit?.status.toLowerCase();
 
-    const prevColumnName =
-      prevStateOfTask.status.toLowerCase() ||
-      currentColumn[0].name.toLowerCase();
+      const subtasks = subtasksValues.map((val, index) => {
+        return {
+          _id: taskToEdit.subtasks[index]._id,
+          title: val.trim(),
+          isCompleted: taskToEdit.subtasks[index].isCompleted
+        };
+      });
 
-    const currentColumnName =
-      taskToEdit?.status.toLowerCase() || currentColumn[0].name.toLowerCase();
+      taskToEdit.title = taskToEdit.title.trim();
+      taskToEdit.subtasks = subtasks;
+      taskToEdit.description = taskToEdit.description.trim();
 
-    const subtasks = subtasksValues.map((val, index) => {
-      return {
-        _id: taskToEdit.subtasks[index]._id,
-        title: val.trim(),
-        isCompleted: taskToEdit.subtasks[index].isCompleted
-      };
-    });
+      const currentBoard = boards.find((board) => board._id === id);
 
-    taskToEdit.title = taskToEdit.title.trim();
-    taskToEdit.subtasks = subtasks;
-    taskToEdit.description = taskToEdit.description.trim();
+      const column = currentBoard?.columns.find(
+        (col) => col.name.toLowerCase() === prevColumnName
+      );
+      const newColumn = currentBoard?.columns.find(
+        (col) => col.name.toLowerCase() === currentColumnName
+      );
 
-    const currentBoard = boards.find((board) => board._id === id);
+      const taskIndex = column?.tasks.findIndex((task) => task._id === taskId);
 
-    const column = currentBoard?.columns.find(
-      (col) => col.name.toLowerCase() === prevColumnName
-    );
-    const newColumn = currentBoard?.columns.find(
-      (col) => col.name.toLowerCase() === currentColumnName
-    );
-
-    if (!column && newColumn && typeof taskIndex === "undefined") {
-      return;
-    }
-
-    if (typeof taskIndex === "number") {
-      const modifiedTask = { ...taskToEdit };
-
-      if ("_id" in modifiedTask) {
-        if (prevColumnName !== currentColumnName) {
-          column?.tasks.splice(taskIndex, 1);
-
-          newColumn?.tasks.push(modifiedTask);
-        } else {
-          column?.tasks.splice(taskIndex, 1, modifiedTask);
-        }
+      if (!column && newColumn) {
+        return;
       }
 
-      editTask(boards);
-      closeModal();
-      toast({ title: "Task edited" });
+      if (typeof taskIndex === "number") {
+        const modifiedTask = { ...taskToEdit };
+
+        if ("_id" in modifiedTask) {
+          if (prevColumnName !== currentColumnName) {
+            column?.tasks.splice(taskIndex, 1);
+
+            newColumn?.tasks.push(modifiedTask);
+          } else {
+            if (column?.tasks) {
+              column.tasks[taskIndex] = modifiedTask;
+            }
+          }
+        }
+
+        editTask(boards);
+        closeModal();
+        toast({ title: "Task edited" });
+      }
     }
   }
 
@@ -226,26 +187,26 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
       return;
     }
 
-    taskToEdit.title = taskToEdit.title.trim();
-    taskToEdit.description = taskToEdit.description.trim();
+    if (taskToEdit) {
+      taskToEdit.title = taskToEdit.title.trim();
+      taskToEdit.description = taskToEdit.description.trim();
 
-    const taskToAdd = { ...taskToEdit, _id: nanoid(10) };
-    const columnToAddTask = taskToEdit.status || currentBoard.columns[0].name;
+      const taskToAdd = { ...taskToEdit, _id: nanoid(10) };
+      const columnToAddTask = taskToEdit.status || currentBoard.columns[0].name;
 
-    const column = currentBoard.columns.find(
-      (col) => col.name.toLowerCase() === columnToAddTask.toLowerCase()
-    );
+      const column = currentBoard.columns.find(
+        (col) => col.name.toLowerCase() === columnToAddTask.toLowerCase()
+      );
 
-    if (!column) {
-      return;
+      if (!column) {
+        return;
+      }
+
+      column.tasks.push(taskToAdd);
+      editTask(boards);
+      closeModal();
+      toast({ title: "Task added" });
     }
-
-    column.tasks.push(taskToAdd);
-    editTask(boards);
-    closeModal();
-    toast({ title: "Task added" });
-
-    console.log({ taskToAdd });
   }
 
   const handleSubmitTask = (
@@ -254,33 +215,35 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
   ) => {
     e.preventDefault();
 
-    let currentColumn: ColumnProps[] = [];
-    let prevStateOfTask: TaskProps | undefined;
-
-    if (isTaskTuple(modalValue?.item) || isTaskMono(modalValue?.item)) {
-      currentColumn = modalValue?.item[0];
-      prevStateOfTask = modalValue?.item[1];
-
+    if (typeof modalValue?.item === "object" && "title" in modalValue?.item) {
+      const prevStateOfTask = modalValue?.item;
       const subtasksValues = inputValues
         .map((val) => val.trim())
         .filter((val) => val);
 
-      subtasksValues.map((val, index) => {
-        if (index <= taskToEdit.subtasks.length - 1 && val) {
-          taskToEdit.subtasks[index].title = val.trim();
-        } else {
-          const subtaskData: SubtaskProps = {
-            _id: nanoid(),
-            title: val.trim(),
-            isCompleted: false
-          };
-          taskToEdit.subtasks.push(subtaskData);
-        }
-      });
-
-      if (type === "edit") {
-        handleEditTask(prevStateOfTask, currentColumn, subtasksValues);
+      if (taskToEdit) {
+        subtasksValues.map((val, index) => {
+          if (index <= taskToEdit.subtasks.length - 1 && val) {
+            taskToEdit.subtasks[index].title = val.trim();
+          } else {
+            const subtaskData: SubtaskProps = {
+              _id: nanoid(),
+              title: val.trim(),
+              isCompleted: false
+            };
+            taskToEdit.subtasks.push(subtaskData);
+          }
+        });
       }
+
+      if (
+        type === "edit" &&
+        typeof prevStateOfTask === "object" &&
+        "title" in prevStateOfTask
+      ) {
+        handleEditTask(prevStateOfTask, subtasksValues);
+      }
+      // }
     }
 
     if (type === "add") {
@@ -304,6 +267,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
             required
             autoFocus
             onChange={(e) =>
+              taskToEdit &&
               setTaskToEdit({ ...taskToEdit, title: e.target.value })
             }
           />
@@ -323,6 +287,7 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
             }
             value={taskToEdit && taskToEdit.description}
             onChange={(e) =>
+              taskToEdit &&
               setTaskToEdit({ ...taskToEdit, description: e.target.value })
             }
           ></textarea>
@@ -360,11 +325,11 @@ const TaskModal = ({ type }: { type: "add" | "edit" }) => {
             id="status"
             value={taskToEdit?.status.toLowerCase()}
             onChange={(e) =>
+              taskToEdit &&
               setTaskToEdit({ ...taskToEdit, status: e.target.value })
             }
           >
             <>
-              <option value="">Select status</option>
               {statusList &&
                 statusList.map((status: string, index: number) => (
                   <option key={index} value={status.toLowerCase()}>

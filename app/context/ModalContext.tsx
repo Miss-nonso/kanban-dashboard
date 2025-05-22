@@ -12,7 +12,7 @@ import { ItemType } from "../utils/types";
 
 type HandleModalOpenProps = {
   modalContent: JSX.Element;
-  index?: number;
+  itemId?: string;
   item?: ItemType;
 };
 
@@ -20,7 +20,7 @@ interface ModalContextProps {
   openModal: boolean;
   handleModalOpen: (
     modalContent: JSX.Element,
-    index?: number,
+    itemId?: string,
     item?: ItemType
   ) => void;
   closeModal: () => void;
@@ -39,15 +39,17 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleModalOpen = (
     modalContent: JSX.Element,
-    index?: number,
+    itemId?: string,
     item?: ItemType
   ) => {
     setOpenModal(true);
 
-    if (typeof index === "number") {
-      setModalValue({ modalContent, index, item });
+    if (itemId && item) {
+      setModalValue({ modalContent, itemId, item });
+    } else if (itemId) {
+      setModalValue({ modalContent, itemId });
     } else {
-      setModalValue({ modalContent, item });
+      setModalValue({ modalContent });
     }
   };
 

@@ -18,10 +18,10 @@ interface BoardContextProps {
   getCurrentBoard: (id: string) => BoardProps | undefined;
   editBoard: (updatedBoard: BoardProps[]) => void;
   editTask: (updatedBoard: BoardProps[]) => void;
-  deleteBoard: (indexOfBoardToDelete: number) => void;
+  deleteBoard: (boardId: string) => void;
   deleteTask: (
-    taskIndex: number,
-    currentBoard: BoardProps,
+    taskId: string,
+    boardId: string,
     currentColumnName: string
   ) => void;
   isLoading: boolean;
@@ -112,14 +112,22 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     updateBoards(updatedBoard);
   };
 
-  const deleteBoard = (index: number) => {
+  const deleteBoard = (boardId: string) => {
     setIsLoadingTrue();
-    const updated = [...boards];
-    updated.splice(index, 1);
+    const allBoards = [...boards];
 
-    updateBoards(updated);
+    const boardIndex = allBoards.findIndex((board) => board._id === boardId);
+    // updated.splice(index, 1);
 
-    const fallback = updated[index - 1] || updated[index] || updated[0] || null;
+    const modifiedBoards = allBoards.filter((board) => board._id !== boardId);
+
+    updateBoards(modifiedBoards);
+
+    const fallback =
+      allBoards[boardIndex - 1] ||
+      allBoards[boardIndex] ||
+      allBoards[0] ||
+      null;
 
     if (fallback) {
       router.push(
@@ -136,18 +144,20 @@ export function BoardProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteTask = (
-    taskIndex: number,
-    currentBoard: BoardProps,
+    taskId: string,
+    boardId: string,
     currentColumnName: string
   ) => {
-    const updatedBoards = boards.map((board) => {
-      if (board._id === currentBoard._id) {
+    console.log(taskId, boardId, currentColumnName);
+    const modifiedBoards = boards.map((board) => {
+      if (board._id === boardId) {
         return {
           ...board,
           columns: board.columns.map((col) => {
-            if (col.name.toLowerCase() === currentColumnName.toLowerCase()) {
-              const updatedTasks = [...col.tasks];
-              updatedTasks.splice(taskIndex, 1);
+            if (col.name.toLowerCase() === currentColumnName) {
+              const tasks = [...col.tasks];
+
+              const updatedTasks = tasks.filter((task) => task._id !== taskId);
               return { ...col, tasks: updatedTasks };
             }
             return col;
@@ -157,7 +167,7 @@ export function BoardProvider({ children }: { children: ReactNode }) {
       return board;
     });
 
-    updateBoards(updatedBoards);
+    updateBoards(modifiedBoards);
     toast({ title: "Task deleted" });
   };
 

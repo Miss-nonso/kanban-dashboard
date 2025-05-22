@@ -6,18 +6,18 @@ import Dropdown from "./Dropdown";
 import { useRef, useState, useEffect } from "react";
 import TaskModal from "./ModalContent/TaskModal";
 import { useModal } from "../context/ModalContext";
-import { useParams } from "next/navigation";
-import { BoardProps } from "../utils/interface";
-import { useBoards } from "../context/BoardContext";
+// import { useParams } from "next/navigation";
+// import { BoardProps } from "../utils/interface";
+// import { useBoards } from "../context/BoardContext";
 import { useSidebar } from "../context/SidebarContext";
 import MobileBoards from "./MobileBoards";
 type HeaderProps = { boardName: string };
 
 const Header = ({ boardName }: HeaderProps) => {
   const { handleModalOpen } = useModal();
-  const params = useParams();
-  const { id } = params;
-  const { boards } = useBoards();
+  // const params = useParams();
+  // const { id } = params;
+  // const { boards } = useBoards();
   const { showSidebar } = useSidebar();
   const [displayDropdown, setDisplayDropdown] = useState(false);
   const [showMobileBoards, setShowMobileBoards] = useState(false);
@@ -29,13 +29,13 @@ const Header = ({ boardName }: HeaderProps) => {
   };
 
   const handleTaskModalOpen = () => {
-    const currentBoard = boards.find((board: BoardProps) => board._id === id);
+    // const currentBoard = boards.find((board: BoardProps) => board._id === id);
 
-    const ColumnsToAddTasksTo = currentBoard?.columns;
+    // const ColumnsToAddTasksTo = currentBoard?.columns;
 
-    if (ColumnsToAddTasksTo) {
-      handleModalOpen(<TaskModal type="add" />, 0, [ColumnsToAddTasksTo]);
-    }
+    // if (ColumnsToAddTasksTo) {
+    handleModalOpen(<TaskModal type="add" />);
+    // }
   };
 
   useEffect(() => {

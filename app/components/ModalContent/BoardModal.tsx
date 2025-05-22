@@ -18,22 +18,13 @@ const BoardModal = ({ type }: BoardModalProps) => {
   const params = useParams();
   const { toast } = useToast();
   const { id } = params;
-  const { modalValue, modalRef, closeModal } = useModal();
-  const { createNewBoard, editBoard, boards } = useBoards();
+  const { modalRef, closeModal } = useModal();
+  const { createNewBoard, editBoard, boards, getCurrentBoard } = useBoards();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [currentBoard, setCurrentBoard] = useState(getCurrentBoard(`${id}`));
   const [inputErrors, setInputErrors] = useState([""]);
   const [inputValues, setInputValues] = useState(getInitialInputValues);
-
-  const [boardname, setBoardname] = useState<string>(() => {
-    if (
-      (type === "edit" || type === "addColumn") &&
-      modalValue?.item &&
-      "name" in modalValue.item
-    ) {
-      return modalValue.item.name;
-    } else {
-      return "";
-    }
-  });
+  const [boardname, setBoardname] = useState<string | undefined>(getBoardName);
 
   useEffect(() => {
     if (duplicatesExist()) {
@@ -43,40 +34,50 @@ const BoardModal = ({ type }: BoardModalProps) => {
   }, [inputValues]);
 
   const formValid =
+    boardname &&
     boardname.length < MAX_BOARD_NAME_LENGTH &&
+    inputValues &&
     inputValues.every(Boolean) &&
     inputErrors.every((err) => !err) &&
     !duplicatesExist() &&
     (type === "addColumn" ? boardname.length > 2 : true);
 
-  function getInitialInputValues(): string[] {
-    if (
-      (type === "edit" || type === "addColumn") &&
-      modalValue?.item &&
-      "columns" in modalValue.item
-    ) {
-      const columnNames = modalValue.item.columns.map((col) => col.name);
+  function getBoardName() {
+    if (type === "edit" || type === "addColumn") {
+      return currentBoard?.name;
+    } else {
+      return "";
+    }
+  }
+
+  function getInitialInputValues(): string[] | undefined {
+    if (!currentBoard) return;
+
+    if (type === "edit" || type === "addColumn") {
+      const columnNames = currentBoard.columns.map((col) => col.name);
       return type === "addColumn" ? [...columnNames, ""] : columnNames;
     }
     return [""];
   }
 
   function duplicatesExist() {
-    const columnValues = inputValues
-      .map((val) => val.trim().toLowerCase())
-      .filter((val) => val);
+    if (inputValues) {
+      const columnValues = inputValues
+        .map((val) => val.trim().toLowerCase())
+        .filter((val) => val);
 
-    const uniqueValues = new Set(columnValues);
+      const uniqueValues = new Set(columnValues);
 
-    if (columnValues.length > 1) {
-      const bool = [...uniqueValues.values()].length < columnValues.length;
+      if (columnValues.length > 1) {
+        const bool = [...uniqueValues.values()].length < columnValues.length;
 
-      return bool;
-    } else return false;
+        return bool;
+      } else return false;
+    }
   }
 
   function deleteInput(index: number) {
-    setInputValues((prev) => prev.filter((_, idx) => idx !== index));
+    setInputValues((prev) => prev && prev.filter((_, idx) => idx !== index));
     setInputErrors((prev) => prev.filter((_, idx) => idx !== index));
   }
 
@@ -90,9 +91,11 @@ const BoardModal = ({ type }: BoardModalProps) => {
     });
 
     setInputValues((prev) => {
-      const prevCopy = [...prev];
-      prevCopy[index] = value;
-      return prevCopy;
+      if (prev) {
+        const prevCopy = [...prev];
+        prevCopy[index] = value;
+        return prevCopy;
+      }
     });
   }
 
@@ -101,84 +104,92 @@ const BoardModal = ({ type }: BoardModalProps) => {
     type?: "add" | "edit" | "addColumn"
   ) {
     e.preventDefault();
-    const columnValues = inputValues
-      .map((val) => val.trim())
-      .filter((val) => val);
+    if (inputValues) {
+      const columnValues = inputValues
+        .map((val) => val.trim())
+        .filter((val) => val);
 
-    if (type === "addColumn") {
-      type = "edit";
-    }
+      if (type === "addColumn") {
+        type = "edit";
+      }
 
-    if (type === "edit") {
-      handleEditBoard(columnValues);
-    } else {
-      handleAddBoard(columnValues);
+      if (type === "edit") {
+        handleEditBoard(columnValues);
+      } else {
+        handleAddBoard(columnValues);
+      }
     }
   }
 
   function handleEditBoard(values: string[]) {
-    const updatedBoards = boards.map((b) => {
-      if (b._id === id) {
-        const updatedColumns = values.map((colVal, index) => ({
-          _id: b.columns[index]?._id || nanoid(10),
-          name: colVal,
-          tasks: b.columns[index]?.tasks || []
-        }));
+    if (boardname) {
+      const updatedBoards = boards.map((b) => {
+        if (b._id === id) {
+          const updatedColumns = values.map((colVal, index) => ({
+            _id: b.columns[index]?._id || nanoid(10),
+            name: colVal,
+            tasks: b.columns[index]?.tasks || []
+          }));
 
-        return { ...b, name: boardname, columns: updatedColumns };
-      }
-      return b;
-    });
+          return { ...b, name: boardname, columns: updatedColumns };
+        }
+        return b;
+      });
 
-    console.log({ updatedBoards });
-    editBoard(updatedBoards);
+      editBoard(updatedBoards);
 
-    closeModal();
-    toast({ title: "Board edited ✅" });
+      closeModal();
+      toast({ title: "Board edited ✅" });
+    }
   }
 
   function handleAddBoard(values: string[]) {
-    const boardObj: Omit<BoardProps, "_id"> = {
-      name: boardname
-        .split(" ")
-        .map(
-          (word: string) =>
-            word.charAt(0).toUpperCase() + word.slice(1, word.length)
-        )
-        .join(" "),
-      columns: []
-    };
+    if (boardname) {
+      const boardObj: Omit<BoardProps, "_id"> = {
+        name: boardname
+          .split(" ")
+          .map(
+            (word: string) =>
+              word.charAt(0).toUpperCase() +
+              word.slice(1, word.length).toLowerCase()
+          )
+          .join(" "),
+        columns: []
+      };
 
-    values.map((val) => {
-      boardObj.columns.push({
-        _id: nanoid(10),
-        name: val,
-        tasks: []
+      values.map((val) => {
+        boardObj.columns.push({
+          _id: nanoid(10),
+          name: val,
+          tasks: []
+        });
       });
-    });
 
-    createNewBoard(boardObj);
-    closeModal();
+      createNewBoard(boardObj);
+      closeModal();
+    }
   }
 
   function handleAddInput(e?: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e?.preventDefault();
 
-    inputValues.forEach((input, index) => {
-      if (input === "") {
-        setInputErrors((prev) => {
-          const prevCopy = [...prev];
-          prevCopy[index] = "Can't be empty";
-          return prevCopy;
-        });
+    if (inputValues) {
+      inputValues.forEach((input, index) => {
+        if (input === "") {
+          setInputErrors((prev) => {
+            const prevCopy = [...prev];
+            prevCopy[index] = "Can't be empty";
+            return prevCopy;
+          });
+        }
+      });
+
+      const emptyValueExists = inputValues.some((input) => input === "");
+
+      if (!emptyValueExists) {
+        setInputValues((prev) => prev && [...prev, ""]);
+        setInputErrors((prev) => prev && [...prev, ""]);
       }
-    });
-
-    const emptyValueExists = inputValues.some((input) => input === "");
-
-    if (!emptyValueExists) {
-      setInputValues((prev) => [...prev, ""]);
-      setInputErrors((prev) => [...prev, ""]);
     }
   }
 
@@ -217,22 +228,22 @@ const BoardModal = ({ type }: BoardModalProps) => {
             {" "}
             <label htmlFor="subtasks">Columns</label>
             <div className="all-col-input-container">
-              {inputValues.map((value, index) => (
-                <InputAdd
-                  value={value}
-                  type={type === "edit" ? "edit" : "add"}
-                  error={inputErrors[index]}
-                  key={index}
-                  deleteInput={() => deleteInput(index)}
-                  onChange={(e) => onChange(e, index)}
-                  disabled={
-                    modalValue?.item &&
-                    "columns" in modalValue.item &&
-                    type === "addColumn" &&
-                    index <= modalValue.item.columns.length - 1
-                  }
-                />
-              ))}
+              {inputValues &&
+                inputValues.map((value, index) => (
+                  <InputAdd
+                    value={value}
+                    type={type === "edit" ? "edit" : "add"}
+                    error={inputErrors[index]}
+                    key={index}
+                    deleteInput={() => deleteInput(index)}
+                    onChange={(e) => onChange(e, index)}
+                    disabled={
+                      currentBoard &&
+                      type === "addColumn" &&
+                      index <= currentBoard.columns.length - 1
+                    }
+                  />
+                ))}
             </div>
           </div>
 

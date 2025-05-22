@@ -3,76 +3,53 @@
 import React from "react";
 import Button from "../Button";
 import { useModal } from "@/app/context/ModalContext";
-// import boards from "@/public/assets/data";
-import { BoardProps, TaskProps } from "@/app/utils/interface";
-import { ItemType } from "@/app/utils/types";
 import { DeleteModalProps } from "@/app/utils/types";
 import { useBoards } from "@/app/context/BoardContext";
+import { useParams } from "next/navigation";
 
 const DeleteModal = ({ taskOrBoard }: DeleteModalProps) => {
+  const params = useParams();
+  const { id } = params;
   const { modalRef, modalValue, closeModal } = useModal();
-  const { deleteBoard, deleteTask, boards } = useBoards();
+  const { deleteBoard, deleteTask, getCurrentBoard } = useBoards();
+  const itemId = modalValue?.itemId;
+  const item = modalValue?.item;
 
-  function isValidObj(item: ItemType | undefined): item is BoardProps {
-    return (
-      item !== undefined &&
-      typeof item === "object" &&
-      !Array.isArray(item) &&
-      "name" in item &&
-      "_id" in item
-    );
+  const currentBoard = getCurrentBoard(`${id}`);
+
+  const itemName = getItemName();
+
+  function getItemName() {
+    if (taskOrBoard === "task" && item && itemId && typeof item === "string") {
+      const column = currentBoard?.columns.find(
+        (col) => col.name.toLowerCase() === item.toLowerCase()
+      );
+
+      if (!column) return;
+
+      const task = column?.tasks.find((task) => task._id === itemId);
+
+      return task?.title;
+    } else {
+      return currentBoard?.name;
+    }
   }
-
-  function isTaskTuple(item: ItemType): item is [BoardProps, TaskProps] {
-    return (
-      item !== undefined &&
-      Array.isArray(item) &&
-      item.length === 2 &&
-      typeof item[0] === "object" &&
-      typeof item[1] === "object" &&
-      item[1] !== null &&
-      "title" in item[1]
-    );
-  }
-
-  const itemName =
-    taskOrBoard === "task"
-      ? isTaskTuple(modalValue?.item) && modalValue.item[1].title
-      : isValidObj(modalValue?.item) && modalValue?.item
-      ? modalValue?.item?.name
-      : "";
 
   const handleDeleteItem = () => {
-    if (taskOrBoard === "task" && modalValue) {
-      if (taskOrBoard === "task" && modalValue && modalValue.item) {
-        if (isTaskTuple(modalValue.item)) {
-          const currentBoard = modalValue.item[0];
-          const task = modalValue.item[1];
-          const taskIndex = modalValue?.index;
-          const currentColumnName = task.status || currentBoard.columns[0].name;
+    if (taskOrBoard === "task") {
+      if (item && typeof item === "string" && itemId) {
+        const board = currentBoard;
+        if (!board) return;
 
-          if (
-            typeof taskIndex === "number" &&
-            currentBoard &&
-            currentColumnName
-          ) {
-            deleteTask(taskIndex, currentBoard, currentColumnName);
-            closeModal();
-          }
-        }
+        const currentColumnName = item.toLowerCase();
+        deleteTask(itemId, currentBoard._id, currentColumnName);
+        closeModal();
       }
     }
 
-    if (taskOrBoard === "board") {
-      if (isValidObj(modalValue?.item)) {
-        const currentBoard = modalValue?.item;
-        const indexOfBoardToDelete = boards.findIndex(
-          (board: BoardProps) => board._id === currentBoard._id
-        );
-
-        deleteBoard(indexOfBoardToDelete);
-        closeModal();
-      }
+    if (taskOrBoard === "board" && currentBoard) {
+      deleteBoard(currentBoard?._id);
+      closeModal();
     }
   };
   return (

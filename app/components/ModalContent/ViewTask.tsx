@@ -2,78 +2,70 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Dropdown from "../Dropdown";
 import { useModal } from "@/app/context/ModalContext";
-import { ColumnProps, TaskProps } from "@/app/utils/interface";
-import { ItemType } from "@/app/utils/types";
+import { TaskProps } from "@/app/utils/interface";
 import { useBoards } from "@/app/context/BoardContext";
 import { useParams } from "next/navigation";
 
-export const isTaskTuple = (
-  item: ItemType
-): item is [ColumnProps[], TaskProps] =>
-  Array.isArray(item) &&
-  item.length === 2 &&
-  Array.isArray(item[0]) &&
-  typeof item[1] === "object";
-
 const ViewTask = () => {
   const { modalValue, modalRef } = useModal();
-  const { boards, editBoard } = useBoards();
+  const { boards, editBoard, getCurrentBoard } = useBoards();
   const params = useParams();
   const { id } = params;
   const [displayDropdown, setDisplayDropdown] = useState(false);
-  const [statusList, setStatusList] = useState<string[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [statusList, setStatusList] = useState<string[] | undefined>(
+    getStatuslist
+  );
+  const [task, setTask] = useState<TaskProps | undefined>(extractTask);
 
-  const item = modalValue?.item;
+  const taskId = modalValue?.itemId;
 
-  const validTaskTuple = isTaskTuple(item);
-  const task = validTaskTuple ? item[1] : null;
-  const taskIndex = modalValue?.index;
+  function getStatuslist() {
+    const currentBoard = getCurrentBoard(`${id}`);
+    if (!currentBoard) return;
+    return currentBoard.columns.map((col) => col.name);
+  }
 
-  const [displayTask, setDisplayTask] = useState<
-    TaskProps | Omit<TaskProps, "_id">
-  >(getTask);
+  function extractTask() {
+    const columnName = modalValue?.item;
+    const taskId = modalValue?.itemId;
+    const currentBoard = getCurrentBoard(`${id}`);
 
-  useEffect(() => {
-    const columns = validTaskTuple ? item[0] : [];
-    if (validTaskTuple && task) {
-      setStatusList(columns.map((col) => col.name));
+    if (!currentBoard) return;
+
+    if (typeof columnName === "string") {
+      const column = currentBoard?.columns.find(
+        (col) => col.name.toLowerCase() === columnName.toLowerCase()
+      );
+
+      if (!column) return;
+
+      const currentTask = column.tasks.find((task) => task._id === taskId);
+
+      if (!currentTask) return;
+
+      return currentTask;
     }
-  }, [task, validTaskTuple, item]);
+  }
 
   useEffect(() => {
     handleTaskChange();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayTask]);
+  }, [task && task.status]);
 
-  if (!validTaskTuple || !task) return null;
-
-  function getTask() {
-    if (task) {
-      return {
-        ...task,
-        title: task.title,
-        description: task.description,
-        status: task.status,
-        subtasks: [...task.subtasks]
-      };
-    } else {
-      return {
-        title: "",
-        description: "",
-        status: "",
-        subtasks: []
-      };
-    }
-  }
+  if (!task) return;
 
   const getCompleteTasks = () =>
-    displayTask.subtasks.filter((subtask) => subtask.isCompleted).length;
+    task.subtasks.filter((subtask) => subtask.isCompleted).length;
 
   function handleTaskChange() {
+    if (!task) return;
     const board = boards.find((board) => board._id === id);
     const prevStatus =
-      task?.status.toLowerCase() || board?.columns[0].name.toLowerCase();
+      extractTask()?.status.toLowerCase() ||
+      task?.status.toLowerCase() ||
+      board?.columns[0].name.toLowerCase();
 
     if (!board) {
       return;
@@ -87,20 +79,29 @@ const ViewTask = () => {
       return;
     }
     const newColumn = board.columns.find(
-      (col) => col.name.toLowerCase() === displayTask.status.toLowerCase()
+      (col) => col.name.toLowerCase() === task?.status.toLowerCase()
     );
 
     if (!newColumn) {
       return;
     }
 
-    if (typeof taskIndex === "number" && "_id" in displayTask) {
-      if (displayTask.status.toLowerCase() === prevStatus) {
-        column?.tasks.splice(taskIndex, 1, displayTask);
-      } else {
-        column.tasks.splice(taskIndex, 1);
-        newColumn.tasks.push(displayTask);
-      }
+    if (task?.status.toLowerCase() === prevStatus) {
+      const updatedTasks = column.tasks.map((taskItem) => {
+        if (taskItem._id === taskId) {
+          return { ...task };
+        } else return taskItem;
+      });
+
+      column.tasks = updatedTasks;
+    } else {
+      const prevTasks = column.tasks;
+      const curTasks = newColumn.tasks;
+      const taskIndex = prevTasks.findIndex((task) => task._id === taskId);
+
+      prevTasks.splice(taskIndex, 1);
+
+      curTasks.push(task);
     }
 
     editBoard(boards);
@@ -113,7 +114,7 @@ const ViewTask = () => {
       ref={modalRef}
     >
       <div className="view-task-modal-header">
-        <h5 className="w-10/12 md:w-11/12">{displayTask.title}</h5>
+        <h5 className="w-10/12 md:w-11/12">{task.title}</h5>
         <span className="">
           <button
             onClick={() => setDisplayDropdown(!displayDropdown)}
@@ -126,27 +127,27 @@ const ViewTask = () => {
               height={20}
             />
           </button>
-          {displayDropdown && typeof modalValue?.index === "number" && (
+          {displayDropdown && typeof modalValue && (
             <Dropdown
               taskOrBoard="task"
               setDisplayDropdown={setDisplayDropdown}
               taskItem={task}
-              taskIndex={taskIndex}
+              taskId={task._id}
             />
           )}
         </span>
       </div>
-      {displayTask.description && (
+      {task.description && (
         <p className="view-task-modal-description whitespace-pre-wrap">
-          {displayTask.description}
+          {task.description}
         </p>
       )}
       <div>
         <label htmlFor="subtasks">
-          Subtasks({getCompleteTasks()} of {displayTask.subtasks.length})
+          Subtasks({getCompleteTasks()} of {task.subtasks.length})
         </label>
         <div className="subtasks-items">
-          {displayTask.subtasks.map((subtask, index) => (
+          {task.subtasks.map((subtask, index) => (
             <label className="container" key={index}>
               <input
                 type="checkbox"
@@ -154,10 +155,12 @@ const ViewTask = () => {
                 onChange={() => {
                   const bool = !subtask.isCompleted;
 
-                  setDisplayTask((prev) => {
-                    const prevCopy = { ...prev };
-                    prevCopy.subtasks[index].isCompleted = bool;
-                    return prevCopy;
+                  setTask((prev) => {
+                    if (prev) {
+                      const prevCopy = { ...prev };
+                      prevCopy.subtasks[index].isCompleted = bool;
+                      return prevCopy;
+                    }
                   });
                 }}
               />
@@ -171,21 +174,23 @@ const ViewTask = () => {
         <select
           name="status"
           id="status"
-          value={displayTask.status.toLowerCase()}
+          value={task.status.toLowerCase()}
           onChange={(e) =>
-            setDisplayTask((prev) => {
-              const prevCopy = { ...prev };
-              prevCopy.status = e.target.value;
-              return prevCopy;
+            setTask((prev) => {
+              if (prev) {
+                const prevCopy = { ...prev };
+                prevCopy.status = e.target.value;
+                return prevCopy;
+              }
             })
           }
         >
-          <option value="">Select status</option>
-          {statusList.map((columnName, index) => (
-            <option key={index} value={columnName.toLowerCase()}>
-              {columnName}
-            </option>
-          ))}
+          {statusList &&
+            statusList.map((columnName, index) => (
+              <option key={index} value={columnName.toLowerCase()}>
+                {columnName}
+              </option>
+            ))}
         </select>
       </div>
     </div>

@@ -7,9 +7,6 @@ export type DeleteModalProps = {
 export type ItemType =
   | TaskProps
   | BoardProps
-  | [BoardProps, TaskProps]
-  | [ColumnProps[]]
-  | [ColumnProps[], TaskProps]
-  | [string, TaskProps]
-  | [ColumnProps[], number]
+  | string
+  | ColumnProps[]
   | undefined;

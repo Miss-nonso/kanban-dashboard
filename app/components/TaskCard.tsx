@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { ColumnProps, SubtaskProps, TaskProps } from "../utils/interface";
+import { SubtaskProps, TaskProps } from "../utils/interface";
 import { useModal } from "../context/ModalContext";
 import ViewTask from "./ModalContent/ViewTask";
-import { useParams } from "next/navigation";
-import { useBoards } from "../context/BoardContext";
+// import { useParams } from "next/navigation";
+// import { useBoards } from "../context/BoardContext";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -18,14 +18,15 @@ const getCompletedSubtasks = (subtasks: SubtaskProps[]) => {
   return completedSubTasks.length;
 };
 
-const TaskCard = ({ task, index }: TaskCardProps) => {
-  const params = useParams();
-  const { id } = params;
+const TaskCard = ({ task }: TaskCardProps) => {
+  // const params = useParams();
+  // const { id } = params;
   const { handleModalOpen } = useModal();
-  const { getCurrentBoard } = useBoards();
+  // const { getCurrentBoard } = useBoards();
 
-  const currentBoard = getCurrentBoard(`${id}`);
-  const ColumnsToAddTasksTo = currentBoard?.columns;
+  // const currentBoard = getCurrentBoard(`${id}`);
+  const columnName = task.status;
+  const taskId = task._id;
 
   const {
     setNodeRef,
@@ -38,13 +39,9 @@ const TaskCard = ({ task, index }: TaskCardProps) => {
 
   const style = { transition, transform: CSS.Transform.toString(transform) };
 
-  const handleTaskModalOpen = (
-    index: number,
-    task: TaskProps,
-    ColumnsToAddTasksTo?: ColumnProps[]
-  ) => {
-    if (ColumnsToAddTasksTo && task) {
-      handleModalOpen(<ViewTask />, index, [ColumnsToAddTasksTo, task]);
+  const handleTaskModalOpen = (taskId: string, columnName?: string) => {
+    if (taskId && columnName) {
+      handleModalOpen(<ViewTask />, taskId, columnName);
     }
   };
 
@@ -64,7 +61,7 @@ const TaskCard = ({ task, index }: TaskCardProps) => {
         {...attributes}
         {...listeners}
         onClick={() => {
-          handleTaskModalOpen(index, task, ColumnsToAddTasksTo);
+          handleTaskModalOpen(taskId, columnName);
         }}
       >
         <h4>{task.title}</h4>{" "}

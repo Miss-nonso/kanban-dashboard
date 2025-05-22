@@ -23,3 +23,6 @@ export interface SubtaskProps {
   title: string;
   isCompleted: boolean;
 }
+
+// USE IDs TO PERFORM ALL CRUD OPERATIONS
+// ISOLATE FUNCTION IN ALL COMPONENTS
