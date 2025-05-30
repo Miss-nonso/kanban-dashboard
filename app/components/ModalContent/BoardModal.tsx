@@ -51,13 +51,12 @@ const BoardModal = ({ type }: BoardModalProps) => {
   }
 
   function getInitialInputValues(): string[] | undefined {
-    if (!currentBoard) return;
-
     if (type === "edit" || type === "addColumn") {
-      const columnNames = currentBoard.columns.map((col) => col.name);
-      return type === "addColumn" ? [...columnNames, ""] : columnNames;
-    }
-    return [""];
+      if (currentBoard) {
+        const columnNames = currentBoard.columns.map((col) => col.name);
+        return type === "addColumn" ? [...columnNames, ""] : columnNames;
+      }
+    } else return [""];
   }
 
   function duplicatesExist() {

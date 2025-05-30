@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "./modal.css";
 @import "./checkbox.css";
+@import "./landingPage.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -33,6 +34,7 @@ html.light {
   --red: #ea5555;
   --redhover: #ff9898;
   --textcolor: #20212c;
+  --grayzinc: #52525b;
   --white: #ffffff;
 }
 
@@ -45,7 +47,7 @@ html.light {
     --darkline: #3e3f4e;
     --darkpurple25opacity: #ffffff;
     --contrastGray: rgba(233, 239, 250, 0.025);
-
+    --zincgray: #a1a1aa;
     --lightgray: #20212c;
     --textcolor: #ffffff;
   }
@@ -85,7 +87,7 @@ body {
   font-family: "Plus Jakarta Sans", serif;
   height: 100dvh;
   color: var(--textcolor);
-  overflow: hidden;
+  /* overflow: hidden; */
   background: var(--background);
 }
 
@@ -237,9 +239,6 @@ button {
 .sidebar .boards-wrapper button svg path {
   @apply w-[100rem];
 }
-/* .boards-wrapper {
-  @apply grid;
-} */
 
 .sidebar .boards-wrapper button {
   @apply text-[var(--lightpurple)] w-full;

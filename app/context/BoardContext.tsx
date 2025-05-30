@@ -32,6 +32,8 @@ interface BoardContextProps {
 const setToLocalStorage = (key: string, value: BoardProps[]) => {
   if (typeof window !== "undefined") {
     localStorage.setItem(key, JSON.stringify(value));
+  } else {
+    console.log("did not save");
   }
 };
 
@@ -99,9 +101,8 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     }
 
     setTimeout(() => {
-      // setIsLoadingFalse();
       toast({ title: "Board created ✅" });
-    }, 2500);
+    }, 2000);
   };
 
   const editBoard = (updatedBoard: BoardProps[]) => {
@@ -117,16 +118,17 @@ export function BoardProvider({ children }: { children: ReactNode }) {
     const allBoards = [...boards];
 
     const boardIndex = allBoards.findIndex((board) => board._id === boardId);
-    // updated.splice(index, 1);
 
     const modifiedBoards = allBoards.filter((board) => board._id !== boardId);
 
     updateBoards(modifiedBoards);
 
+    const boardsLeft = [...modifiedBoards];
+
     const fallback =
-      allBoards[boardIndex - 1] ||
-      allBoards[boardIndex] ||
-      allBoards[0] ||
+      boardsLeft[boardIndex - 1] ||
+      boardsLeft[boardIndex] ||
+      boardsLeft[0] ||
       null;
 
     if (fallback) {
@@ -134,13 +136,12 @@ export function BoardProvider({ children }: { children: ReactNode }) {
         `/boards/${fallback._id}/${fallback.name.replace(/ /g, "-")}`
       );
     } else {
-      router.push(`/`);
+      router.push(`/boards`);
     }
 
     setTimeout(() => {
-      // setIsLoadingFalse();
       toast({ title: "Board deleted" });
-    }, 2500);
+    }, 2000);
   };
 
   const deleteTask = (

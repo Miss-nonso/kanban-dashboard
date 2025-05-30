@@ -8,7 +8,6 @@ import Toggle from "./Toggle";
 import { useModal } from "../context/ModalContext";
 import BoardModal from "./ModalContent/BoardModal";
 import { useState, useEffect } from "react";
-// import { BoardProps } from "../utils/interface";
 import { useBoards } from "../context/BoardContext";
 import { useSidebar } from "../context/SidebarContext";
 import SidebarButton from "./SidebarButton";
@@ -27,7 +26,6 @@ const Sidebar = () => {
 
   const handleOpenModal = () => {
     if (boards) {
-      // const currentBoard = boards.find((board: BoardProps) => board._id === id);
       handleModalOpen(<BoardModal type="add" />);
     }
   };

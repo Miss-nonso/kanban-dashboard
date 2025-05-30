@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useBoards } from "../context/BoardContext";
 import { useParams } from "next/navigation";
 import { useModal } from "../context/ModalContext";
-// import { BoardProps } from "../utils/interface";
 import BoardModal from "./ModalContent/BoardModal";
 import Toggle from "./Toggle";
 
@@ -21,7 +20,6 @@ const MobileBoards = () => {
 
   const handleOpenModal = () => {
     if (boards) {
-      // const currentBoard = boards.find((board: BoardProps) => board._id === id);
       handleModalOpen(<BoardModal type="add" />);
     }
   };

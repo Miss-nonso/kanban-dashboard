@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./styles/globals.css";
-// import Sidebar from "./components/Sidebar";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ModalProvider } from "./context/ModalContext";
 import { BoardProvider } from "./context/BoardContext";
 import { SidebarProvider } from "./context/SidebarContext";
 import { Toaster } from "@/components/ui/toaster";
-// import { Metadata } from "next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

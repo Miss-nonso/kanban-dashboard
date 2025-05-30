@@ -4,8 +4,6 @@ import React from "react";
 import { SubtaskProps, TaskProps } from "../utils/interface";
 import { useModal } from "../context/ModalContext";
 import ViewTask from "./ModalContent/ViewTask";
-// import { useParams } from "next/navigation";
-// import { useBoards } from "../context/BoardContext";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -19,12 +17,7 @@ const getCompletedSubtasks = (subtasks: SubtaskProps[]) => {
 };
 
 const TaskCard = ({ task }: TaskCardProps) => {
-  // const params = useParams();
-  // const { id } = params;
   const { handleModalOpen } = useModal();
-  // const { getCurrentBoard } = useBoards();
-
-  // const currentBoard = getCurrentBoard(`${id}`);
   const columnName = task.status;
   const taskId = task._id;
 
