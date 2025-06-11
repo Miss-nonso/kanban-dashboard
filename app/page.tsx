@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment } from 'react';
 // import Main from "./boards/[id]/[slug]/page";
-import { useBoards } from "./context/BoardContext";
-import { Suspense, lazy } from "react";
-import SkeletonCard from "./components/Skeleton/SkeletonCard";
+import { useBoards } from './context/BoardContext';
+import { Suspense, lazy } from 'react';
+import SkeletonCard from './components/Skeleton/SkeletonCard';
 // import { useRouter } from "next/navigation";
-import LandingPage from "./components/LandingPage/LandingPage";
+import LandingPage from './components/LandingPage/LandingPage';
 
 export default function Home() {
   // const router = useRouter();
@@ -14,9 +14,7 @@ export default function Home() {
   const [isClient, setIsClient] = useState(false);
   const { isLoading, setIsLoadingTrue, setIsLoadingFalse } = useBoards();
 
-  const LazyComponent = lazy(
-    () => import("@/app/components/Skeleton/SkeletonCard")
-  );
+  const LazyComponent = lazy(() => import('@/app/components/Skeleton/SkeletonCard'));
 
   useEffect(() => {
     setIsLoadingTrue();

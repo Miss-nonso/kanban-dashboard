@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import Logo from "./Logo";
-import Link from "next/link";
-import Image from "next/image";
-import { useParams } from "next/navigation";
-import Toggle from "./Toggle";
-import { useModal } from "../context/ModalContext";
-import BoardModal from "./ModalContent/BoardModal";
-import { useState, useEffect } from "react";
-import { useBoards } from "../context/BoardContext";
-import { useSidebar } from "../context/SidebarContext";
-import SidebarButton from "./SidebarButton";
+import Logo from './Logo';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useParams } from 'next/navigation';
+import Toggle from './Toggle';
+import { useModal } from '../context/ModalContext';
+import BoardModal from './ModalContent/BoardModal';
+import { useState, useEffect } from 'react';
+import { useBoards } from '../context/BoardContext';
+import { useSidebar } from '../context/SidebarContext';
+import SidebarButton from './SidebarButton';
 
 const Sidebar = () => {
   const params = useParams();
@@ -48,10 +48,9 @@ const Sidebar = () => {
                 {isClient &&
                   boards.map(({ name, _id }: { name: string; _id: string }) => (
                     <Link
-                      href={`/boards/${_id}/${name.replace(/ /g, "-")}`}
+                      href={`/boards/${_id}/${name.replace(/ /g, '-')}`}
                       key={_id}
-                      className={id === _id ? "active" : ""}
-                    >
+                      className={id === _id ? 'active' : ''}>
                       <Image
                         src="/assets/icons/icon-board.svg"
                         alt="board"

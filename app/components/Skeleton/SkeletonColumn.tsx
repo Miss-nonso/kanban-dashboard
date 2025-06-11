@@ -1,6 +1,6 @@
-import React from "react";
-import { TaskProps } from "../../utils/interface";
-import { Skeleton } from "@/components/ui/skeleton";
+import React from 'react';
+import { TaskProps } from '../../utils/interface';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const SkeletonColumn = ({ tasks }: { tasks: TaskProps[] }) => {
   return (

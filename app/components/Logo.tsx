@@ -1,12 +1,12 @@
-import React from "react";
-import Image from "next/image";
-import { useTheme } from "../context/ThemeContext";
+import React from 'react';
+import Image from 'next/image';
+import { useTheme } from '../context/ThemeContext';
 
 const Logo = () => {
   const { theme } = useTheme();
   return (
     <div>
-      {theme === "dark" ? (
+      {theme === 'dark' ? (
         <Image
           src="/assets/icons/logo-light.svg"
           alt="logo"

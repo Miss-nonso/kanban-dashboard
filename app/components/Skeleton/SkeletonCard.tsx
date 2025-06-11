@@ -1,8 +1,8 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import SkeletonColumn from "./SkeletonColumn";
-import { staticBoards } from "@/public/assets/data";
+import { Skeleton } from '@/components/ui/skeleton';
+import SkeletonColumn from './SkeletonColumn';
+import { staticBoards } from '@/public/assets/data';
 
-const dummyBoards = ["", "", "", "", "", "", "", ""];
+const dummyBoards = ['', '', '', '', '', '', '', ''];
 
 const SkeletonCard = () => {
   return (
@@ -17,8 +17,7 @@ const SkeletonCard = () => {
           <div className="grid gap-8">
             {dummyBoards.map((_, index) => (
               <div className="flex items-center gap-2" key={index}>
-                <Skeleton className="w-[2rem] h-8" />{" "}
-                <Skeleton className="w-[10rem] h-10" />
+                <Skeleton className="w-[2rem] h-8" /> <Skeleton className="w-[10rem] h-10" />
               </div>
             ))}
           </div>
@@ -30,7 +29,7 @@ const SkeletonCard = () => {
           <div className="absolute mx-8 w-full flex justify-between items-center  h-[6rem] md:w-[78vw] md:mx-8">
             <Skeleton className="h-5 w-[8rem] " />
             <div className="flex gap-4 mr-12">
-              {" "}
+              {' '}
               <Skeleton className=" h-6 w-[2rem] md:w-[10rem] " />
               <Skeleton className=" h-5 w-[0.5rem]" />
             </div>

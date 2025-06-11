@@ -1,5 +1,5 @@
-import Link from "next/link";
-import React from "react";
+import Link from 'next/link';
+import React from 'react';
 
 const InvalidURL = () => {
   return (
@@ -10,8 +10,7 @@ const InvalidURL = () => {
       </p>
       <Link
         href="/"
-        className="bg-[var(--darkpurple)] p-4 rounded-lg hover:scale-[1.02] transition-all duration-300 ease-in-out"
-      >
+        className="bg-[var(--darkpurple)] p-4 rounded-lg hover:scale-[1.02] transition-all duration-300 ease-in-out">
         Back to Base
       </Link>
     </div>

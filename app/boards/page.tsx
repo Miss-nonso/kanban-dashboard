@@ -1,15 +1,13 @@
-"use client";
+'use client';
 
-import React, { Suspense, useEffect, useState, lazy } from "react";
-import NoBoards from "../components/NoBoards";
-import { useModal } from "../context/ModalContext";
-import Modal from "../components/Modal";
-import { useBoards } from "../context/BoardContext";
-import { useRouter } from "next/navigation";
+import React, { Suspense, useEffect, useState, lazy } from 'react';
+import NoBoards from '../components/NoBoards';
+import { useModal } from '../context/ModalContext';
+import Modal from '../components/Modal';
+import { useBoards } from '../context/BoardContext';
+import { useRouter } from 'next/navigation';
 
-const LazyComponent = lazy(
-  () => import("@/app/components/Skeleton/SkeletonCard")
-);
+const LazyComponent = lazy(() => import('@/app/components/Skeleton/SkeletonCard'));
 
 const VoidBoards = () => {
   const { openModal, modalValue } = useModal();
@@ -19,9 +17,7 @@ const VoidBoards = () => {
 
   useEffect(() => {
     if (boards.length > 0) {
-      router.push(
-        `/boards/${boards[0]._id}/${boards[0].name.replace(/ /g, "-")}`
-      );
+      router.push(`/boards/${boards[0]._id}/${boards[0].name.replace(/ /g, '-')}`);
     } else {
       setIsClient(true);
     }
