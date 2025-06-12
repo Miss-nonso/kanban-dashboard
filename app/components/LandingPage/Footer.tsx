@@ -145,7 +145,6 @@ const Footer = () => {
               <li>
                 <Link
                   href="mailto:chinonsodaniels2020@gmail.com"
-                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors text-sm flex items-center">
                   <svg
