@@ -47,7 +47,6 @@ const Footer = () => {
               <li>
                 <Link
                   href="https://github.com/usekaneo/kaneo"
-                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors text-sm flex items-center">
                   <svg
@@ -74,7 +73,6 @@ const Footer = () => {
                       ? `/boards/${boards[0]._id}/${boards[0].name.replace(/ /g, '-')}`
                       : `/boards`
                   }
-                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors text-sm flex items-center">
                   <svg

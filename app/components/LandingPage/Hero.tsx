@@ -78,7 +78,6 @@ const Hero = () => {
                 ? `/boards/${boards[0]._id}/${boards[0].name.replace(/ /g, '-')}`
                 : `/boards`
             }
-            target="_blank"
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow-lg shadow-indigo-500/20 py-2 bg-indigo-600 text-white hover:bg-indigo-500 hover:scale-[1.02] dark:bg-indigo-500 dark:hover:bg-indigo-400 h-12 px-8">
             <svg
               xmlns="http://www.w3.org/2000/svg"
