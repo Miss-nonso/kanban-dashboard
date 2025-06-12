@@ -96,7 +96,7 @@ const Hero = () => {
                   )}`
                 : `/boards`
             }
-            target="_black"
+            target="_blank"
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow-lg shadow-indigo-500/20 py-2 bg-indigo-600 text-white hover:bg-indigo-500 hover:scale-[1.02] dark:bg-indigo-500 dark:hover:bg-indigo-400 h-12 px-8"
           >
             <svg
@@ -118,7 +118,7 @@ const Hero = () => {
             <span>Try demo</span>
           </Link>
           <Link
-            href=""
+            href="https://github.com/Miss-nonso/kanban-dashboard"
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow-lg py-2 bg-white text-zinc-900 hover:bg-zinc-50 hover:scale-[1.02] dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 h-12 px-8 border border-zinc-200 dark:border-zinc-700"
           >
             <svg

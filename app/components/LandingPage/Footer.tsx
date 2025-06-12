@@ -115,7 +115,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="https://x.com/usekaneo"
+                  href="https://www.linkedin.com/in/nonso-daniels/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors text-sm flex items-center"
@@ -163,7 +163,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="https://github.com/orgs/usekaneo/discussions"
+                  href="mailto:chinonsodaniels2020@gmail.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors text-sm flex items-center"
