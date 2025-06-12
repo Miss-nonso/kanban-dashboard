@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Dropdown from '../Dropdown';
 import { useModal } from '@/app/context/ModalContext';

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useEffect, useState, lazy } from 'react';
+import { Suspense, useEffect, useState, lazy } from 'react';
 import NoBoards from '../components/NoBoards';
 import { useModal } from '../context/ModalContext';
 import Modal from '../components/Modal';

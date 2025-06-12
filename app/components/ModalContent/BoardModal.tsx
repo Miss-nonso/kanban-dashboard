@@ -1,7 +1,7 @@
 'use client';
 
 import { BoardProps } from '@/app/utils/interface';
-import React, { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import Button from '../Button';
 import { DraggableInputAdd } from '../InputAdd';
 import { useModal } from '@/app/context/ModalContext';

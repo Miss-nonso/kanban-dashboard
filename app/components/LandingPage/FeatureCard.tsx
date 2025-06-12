@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface FeatureDataProps {
   icon: React.JSX.Element;
   title: string;

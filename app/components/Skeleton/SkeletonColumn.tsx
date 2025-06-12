@@ -1,4 +1,3 @@
-import React from 'react';
 import { TaskProps } from '../../utils/interface';
 import { Skeleton } from '@/components/ui/skeleton';
 

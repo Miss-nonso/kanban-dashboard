@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+
 import Logo from '../Logo';
 import Link from 'next/link';
 import { useBoards } from '@/app/context/BoardContext';

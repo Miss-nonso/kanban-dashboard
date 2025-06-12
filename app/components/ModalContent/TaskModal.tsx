@@ -3,7 +3,7 @@
 import { BoardProps, ColumnProps, SubtaskProps, TaskProps } from '@/app/utils/interface';
 import { nanoid } from 'nanoid';
 import Button from '../Button';
-import React, { useState, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { useParams } from 'next/navigation';
 import { useModal } from '@/app/context/ModalContext';
 import InputAdd from '../InputAdd';

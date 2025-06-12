@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { SubtaskProps, TaskProps } from '../utils/interface';
 import { useModal } from '../context/ModalContext';
 import ViewTask from './ModalContent/ViewTask';

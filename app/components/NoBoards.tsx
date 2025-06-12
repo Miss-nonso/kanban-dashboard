@@ -1,4 +1,3 @@
-import React from 'react';
 import Button from './Button';
 import BoardModal from './ModalContent/BoardModal';
 import { useModal } from '../context/ModalContext';

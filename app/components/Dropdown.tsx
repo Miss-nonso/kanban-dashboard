@@ -1,5 +1,5 @@
 'use client';
-import React, { Ref } from 'react';
+import { Ref } from 'react';
 import { useModal } from '../context/ModalContext';
 import BoardModal from './ModalContent/BoardModal';
 import TaskModal from './ModalContent/TaskModal';
