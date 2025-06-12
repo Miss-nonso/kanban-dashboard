@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import Dropdown from "../Dropdown";
-import { useModal } from "@/app/context/ModalContext";
-import { TaskProps } from "@/app/utils/interface";
-import { useBoards } from "@/app/context/BoardContext";
-import { useParams } from "next/navigation";
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Dropdown from '../Dropdown';
+import { useModal } from '@/app/context/ModalContext';
+import { TaskProps } from '@/app/utils/interface';
+import { useBoards } from '@/app/context/BoardContext';
+import { useParams } from 'next/navigation';
 
 const ViewTask = () => {
   const { modalValue, modalRef } = useModal();
@@ -13,9 +13,7 @@ const ViewTask = () => {
   const { id } = params;
   const [displayDropdown, setDisplayDropdown] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [statusList, setStatusList] = useState<string[] | undefined>(
-    getStatuslist
-  );
+  const [statusList, setStatusList] = useState<string[] | undefined>(getStatuslist);
   const [task, setTask] = useState<TaskProps | undefined>(extractTask);
 
   const taskId = modalValue?.itemId;
@@ -23,7 +21,7 @@ const ViewTask = () => {
   function getStatuslist() {
     const currentBoard = getCurrentBoard(`${id}`);
     if (!currentBoard) return;
-    return currentBoard.columns.map((col) => col.name);
+    return currentBoard.columns.map(col => col.name);
   }
 
   function extractTask() {
@@ -33,14 +31,14 @@ const ViewTask = () => {
 
     if (!currentBoard) return;
 
-    if (typeof columnName === "string") {
+    if (typeof columnName === 'string') {
       const column = currentBoard?.columns.find(
-        (col) => col.name.toLowerCase() === columnName.toLowerCase()
+        col => col.name.toLowerCase() === columnName.toLowerCase()
       );
 
       if (!column) return;
 
-      const currentTask = column.tasks.find((task) => task._id === taskId);
+      const currentTask = column.tasks.find(task => task._id === taskId);
 
       if (!currentTask) return;
 
@@ -56,12 +54,11 @@ const ViewTask = () => {
 
   if (!task) return;
 
-  const getCompleteTasks = () =>
-    task.subtasks.filter((subtask) => subtask.isCompleted).length;
+  const getCompleteTasks = () => task.subtasks.filter(subtask => subtask.isCompleted).length;
 
   function handleTaskChange() {
     if (!task) return;
-    const board = boards.find((board) => board._id === id);
+    const board = boards.find(board => board._id === id);
     const prevStatus =
       extractTask()?.status.toLowerCase() ||
       task?.status.toLowerCase() ||
@@ -71,15 +68,13 @@ const ViewTask = () => {
       return;
     }
 
-    const column = board.columns.find(
-      (col) => col.name.toLowerCase() === prevStatus
-    );
+    const column = board.columns.find(col => col.name.toLowerCase() === prevStatus);
 
     if (!column) {
       return;
     }
     const newColumn = board.columns.find(
-      (col) => col.name.toLowerCase() === task?.status.toLowerCase()
+      col => col.name.toLowerCase() === task?.status.toLowerCase()
     );
 
     if (!newColumn) {
@@ -87,7 +82,7 @@ const ViewTask = () => {
     }
 
     if (task?.status.toLowerCase() === prevStatus) {
-      const updatedTasks = column.tasks.map((taskItem) => {
+      const updatedTasks = column.tasks.map(taskItem => {
         if (taskItem._id === taskId) {
           return { ...task };
         } else return taskItem;
@@ -97,7 +92,7 @@ const ViewTask = () => {
     } else {
       const prevTasks = column.tasks;
       const curTasks = newColumn.tasks;
-      const taskIndex = prevTasks.findIndex((task) => task._id === taskId);
+      const taskIndex = prevTasks.findIndex(task => task._id === taskId);
 
       prevTasks.splice(taskIndex, 1);
 
@@ -108,18 +103,11 @@ const ViewTask = () => {
   }
 
   return (
-    <div
-      className="modal-content-wrapper"
-      id="view-task-modal-wrapper"
-      ref={modalRef}
-    >
+    <div className="modal-content-wrapper" id="view-task-modal-wrapper" ref={modalRef}>
       <div className="view-task-modal-header">
         <h5 className="w-10/12 md:w-11/12">{task.title}</h5>
         <span className="">
-          <button
-            onClick={() => setDisplayDropdown(!displayDropdown)}
-            className="task-option-btn"
-          >
+          <button onClick={() => setDisplayDropdown(!displayDropdown)} className="task-option-btn">
             <Image
               src="/assets/icons/icon-vertical-ellipsis.svg"
               alt="options"
@@ -138,9 +126,7 @@ const ViewTask = () => {
         </span>
       </div>
       {task.description && (
-        <p className="view-task-modal-description whitespace-pre-wrap">
-          {task.description}
-        </p>
+        <p className="view-task-modal-description whitespace-pre-wrap">{task.description}</p>
       )}
       <div>
         <label htmlFor="subtasks">
@@ -155,7 +141,7 @@ const ViewTask = () => {
                 onChange={() => {
                   const bool = !subtask.isCompleted;
 
-                  setTask((prev) => {
+                  setTask(prev => {
                     if (prev) {
                       const prevCopy = { ...prev };
                       prevCopy.subtasks[index].isCompleted = bool;
@@ -175,16 +161,15 @@ const ViewTask = () => {
           name="status"
           id="status"
           value={task.status.toLowerCase()}
-          onChange={(e) =>
-            setTask((prev) => {
+          onChange={e =>
+            setTask(prev => {
               if (prev) {
                 const prevCopy = { ...prev };
                 prevCopy.status = e.target.value;
                 return prevCopy;
               }
             })
-          }
-        >
+          }>
           {statusList &&
             statusList.map((columnName, index) => (
               <option key={index} value={columnName.toLowerCase()}>

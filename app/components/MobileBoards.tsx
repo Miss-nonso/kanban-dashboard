@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useBoards } from "../context/BoardContext";
-import { useParams } from "next/navigation";
-import { useModal } from "../context/ModalContext";
-import BoardModal from "./ModalContent/BoardModal";
-import Toggle from "./Toggle";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useBoards } from '../context/BoardContext';
+import { useParams } from 'next/navigation';
+import { useModal } from '../context/ModalContext';
+import BoardModal from './ModalContent/BoardModal';
+import Toggle from './Toggle';
 
 const MobileBoards = () => {
   const { boards } = useBoards();
@@ -35,16 +35,10 @@ const MobileBoards = () => {
             {isClient &&
               boards.map(({ name, _id }: { name: string; _id: string }) => (
                 <Link
-                  href={`/boards/${_id}/${name.replace(/ /g, "-")}`}
+                  href={`/boards/${_id}/${name.replace(/ /g, '-')}`}
                   key={_id}
-                  className={id === _id ? "active" : ""}
-                >
-                  <Image
-                    src="/assets/icons/icon-board.svg"
-                    alt="board"
-                    width={20}
-                    height={12}
-                  />
+                  className={id === _id ? 'active' : ''}>
+                  <Image src="/assets/icons/icon-board.svg" alt="board" width={20} height={12} />
                   <li>{name}</li>
                 </Link>
               ))}

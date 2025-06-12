@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Button from "./Button";
-import Dropdown from "./Dropdown";
-import { useRef, useState, useEffect } from "react";
-import TaskModal from "./ModalContent/TaskModal";
-import { useModal } from "../context/ModalContext";
+import Image from 'next/image';
+import Button from './Button';
+import Dropdown from './Dropdown';
+import { useRef, useState, useEffect } from 'react';
+import TaskModal from './ModalContent/TaskModal';
+import { useModal } from '../context/ModalContext';
 
-import { useSidebar } from "../context/SidebarContext";
-import MobileBoards from "./MobileBoards";
+import { useSidebar } from '../context/SidebarContext';
+import MobileBoards from './MobileBoards';
 type HeaderProps = { boardName: string };
 
 const Header = ({ boardName }: HeaderProps) => {
@@ -32,15 +32,15 @@ const Header = ({ boardName }: HeaderProps) => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
-      if (target.classList.contains("dropdown-bg")) {
+      if (target.classList.contains('dropdown-bg')) {
         closeDropdown();
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -50,20 +50,16 @@ const Header = ({ boardName }: HeaderProps) => {
 
   return (
     <header
-      className={` ${
-        showSidebar && "md:ml-[16.25rem] lg:ml-[18.75rem] md:px-2 "
-      }  md:px-8 px-3`}
-    >
+      className={` ${showSidebar && 'md:ml-[16.25rem] lg:ml-[18.75rem] md:px-2 '}  md:px-8 px-3`}>
       <div
         className="flex gap-2 justify-center items-center"
         onClick={() => {
-          setShowMobileBoards((prev) => !prev);
+          setShowMobileBoards(prev => !prev);
           if (displayDropdown) {
             setDisplayDropdown(false);
           }
-        }}
-      >
-        {" "}
+        }}>
+        {' '}
         <Image
           className="block md:hidden"
           src="/assets/icons/textlessLogo.png"
@@ -73,13 +69,12 @@ const Header = ({ boardName }: HeaderProps) => {
         />
         <h2
           className={`${
-            boardName.length > 15 ? "text-[0.75rem] " : "text-[18px]"
-          } md:text-[24px] font-bold tracking-[0.045em] `}
-        >
+            boardName.length > 15 ? 'text-[0.75rem] ' : 'text-[18px]'
+          } md:text-[24px] font-bold tracking-[0.045em] `}>
           {boardName}
         </h2>
         <button className="relative block focus:outline-[var(--darkpurple)] focus:p-1 md:hidden">
-          {" "}
+          {' '}
           {showMobileBoards ? (
             <Image
               src="/assets/icons/icon-chevron-up.svg"
@@ -114,8 +109,7 @@ const Header = ({ boardName }: HeaderProps) => {
                 setShowMobileBoards(false);
               }
             }}
-            className="mt-1.5"
-          >
+            className="mt-1.5">
             <Image
               src="/assets/icons/icon-vertical-ellipsis.svg"
               alt="options"

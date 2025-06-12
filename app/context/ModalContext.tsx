@@ -1,14 +1,7 @@
-"use client";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  Ref
-} from "react";
-import { JSX } from "react";
-import { ItemType } from "../utils/types";
+'use client';
+import { createContext, useContext, useEffect, useState, useRef, Ref } from 'react';
+import { JSX } from 'react';
+import { ItemType } from '../utils/types';
 
 type HandleModalOpenProps = {
   modalContent: JSX.Element;
@@ -18,11 +11,7 @@ type HandleModalOpenProps = {
 
 interface ModalContextProps {
   openModal: boolean;
-  handleModalOpen: (
-    modalContent: JSX.Element,
-    itemId?: string,
-    item?: ItemType
-  ) => void;
+  handleModalOpen: (modalContent: JSX.Element, itemId?: string, item?: ItemType) => void;
   closeModal: () => void;
   modalValue: HandleModalOpenProps | null;
   modalRef: Ref<HTMLDivElement>;
@@ -32,16 +21,10 @@ const ModalContext = createContext<ModalContextProps | undefined>(undefined);
 
 export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [modalValue, setModalValue] = useState<HandleModalOpenProps | null>(
-    null
-  );
+  const [modalValue, setModalValue] = useState<HandleModalOpenProps | null>(null);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  const handleModalOpen = (
-    modalContent: JSX.Element,
-    itemId?: string,
-    item?: ItemType
-  ) => {
+  const handleModalOpen = (modalContent: JSX.Element, itemId?: string, item?: ItemType) => {
     setOpenModal(true);
 
     if (itemId && item) {
@@ -60,27 +43,22 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
         closeModal();
       }
     };
 
     if (openModal) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [openModal]);
 
   return (
-    <ModalContext.Provider
-      value={{ openModal, closeModal, handleModalOpen, modalValue, modalRef }}
-    >
+    <ModalContext.Provider value={{ openModal, closeModal, handleModalOpen, modalValue, modalRef }}>
       {children}
     </ModalContext.Provider>
   );
@@ -89,7 +67,7 @@ export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
 export const useModal = () => {
   const context = useContext(ModalContext);
   if (!context) {
-    throw new Error("useModal must be used within a ModalProvider");
+    throw new Error('useModal must be used within a ModalProvider');
   }
   return context;
 };

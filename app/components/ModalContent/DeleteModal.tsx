@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React from "react";
-import Button from "../Button";
-import { useModal } from "@/app/context/ModalContext";
-import { DeleteModalProps } from "@/app/utils/types";
-import { useBoards } from "@/app/context/BoardContext";
-import { useParams } from "next/navigation";
+import React from 'react';
+import Button from '../Button';
+import { useModal } from '@/app/context/ModalContext';
+import { DeleteModalProps } from '@/app/utils/types';
+import { useBoards } from '@/app/context/BoardContext';
+import { useParams } from 'next/navigation';
 
 const DeleteModal = ({ taskOrBoard }: DeleteModalProps) => {
   const params = useParams();
@@ -20,14 +20,14 @@ const DeleteModal = ({ taskOrBoard }: DeleteModalProps) => {
   const itemName = getItemName();
 
   function getItemName() {
-    if (taskOrBoard === "task" && item && itemId && typeof item === "string") {
+    if (taskOrBoard === 'task' && item && itemId && typeof item === 'string') {
       const column = currentBoard?.columns.find(
-        (col) => col.name.toLowerCase() === item.toLowerCase()
+        col => col.name.toLowerCase() === item.toLowerCase()
       );
 
       if (!column) return;
 
-      const task = column?.tasks.find((task) => task._id === itemId);
+      const task = column?.tasks.find(task => task._id === itemId);
 
       return task?.title;
     } else {
@@ -36,8 +36,8 @@ const DeleteModal = ({ taskOrBoard }: DeleteModalProps) => {
   }
 
   const handleDeleteItem = () => {
-    if (taskOrBoard === "task") {
-      if (item && typeof item === "string" && itemId) {
+    if (taskOrBoard === 'task') {
+      if (item && typeof item === 'string' && itemId) {
         const board = currentBoard;
         if (!board) return;
 
@@ -47,35 +47,24 @@ const DeleteModal = ({ taskOrBoard }: DeleteModalProps) => {
       }
     }
 
-    if (taskOrBoard === "board" && currentBoard) {
+    if (taskOrBoard === 'board' && currentBoard) {
       deleteBoard(currentBoard?._id);
       closeModal();
     }
   };
   return (
     <div className="modal-content-wrapper delete-modal-content" ref={modalRef}>
-      <h5>Delete this {taskOrBoard === "task" ? "task" : "board"}?</h5>
+      <h5>Delete this {taskOrBoard === 'task' ? 'task' : 'board'}?</h5>
 
       <p>
-        Are you sure you want to delete the{" "}
+        Are you sure you want to delete the{' '}
         <span className="font-extrabold">&apos;{itemName}&apos; </span>
-        {taskOrBoard}? This action will remove all columns and tasks and cannot
-        be reversed.
+        {taskOrBoard}? This action will remove all columns and tasks and cannot be reversed.
       </p>
 
       <div className="btns-wrapper">
-        <Button
-          text="Delete"
-          btnClass="danger"
-          fn={handleDeleteItem}
-          btnType="button"
-        />
-        <Button
-          text="Cancel"
-          btnClass="secondary"
-          fn={closeModal}
-          btnType="button"
-        />
+        <Button text="Delete" btnClass="danger" fn={handleDeleteItem} btnType="button" />
+        <Button text="Cancel" btnClass="secondary" fn={closeModal} btnType="button" />
       </div>
     </div>
   );

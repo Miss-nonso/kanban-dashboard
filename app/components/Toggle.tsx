@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React from "react";
-import Image from "next/image";
-import { useTheme } from "../context/ThemeContext";
+import React from 'react';
+import Image from 'next/image';
+import { useTheme } from '../context/ThemeContext';
 
 const Toggle = () => {
   const { theme, toggleTheme } = useTheme();
@@ -17,10 +17,9 @@ const Toggle = () => {
         />
 
         <button
-          className={`${theme === "dark" ? "dark" : "light"} toggle`}
+          className={`${theme === 'dark' ? 'dark' : 'light'} toggle`}
           id="toggle-btn"
-          onClick={toggleTheme}
-        >
+          onClick={toggleTheme}>
           <span className="w-4 "></span>
         </button>
         <Image
