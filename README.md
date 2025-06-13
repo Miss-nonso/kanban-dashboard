@@ -110,6 +110,4 @@ Open [http://localhost:3000](http://localhost:3000) to view the board.
 
 Built with plenty of "You can't give up now" moments, late‑night bug hunts, and the relentless belief that small side‑projects teach big lessons.
 
----
 
-If you'd like me to adapt this into a project pitch, a LinkedIn launch post, or a walkthrough video script — just say the word.
