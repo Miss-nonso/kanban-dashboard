@@ -1,104 +1,115 @@
-```markdown
-# 🗂️ React / Next Kanban Board  
-*A minimal‑yet‑mighty efficient task manager powered by the App Router.*
+# 🗂️ Kanban Board
+
+A sleek, minimal, and responsive **Kanban Board** built with **Next.js App Router**, **TypeScript**, **Tailwind CSS**, and the expressive beauty of **ShadCN UI**.
+
+Designed to help you manage tasks with ease — whether you're planning your next startup, writing documentation, or just organizing your thoughts — this Kanban board brings structure to your chaos with style and intention.
 
 ---
 
-## 🛠️ Tech Stack
-| Layer | What we use | Why |
-|-------|-------------|-----|
-| **Framework** | **Next 15 (App Router)** | Instant pages, file‑system routing, SEO |
-| **UI** | React 18 • Tailwind CSS • shadcn/ui | Rapid styling + accessible primitives |
-| **State / Drag** | Context API (+ LocalStorage) • @dnd‑kit/core | Tiny footprint, buttery‑smooth drag‑and‑drop |
-| **Type Safety** | TypeScript | Catch bugs **before** they ship |
-| **Icons & UX** | Lucide • sonner/toast | Crisp visuals + gentle feedback |
-| **Tooling** | Vite‑powered dev server (via Next) • ESLint / Prettier | Fast reloads, consistent code |
+## 🛠 Tech Stack
+
+* **Next.js (App Router)** – The backbone of the project
+* **TypeScript** – Because type safety is productivity
+* **Tailwind CSS** – Utility-first styling for clean, scalable UI
+* **ShadCN UI** – Elegant and accessible components
+* **Lucide Icons** – Crisp, lightweight icons
+* **nanoid** – For generating unique task and board IDs
+* **localStorage** – For client-side state persistence
+* **React DnD (planned)** – For drag-and-drop functionality
+* **Toast Notifications** – UX feedback that whispers, not screams
 
 ---
 
-## 📦 Features
-### Boards & Columns  
-- Create unlimited boards, columns, tasks  
-- Persist everything in `localStorage` (reload‑proof)  
-- Inline renaming, deletion, column re‑ordering (drag‑and‑drop)
+📦 Features
 
-### Tasks  
-- Rich task modal with **sub‑tasks** & status select  
-- Cross‑column drag with real‑time status update  
-- Instant toast after create / edit / delete (good‑bye “Did it work?”)
+🗂 Board & Task Management
+* **Create Boards** – Give structure to your projects
+* **Add Columns** – Customize your workflow: Todo, In Progress, Done — you decide
+* **Column re‑ordering** - Easy re-order of column using drag-and-drop
+* **Add Tasks** – Each task gets a title, description, and some subtasks
+* **Delete with Caution** – Toast confirms after you give the go ahead
+* **Add Task descriptions** for more detail
+* Rich task modal with **sub‑tasks** & status select  
+* Cross‑column drag with real‑time status update  
 
-### UX niceties  
-- Dark / Light toggle (Tailwind + `data-theme`)  
-- Keyboard‑escape modal close  
-- Skeleton loaders while data hydrates  
-- 404 fallback for invalid board IDs
+🧠 Smart UX Decisions
+Persisted data using localStorage (Refresh your tab, not your progress)
+Instant visual feedback using toast messages
+Responsive Design – Looks good from mobile to widescreen
+Accessible UX – Focus states, keyboard nav, and readable contrast
+
+⚙️ Developer Features
+Modular, readable component structure
+Easy-to-extend state update logic
+Light/dark mode support (toggle-ready)
+
 
 ---
 
-## 🧱 Project Structure
+## 🧱 File Structure
+
+```
+src/
+├── app/                    # App router directory
+│   └── page.tsx           # Landing page
+│   └── layout.tsx         # Global layout
+├── components/            # Shared, reusable UI components
+│   ├── board/             # Board UI logic
+│   ├── column/            # Column logic
+│   ├── task/              # Task cards and form
+│   └── ui/                # Buttons, inputs, modals (shadcn-based)
+├── hooks/                 # Custom hooks (e.g. useLocalStorage)
+├── lib/                   # Utility functions (e.g. state update logic)
+├── types/                 # TypeScript interfaces
+├── constants/             # App-wide static data
+├── styles/                # Global styles & tailwind config
+└── public/                # Static assets (if any)
 ```
 
-src/
-├── app/                    # Next 15 “app” directory
-│   ├── boards/             # Dynamic board routes
-│   ├── layout.tsx          # Root layout
-│   └── globals.css
-├── components/
-│   ├── board/              # Board grid, Column, TaskCard
-│   ├── modal/              # Modal shell & specific modals
-│   └── ui/                 # Buttons, Inputs, Toggle …
-├── context/
-│   ├── BoardContext.tsx    # <— persistence / CRUD logic
-│   └── ModalContext.tsx
-├── hooks/                  # Custom hooks (use-toast, useOutsideClick)
-├── public/assets/          # Static icons & default board JSON
-└── utils/                  # Types, helper funcs
-
-````
-
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started
 
-### Prerequisites  
-- **Node ≥ 18**  
-- npm or pnpm
+### Prerequisites
+
+* Node.js v18 or later
+* Yarn or npm
+
+### Installation
 
 ```bash
-# 1. Clone
-git clone https://github.com/yourname/next-kanban.git
-cd next-kanban
-
-# 2. Install
-npm install    # or pnpm i
-
-# 3. Run dev server
-npm run dev
-
-# App: http://localhost:3000
-````
-
----
-
-
-
----
-
-## 📝 Assumptions
-
-* Data lives **entirely in localStorage**; no backend/API
-* Single‑user, offline‑first scenario
-* No authentication or real‑time collaboration (can be added later)
-
----
-
-
-
-## 📄 License
-
-MIT — see [`LICENSE`](./LICENSE).
-
-> Built with plenty of "you can't give up now moments", late‑night resilience, and the relentless belief that **small side‑projects teach big lessons.**
-
+git clone https://github.com/Miss-nonso/kanban-board.git
+cd kanban-board
+npm install # or yarn
 ```
+
+### Run the development server
+
+```bash
+npm run dev # or yarn dev
 ```
+
+Open [http://localhost:3000](http://localhost:3000) to view the board.
+
+---
+
+
+
+
+
+## 📝 Assumptions
+
+* No external database — everything's stored in the browser
+* No authentication
+* Designed with accessibility in mind
+
+---
+
+
+---
+
+Built with plenty of "You can't give up now" moments, late‑night bug hunts, and the relentless belief that small side‑projects teach big lessons.
+
+---
+
+If you'd like me to adapt this into a project pitch, a LinkedIn launch post, or a walkthrough video script — just say the word.
