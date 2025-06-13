@@ -93,9 +93,6 @@ Open [http://localhost:3000](http://localhost:3000) to view the board.
 ---
 
 
-
-
-
 ## 📝 Assumptions
 
 * No external database — everything's stored in the browser
@@ -104,8 +101,6 @@ Open [http://localhost:3000](http://localhost:3000) to view the board.
 
 ---
 
-
----
 
 Built with plenty of "You can't give up now" moments, late‑night bug hunts, and the relentless belief that small side‑projects teach big lessons.
 
