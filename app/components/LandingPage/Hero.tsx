@@ -6,7 +6,7 @@ const Hero = () => {
   const { boards } = useBoards();
 
   return (
-    <div className="landingPageHero mb-28 sm:mb-96">
+    <div className="landingPageHero mb-[34rem] sm:mb-96">
       <div className="coloured-elements-wrapper h-screen blur-3xl relative  ">
         <div
           className="coloured-elements h-full opacity-40"
@@ -115,7 +115,7 @@ const Hero = () => {
             <span> View code</span>
           </Link>
         </div>
-        <div className="mt-16 sm:mt-24 min-h-3/4 animate-fade-in-delay-3">
+        <div className="sm:mt-24 min-h-3/4 animate-fade-in-delay-3">
           <div
             className="relative h-[400px] sm:h-[600px]"
             // id="laptop-container"
