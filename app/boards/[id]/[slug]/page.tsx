@@ -44,13 +44,29 @@ const Main = () => {
   const [, setActiveColumn] = useState<ColumnProps | null>(null);
   const [activeTask, setActiveTask] = useState<TaskProps | null>(null);
   const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(PointerSensor),
-    useSensor(TouchSensor),
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
   // const timeoutRef = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
