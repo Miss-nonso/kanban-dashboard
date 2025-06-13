@@ -33,15 +33,15 @@ Designed to help you manage tasks with ease — whether you're planning your nex
 * Cross‑column drag with real‑time status update  
 
 🧠 Smart UX Decisions
-Persisted data using localStorage (Refresh your tab, not your progress)
-Instant visual feedback using toast messages
-Responsive Design – Looks good from mobile to widescreen
-Accessible UX – Focus states, keyboard nav, and readable contrast
+* Persisted data using localStorage (Refresh your tab, not your progress)
+* Instant visual feedback using toast messages
+* Responsive Design – Looks good from mobile to widescreen
+* Accessible UX – Focus states, keyboard nav, and readable contrast
 
 ⚙️ Developer Features
-Modular, readable component structure
-Easy-to-extend state update logic
-Light/dark mode support (toggle-ready)
+* Modular, readable component structure
+* Easy-to-extend state update logic
+* Light/dark mode support 
 
 
 ---
