@@ -1,75 +1,104 @@
- 
+```markdown
+# 🗂️ React / Next Kanban Board  
+*A minimal‑yet‑mighty efficient task manager powered by the App Router.*
 
 ---
 
-### **Kanban Board**  
-
-#### **📌 Overview**  
-This Kanban board project is a highly interactive task management tool built with **Next.js (App Router)** and **TypeScript**. It follows best UI/UX practices to ensure smooth user experience across all screen sizes.  
-
----
-
-### **🚀 Features**  
-- **Drag & Drop Support** – Easily reorder tasks and columns.  
-- **Column Indicators** – Unique color-coding for quick visual differentiation.  
-- **Dark/Light Mode Support** – Theme adapts dynamically.  
-- **Local Storage Persistence** – Ensures data is retained between sessions.  
-- **Accessible & Responsive UI** – Keyboard navigation and mobile-friendly layout.  
+## 🛠️ Tech Stack
+| Layer | What we use | Why |
+|-------|-------------|-----|
+| **Framework** | **Next 15 (App Router)** | Instant pages, file‑system routing, SEO |
+| **UI** | React 18 • Tailwind CSS • shadcn/ui | Rapid styling + accessible primitives |
+| **State / Drag** | Context API (+ LocalStorage) • @dnd‑kit/core | Tiny footprint, buttery‑smooth drag‑and‑drop |
+| **Type Safety** | TypeScript | Catch bugs **before** they ship |
+| **Icons & UX** | Lucide • sonner/toast | Crisp visuals + gentle feedback |
+| **Tooling** | Vite‑powered dev server (via Next) • ESLint / Prettier | Fast reloads, consistent code |
 
 ---
 
-### **🎨 Design System & Best Practices**  
+## 📦 Features
+### Boards & Columns  
+- Create unlimited boards, columns, tasks  
+- Persist everything in `localStorage` (reload‑proof)  
+- Inline renaming, deletion, column re‑ordering (drag‑and‑drop)
 
-#### **🎯 Color Palette & Indicators**  
-- Used a distinct **hex-based color system** for column identification.  
-- Ensured high contrast for better readability and accessibility.  
-- Followed **WCAG color contrast guidelines** to enhance visibility.  
+### Tasks  
+- Rich task modal with **sub‑tasks** & status select  
+- Cross‑column drag with real‑time status update  
+- Instant toast after create / edit / delete (good‑bye “Did it work?”)
 
-#### **📏 UI/UX Principles Followed**  
-- **Consistency** – Components follow a structured **design system** for uniformity.  
-- **Minimalist Design** – Reduced cognitive load with simple layouts.  
-- **Visual Hierarchy** – Used proper spacing, typography, and color coding for clarity.  
-- **State Management** – Managed state efficiently using **React Hooks** (`useState`, `useEffect`).  
-
----
-
-### **⚠️ Challenges Encountered & Solutions**  
-
-#### **1️⃣ Dynamic Theme Switching Issues**  
-- **Problem:** CSS variables for `textcolor` weren’t updating as expected.  
-- **Solution:** Removed quotation marks from HEX values in `:root`, ensuring correct parsing.  
-
-#### **2️⃣ TypeScript Errors with State Management**  
-- **Problem:** Encountered issues with **null values** in `useState` (e.g., `Property 'columns' does not exist on type '{}'`).  
-- **Solution:** Explicitly typed states to avoid `undefined` behavior:  
-  ```ts
-  const [board, setBoard] = useState<Board | null>(null);
-  ```
-
-#### **3️⃣ Too Many Re-Renders in React**  
-- **Problem:** Infinite loop when setting state inside `useEffect`.  
-- **Solution:** Adjusted dependencies to prevent redundant re-renders:  
-  ```ts
-  useEffect(() => {
-    if (!id) return;
-    const foundBoard = FindBoard(id);
-    if (!foundBoard) {
-      setInvalidURL(true);
-    } else {
-      setBoard(foundBoard);
-      setHeaderName(extractHeaderName(foundBoard));
-    }
-  }, [id]);
-  ```
+### UX niceties  
+- Dark / Light toggle (Tailwind + `data-theme`)  
+- Keyboard‑escape modal close  
+- Skeleton loaders while data hydrates  
+- 404 fallback for invalid board IDs
 
 ---
 
-### **💡 Lessons Learned**  
-- **Avoid unnecessary re-renders** by managing dependencies in `useEffect`.  
-- **Type safety is crucial** in TypeScript to prevent runtime errors.  
-- **Ensure CSS variables are correctly formatted** for dynamic theming to work as expected.  
-- **Follow accessibility best practices** for keyboard navigation and color contrast.  
+## 🧱 Project Structure
+```
+
+src/
+├── app/                    # Next 15 “app” directory
+│   ├── boards/             # Dynamic board routes
+│   ├── layout.tsx          # Root layout
+│   └── globals.css
+├── components/
+│   ├── board/              # Board grid, Column, TaskCard
+│   ├── modal/              # Modal shell & specific modals
+│   └── ui/                 # Buttons, Inputs, Toggle …
+├── context/
+│   ├── BoardContext.tsx    # <— persistence / CRUD logic
+│   └── ModalContext.tsx
+├── hooks/                  # Custom hooks (use-toast, useOutsideClick)
+├── public/assets/          # Static icons & default board JSON
+└── utils/                  # Types, helper funcs
+
+````
 
 ---
 
-This project embodies clean code practices, efficient state management, and a scalable design system. 🚀🔥 Let me know if you'd like to expand on anything!
+## 🚀 Getting Started
+
+### Prerequisites  
+- **Node ≥ 18**  
+- npm or pnpm
+
+```bash
+# 1. Clone
+git clone https://github.com/yourname/next-kanban.git
+cd next-kanban
+
+# 2. Install
+npm install    # or pnpm i
+
+# 3. Run dev server
+npm run dev
+
+# App: http://localhost:3000
+````
+
+---
+
+
+
+---
+
+## 📝 Assumptions
+
+* Data lives **entirely in localStorage**; no backend/API
+* Single‑user, offline‑first scenario
+* No authentication or real‑time collaboration (can be added later)
+
+---
+
+
+
+## 📄 License
+
+MIT — see [`LICENSE`](./LICENSE).
+
+> Built with plenty of "you can't give up now moments", late‑night resilience, and the relentless belief that **small side‑projects teach big lessons.**
+
+```
+```
