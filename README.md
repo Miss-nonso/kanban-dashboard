@@ -22,7 +22,7 @@ Designed to help you manage tasks with ease — whether you're planning your nex
 
 ## 📦 Features
 
-🗂 Board & Task Management
+**🗂 Board & Task Management**
 * **Create Boards** – Give structure to your projects
 * **Add Columns** – Customize your workflow: Todo, In Progress, Done — you decide
 * **Column re‑ordering** - Easy re-order of column using drag-and-drop
@@ -32,13 +32,13 @@ Designed to help you manage tasks with ease — whether you're planning your nex
 * Rich task modal with **sub‑tasks** & status select  
 * Cross‑column drag with real‑time status update  
 
-🧠 Smart UX Decisions
+**🧠 Smart UX Decisions**
 * Persisted data using localStorage (Refresh your tab, not your progress)
 * Instant visual feedback using toast messages
 * Responsive Design – Looks good from mobile to widescreen
 * Accessible UX – Focus states, keyboard nav, and readable contrast
 
-⚙️ Developer Features
+**⚙️ Developer Features**
 * Modular, readable component structure
 * Easy-to-extend state update logic
 * Light/dark mode support 
