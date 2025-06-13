@@ -1,75 +1,107 @@
- 
+# 🗂️ Kanban Board
+
+A sleek, minimal, and responsive **Kanban Board** built with **Next.js App Router**, **TypeScript**, **Tailwind CSS**, and the expressive beauty of **ShadCN UI**.
+Designed to help you manage tasks with ease — whether you're planning your next startup, writing documentation, or just organizing your thoughts, this Kanban board brings structure to your chaos with style and intention.
 
 ---
 
-### **Kanban Board**  
+## 🛠 Tech Stack
 
-#### **📌 Overview**  
-This Kanban board project is a highly interactive task management tool built with **Next.js (App Router)** and **TypeScript**. It follows best UI/UX practices to ensure smooth user experience across all screen sizes.  
-
----
-
-### **🚀 Features**  
-- **Drag & Drop Support** – Easily reorder tasks and columns.  
-- **Column Indicators** – Unique color-coding for quick visual differentiation.  
-- **Dark/Light Mode Support** – Theme adapts dynamically.  
-- **Local Storage Persistence** – Ensures data is retained between sessions.  
-- **Accessible & Responsive UI** – Keyboard navigation and mobile-friendly layout.  
+* **Next.js (App Router)** – The backbone of the project
+* **TypeScript** – Because type safety is productivity
+* **Tailwind CSS** – Utility-first styling for clean, scalable UI
+* **ShadCN UI** – Elegant and accessible components
+* **Lucide Icons** – Crisp, lightweight icons
+* **nanoid** – For generating unique task and board IDs
+* **localStorage** – For client-side state persistence
+* **React DnD (planned)** – For drag-and-drop functionality
+* **Toast Notifications** – UX feedback that whispers, not screams
 
 ---
 
-### **🎨 Design System & Best Practices**  
+## 📦 Features
 
-#### **🎯 Color Palette & Indicators**  
-- Used a distinct **hex-based color system** for column identification.  
-- Ensured high contrast for better readability and accessibility.  
-- Followed **WCAG color contrast guidelines** to enhance visibility.  
+**🗂 Board & Task Management**
+* **Create Boards** – Give structure to your projects
+* **Add Columns** – Customize your workflow: Todo, In Progress, Done — you decide
+* **Column re‑ordering** - Easy re-order of column using drag-and-drop
+* **Add Tasks** – Each task gets a title, description, and some subtasks
+* **Delete with Caution** – Toast confirms after you give the go ahead
+* **Add Task descriptions** for more detail
+* Rich task modal with **sub‑tasks** & status select  
+* Cross‑column drag with real‑time status update  
 
-#### **📏 UI/UX Principles Followed**  
-- **Consistency** – Components follow a structured **design system** for uniformity.  
-- **Minimalist Design** – Reduced cognitive load with simple layouts.  
-- **Visual Hierarchy** – Used proper spacing, typography, and color coding for clarity.  
-- **State Management** – Managed state efficiently using **React Hooks** (`useState`, `useEffect`).  
+**🧠 Smart UX Decisions**
+* Persisted data using localStorage (Refresh your tab, not your progress)
+* Instant visual feedback using toast messages
+* Responsive Design – Looks good from mobile to widescreen
+* Accessible UX – Focus states, keyboard nav, and readable contrast
 
----
+**⚙️ Developer Features**
+* Modular, readable component structure
+* Easy-to-extend state update logic
+* Light/dark mode support 
 
-### **⚠️ Challenges Encountered & Solutions**  
-
-#### **1️⃣ Dynamic Theme Switching Issues**  
-- **Problem:** CSS variables for `textcolor` weren’t updating as expected.  
-- **Solution:** Removed quotation marks from HEX values in `:root`, ensuring correct parsing.  
-
-#### **2️⃣ TypeScript Errors with State Management**  
-- **Problem:** Encountered issues with **null values** in `useState` (e.g., `Property 'columns' does not exist on type '{}'`).  
-- **Solution:** Explicitly typed states to avoid `undefined` behavior:  
-  ```ts
-  const [board, setBoard] = useState<Board | null>(null);
-  ```
-
-#### **3️⃣ Too Many Re-Renders in React**  
-- **Problem:** Infinite loop when setting state inside `useEffect`.  
-- **Solution:** Adjusted dependencies to prevent redundant re-renders:  
-  ```ts
-  useEffect(() => {
-    if (!id) return;
-    const foundBoard = FindBoard(id);
-    if (!foundBoard) {
-      setInvalidURL(true);
-    } else {
-      setBoard(foundBoard);
-      setHeaderName(extractHeaderName(foundBoard));
-    }
-  }, [id]);
-  ```
 
 ---
 
-### **💡 Lessons Learned**  
-- **Avoid unnecessary re-renders** by managing dependencies in `useEffect`.  
-- **Type safety is crucial** in TypeScript to prevent runtime errors.  
-- **Ensure CSS variables are correctly formatted** for dynamic theming to work as expected.  
-- **Follow accessibility best practices** for keyboard navigation and color contrast.  
+## 🧱 File Structure
+
+```
+src/
+├── app/                    # App router directory
+│   └── page.tsx           # Landing page
+│   └── layout.tsx         # Global layout
+├── components/            # Shared, reusable UI components
+│   ├── board/             # Board UI logic
+│   ├── column/            # Column logic
+│   ├── task/              # Task cards and form
+│   └── ui/                # Buttons, inputs, modals (shadcn-based)
+├── hooks/                 # Custom hooks (e.g. useLocalStorage)
+├── lib/                   # Utility functions (e.g. state update logic)
+├── types/                 # TypeScript interfaces
+├── constants/             # App-wide static data
+├── styles/                # Global styles & tailwind config
+└── public/                # Static assets (if any)
+```
 
 ---
 
-This project embodies clean code practices, efficient state management, and a scalable design system. 🚀🔥 Let me know if you'd like to expand on anything!
+## 🚀 Getting Started
+
+### Prerequisites
+
+* Node.js v18 or later
+* Yarn or npm
+
+### Installation
+
+```bash
+git clone https://github.com/Miss-nonso/kanban-board.git
+cd kanban-board
+npm install # or yarn
+```
+
+### Run the development server
+
+```bash
+npm run dev # or yarn dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to view the board.
+
+---
+
+
+## 📝 Assumptions
+
+* No external database — everything's stored in the browser
+* No authentication
+* Designed with accessibility in mind
+
+---
+
+
+Built with plenty of "You can't give up now" moments, late‑night bug hunts, and the relentless belief that small side‑projects teach big lessons.
+
+
