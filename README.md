@@ -20,7 +20,7 @@ Designed to help you manage tasks with ease — whether you're planning your nex
 
 ---
 
-📦 Features
+## 📦 Features
 
 🗂 Board & Task Management
 * **Create Boards** – Give structure to your projects
