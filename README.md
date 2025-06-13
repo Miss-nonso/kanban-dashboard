@@ -1,7 +1,6 @@
 # 🗂️ Kanban Board
 
 A sleek, minimal, and responsive **Kanban Board** built with **Next.js App Router**, **TypeScript**, **Tailwind CSS**, and the expressive beauty of **ShadCN UI**.
-
 Designed to help you manage tasks with ease — whether you're planning your next startup, writing documentation, or just organizing your thoughts, this Kanban board brings structure to your chaos with style and intention.
 
 ---
