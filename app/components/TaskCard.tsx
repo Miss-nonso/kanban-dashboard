@@ -5,6 +5,7 @@ import { useModal } from '../context/ModalContext';
 import ViewTask from './ModalContent/ViewTask';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useEffect } from 'react';
 
 type TaskCardProps = { task: TaskProps; index: number };
 
@@ -34,6 +35,20 @@ const TaskCard = ({ task }: TaskCardProps) => {
   if (isDragging) {
     return <div ref={setNodeRef} style={style} className="card opacity-30"></div>;
   }
+
+  useEffect(() => {
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isDragging) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [isDragging]);
 
   return (
     <>
