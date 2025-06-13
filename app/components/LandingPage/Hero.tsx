@@ -6,7 +6,7 @@ const Hero = () => {
   const { boards } = useBoards();
 
   return (
-    <div className="landingPageHero mb-[34rem] sm:mb-96">
+    <div className="landingPageHero mb-[14rem]  sm:mb-96">
       <div className="coloured-elements-wrapper h-screen blur-3xl relative  ">
         <div
           className="coloured-elements h-full opacity-40"
