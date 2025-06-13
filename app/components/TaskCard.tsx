@@ -32,10 +32,6 @@ const TaskCard = ({ task }: TaskCardProps) => {
     }
   };
 
-  if (isDragging) {
-    return <div ref={setNodeRef} style={style} className="card opacity-30"></div>;
-  }
-
   useEffect(() => {
     const handleTouchMove = (e: TouchEvent) => {
       if (isDragging) {
@@ -49,6 +45,10 @@ const TaskCard = ({ task }: TaskCardProps) => {
       document.removeEventListener('touchmove', handleTouchMove);
     };
   }, [isDragging]);
+
+  if (isDragging) {
+    return <div ref={setNodeRef} style={style} className="card opacity-30"></div>;
+  }
 
   return (
     <>
